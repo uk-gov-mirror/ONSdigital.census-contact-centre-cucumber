@@ -1,4 +1,4 @@
-package uk.gov.ons.ctp.integration.rhcucumber.cucSteps;
+package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;

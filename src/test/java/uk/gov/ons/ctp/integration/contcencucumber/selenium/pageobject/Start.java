@@ -1,4 +1,4 @@
-package uk.gov.ons.ctp.integration.rhcucumber.selenium.pageobject;
+package uk.gov.ons.ctp.integration.contcencucumber.selenium.pageobject;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package uk.gov.ons.ctp.integration.rhcucumber;
+package uk.gov.ons.ctp.integration.contcencucumber;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;

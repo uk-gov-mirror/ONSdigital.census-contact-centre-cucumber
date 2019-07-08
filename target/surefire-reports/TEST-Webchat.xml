@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="Webchat" time="11.029" tests="4" errors="0" skipped="2" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="Webchat" time="0.123" tests="41" errors="0" skipped="41" failures="0">
   <properties>
     <property name="gopherProxySet" value="false"/>
     <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
@@ -63,64 +63,193 @@
     <property name="java.class.version" value="55.0"/>
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
   </properties>
-  <testcase name="Unhappy path - No UAC entered" classname="Access the Census Questionnaire" time="4.325"/>
-  <testcase name="Unhappy path – Invalid UAC entered" classname="Access the Census Questionnaire" time="6.659"/>
+  <testcase name="Unhappy path - No UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;I am on the RH Start Page&quot; is undefined"/>
+    <system-out><![CDATA[Feature: Access the Census Questionnaire
+  I want to complete my Census Questionnaire
+
+  @SetUpAccessTheCensus @TearDownAccessTheCensus
+  Scenario: Unhappy path - No UAC entered                                           &amp#27;[90m# src/test/resources/integrationtests/accessTheCensus.feature:23&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI am on the RH Start Page&amp#27;[0m                                                 &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI click the “Start now” button&amp#27;[0m                                              &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33man error message “Please enter your access code.” appears on the same page&amp#27;[0m &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33munderneath the message is a list of telephone numbers to call for advise&amp#27;[0m    &amp#27;[90m# null&amp#27;[0m
+]]></system-out>
+    <system-err><![CDATA[Jul 08, 2019 5:53:14 PM cucumber.runtime.java.ObjectFactoryLoader loadSingleObjectFactory
+WARNING: Use deprecated reflections to load ObjectFactory.
+]]></system-err>
+  </testcase>
+  <testcase name="Unhappy path - No UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;I click the “Start now” button&quot; is undefined"/>
+  </testcase>
+  <testcase name="Unhappy path - No UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;an error message “Please enter your access code.” appears on the same page&quot; is undefined"/>
+  </testcase>
+  <testcase name="Unhappy path - No UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;underneath the message is a list of telephone numbers to call for advise&quot; is undefined"/>
+  </testcase>
+  <testcase name="Unhappy path – Invalid UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;I am on the RH Start Page&quot; is undefined"/>
+    <system-out><![CDATA[
+  @SetUpAccessTheCensus @TearDownAccessTheCensus
+  Scenario: Unhappy path – Invalid UAC entered                                                       &amp#27;[90m# src/test/resources/integrationtests/accessTheCensus.feature:31&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI am on the RH Start Page&amp#27;[0m                                                                  &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI enter invalid UAC "aaaa" "aaaa" "aaaa" "aaaa" into the text box&amp#27;[0m                            &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI click the “Start now” button&amp#27;[0m                                                               &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33man error message “Please re-enter your access code and try again.” appears on the same page&amp#27;[0m &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33munderneath the message is a list of telephone numbers to call for advise&amp#27;[0m                     &amp#27;[90m# null&amp#27;[0m
+]]></system-out>
+  </testcase>
+  <testcase name="Unhappy path – Invalid UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;I enter invalid UAC &quot;aaaa&quot; &quot;aaaa&quot; &quot;aaaa&quot; &quot;aaaa&quot; into the text box&quot; is undefined"/>
+  </testcase>
+  <testcase name="Unhappy path – Invalid UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;I click the “Start now” button&quot; is undefined"/>
+  </testcase>
+  <testcase name="Unhappy path – Invalid UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;an error message “Please re-enter your access code and try again.” appears on the same page&quot; is undefined"/>
+  </testcase>
+  <testcase name="Unhappy path – Invalid UAC entered" classname="Access the Census Questionnaire" time="0">
+    <skipped message="The step &quot;underneath the message is a list of telephone numbers to call for advise&quot; is undefined"/>
+  </testcase>
   <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
-    <skipped message="TODO: implement me"/>
+    <skipped message="The step &quot;I am on the RH Start Page  - method 2&quot; is undefined"/>
     <system-out><![CDATA[
 Feature: Request a Household UAC
   I want to get a new UAC for completing my Household Census Questionnaire
 
   Scenario: Submit UAC Request to RM                                             &amp#27;[90m# src/test/resources/integrationtests/requestUACForHousehold.feature:9&amp#27;[0m
-    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI am on the RH Start Page  - method &amp#27;[0m&amp#27;[33m&amp#27;[1m2&amp#27;[0m                                  &amp#27;[90m# RequestAHouseholdUAC.i_am_on_the_RH_Start_Page_method(Integer)&amp#27;[0m
-      &amp#27;[33mcucumber.api.PendingException: TODO: implement me
-	at uk.gov.ons.ctp.integration.rhcucumber.cucSteps.RequestAHouseholdUAC.i_am_on_the_RH_Start_Page_method(RequestAHouseholdUAC.java:23)
-	at ✽.I am on the RH Start Page  - method 2(file:src/test/resources/integrationtests/requestUACForHousehold.feature:10)
-&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI select the “Request UAC” option&amp#27;[0m                                        &amp#27;[90m# RequestAHouseholdUAC.i_select_the_Request_UAC_option()&amp#27;[0m
-    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a form for entering my postcode&amp#27;[0m                     &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_a_form_for_entering_my_postcode()&amp#27;[0m
-    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI enter a valid UK postcode&amp#27;[0m                                            &amp#27;[90m# RequestAHouseholdUAC.i_enter_a_valid_UK_postcode()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI select the “Find Address” option&amp#27;[0m                                       &amp#27;[90m# RequestAHouseholdUAC.i_select_the_Find_Address_option()&amp#27;[0m
-    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with the AI list of available addresses for the postcode&amp#27;[0m &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_the_AI_list_of_available_addresses_for_the_postcode()&amp#27;[0m
-    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI select my address from the AI list&amp#27;[0m                                   &amp#27;[90m# RequestAHouseholdUAC.i_select_my_address_from_the_AI_list()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI select “Continue” - method &amp#27;[0m&amp#27;[36m&amp#27;[1m1&amp#27;[0m                                           &amp#27;[90m# RequestAHouseholdUAC.i_select_Continue_method(Integer)&amp#27;[0m
-    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a page to confirm my address - method &amp#27;[0m&amp#27;[36m&amp#27;[1m2&amp#27;[0m             &amp#27;[90m# AccessTheCensus.i_am_presented_with_a_page_to_confirm_my_address_method(Integer)&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe address confirmation page contains two options - method &amp#27;[0m&amp#27;[36m&amp#27;[1m2&amp#27;[0m            &amp#27;[90m# AccessTheCensus.the_address_confirmation_page_contains_two_options_method(Integer)&amp#27;[0m
-    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI select the &amp#27;[0m&amp#27;[36m&amp#27;[1m"Yes, this address is correct"&amp#27;[0m&amp#27;[36m option - method &amp#27;[0m&amp#27;[36m&amp#27;[1m2&amp#27;[0m          &amp#27;[90m# RequestAHouseholdUAC.i_select_the_option_method(String,Integer)&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe address is one of the addresses that’s in the rehearsal&amp#27;[0m              &amp#27;[90m# RequestAHouseholdUAC.the_address_is_one_of_the_addresses_that_s_in_the_rehearsal()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthere is exactly &amp#27;[0m&amp#27;[36m&amp#27;[1m1&amp#27;[0m&amp#27;[36m HH case that’s associated with the UPRN&amp#27;[0m               &amp#27;[90m# RequestAHouseholdUAC.there_is_exactly_HH_case_that_s_associated_with_the_UPRN(Integer)&amp#27;[0m
-    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a form for entering a mobile no.&amp#27;[0m                    &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_a_form_for_entering_a_mobile_no()&amp#27;[0m
-    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI enter my UK mobile no.&amp#27;[0m                                               &amp#27;[90m# RequestAHouseholdUAC.i_enter_my_UK_mobile_no()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI select “Continue” - method &amp#27;[0m&amp#27;[36m&amp#27;[1m2&amp#27;[0m                                           &amp#27;[90m# RequestAHouseholdUAC.i_select_Continue_method(Integer)&amp#27;[0m
-    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a page to confirm my mobile no.&amp#27;[0m                     &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_a_page_to_confirm_my_mobile_no()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe mobile no. confirmation page contains two options&amp#27;[0m                    &amp#27;[90m# RequestAHouseholdUAC.the_mobile_no_confirmation_page_contains_two_options()&amp#27;[0m
-    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI select the &amp#27;[0m&amp#27;[36m&amp#27;[1m"Yes, send the text now"&amp#27;[0m&amp#27;[36m option&amp#27;[0m                           &amp#27;[90m# RequestAHouseholdUAC.i_select_the_option(String)&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe region associated with the HH case is NOT Wales&amp#27;[0m                      &amp#27;[90m# RequestAHouseholdUAC.the_region_associated_with_the_HH_case_is_NOT_Wales()&amp#27;[0m
-    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mmy UAC request is submitted&amp#27;[0m                                             &amp#27;[90m# RequestAHouseholdUAC.my_UAC_request_is_submitted()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI am presented with a page containing a confirmation message&amp#27;[0m             &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_a_page_containing_a_confirmation_message()&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI am on the RH Start Page  - method 2&amp#27;[0m                                  &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI select the “Request UAC” option&amp#27;[0m                                        &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mI am presented with a form for entering my postcode&amp#27;[0m                     &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI enter a valid UK postcode&amp#27;[0m                                            &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI select the “Find Address” option&amp#27;[0m                                       &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mI am presented with the AI list of available addresses for the postcode&amp#27;[0m &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI select my address from the AI list&amp#27;[0m                                   &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI select “Continue” - method 1&amp#27;[0m                                           &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mI am presented with a page to confirm my address - method 2&amp#27;[0m             &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mthe address confirmation page contains two options - method 2&amp#27;[0m            &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI select the "Yes, this address is correct" option - method 2&amp#27;[0m          &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mthe address is one of the addresses that’s in the rehearsal&amp#27;[0m              &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mthere is exactly 1 HH case that’s associated with the UPRN&amp#27;[0m               &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mI am presented with a form for entering a mobile no.&amp#27;[0m                    &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI enter my UK mobile no.&amp#27;[0m                                               &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI select “Continue” - method 2&amp#27;[0m                                           &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mI am presented with a page to confirm my mobile no.&amp#27;[0m                     &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mthe mobile no. confirmation page contains two options&amp#27;[0m                    &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI select the "Yes, send the text now" option&amp#27;[0m                           &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mthe region associated with the HH case is NOT Wales&amp#27;[0m                      &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mmy UAC request is submitted&amp#27;[0m                                             &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI am presented with a page containing a confirmation message&amp#27;[0m             &amp#27;[90m# null&amp#27;[0m
 ]]></system-out>
   </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I select the “Request UAC” option&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I am presented with a form for entering my postcode&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I enter a valid UK postcode&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I select the “Find Address” option&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I am presented with the AI list of available addresses for the postcode&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I select my address from the AI list&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I select “Continue” - method 1&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I am presented with a page to confirm my address - method 2&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;the address confirmation page contains two options - method 2&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I select the &quot;Yes, this address is correct&quot; option - method 2&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;the address is one of the addresses that’s in the rehearsal&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;there is exactly 1 HH case that’s associated with the UPRN&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I am presented with a form for entering a mobile no.&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I enter my UK mobile no.&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I select “Continue” - method 2&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I am presented with a page to confirm my mobile no.&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;the mobile no. confirmation page contains two options&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I select the &quot;Yes, send the text now&quot; option&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;the region associated with the HH case is NOT Wales&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;my UAC request is submitted&quot; is undefined"/>
+  </testcase>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="The step &quot;I am presented with a page containing a confirmation message&quot; is undefined"/>
+  </testcase>
   <testcase name="Start a Webchat Session" classname="Webchat" time="0">
-    <skipped message="TODO: implement me"/>
+    <skipped message="The step &quot;I want to chat with a contact centre agent&quot; is undefined"/>
     <system-out><![CDATA[
 Feature: Webchat
   I want to chat with a Contact Centre agent
 
   Scenario: Start a Webchat Session                               &amp#27;[90m# src/test/resources/integrationtests/webchat.feature:9&amp#27;[0m
-    &amp#27;[32mGiven &amp#27;[0m&amp#27;[32mI want to chat with a contact centre agent&amp#27;[0m              &amp#27;[90m# Webchat.i_want_to_chat_with_a_contact_centre_agent()&amp#27;[0m
-    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI am on the RH Start Page - method &amp#27;[0m&amp#27;[33m&amp#27;[1m3&amp#27;[0m                      &amp#27;[90m# Webchat.i_am_on_the_RH_Start_Page_method(Integer)&amp#27;[0m
-      &amp#27;[33mcucumber.api.PendingException: TODO: implement me
-	at uk.gov.ons.ctp.integration.rhcucumber.cucSteps.Webchat.i_am_on_the_RH_Start_Page_method(Webchat.java:23)
-	at ✽.I am on the RH Start Page - method 3(file:src/test/resources/integrationtests/webchat.feature:11)
-&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI have selected the Webchat option&amp#27;[0m                        &amp#27;[90m# Webchat.i_have_selected_the_Webchat_option()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe current time is in opening hours&amp#27;[0m                      &amp#27;[90m# Webchat.the_current_time_is_in_opening_hours()&amp#27;[0m
-    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a form to enter required information&amp#27;[0m &amp#27;[90m# Webchat.i_am_presented_with_a_form_to_enter_required_information()&amp#27;[0m
-    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI enter all the required information&amp#27;[0m                    &amp#27;[90m# Webchat.i_enter_all_the_required_information()&amp#27;[0m
-    &amp#27;[36mWhen &amp#27;[0m&amp#27;[36mI select the “Start Chat” button&amp#27;[0m                         &amp#27;[90m# Webchat.i_select_the_Start_Chat_button()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe current time is in opening hours&amp#27;[0m                      &amp#27;[90m# Webchat.the_current_time_is_in_opening_hours()&amp#27;[0m
-    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mthe information is submitted to Serco&amp#27;[0m                    &amp#27;[90m# Webchat.the_information_is_submitted_to_Serco()&amp#27;[0m
-    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mmy Webchat session starts&amp#27;[0m                                 &amp#27;[90m# Webchat.my_Webchat_session_starts()&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI want to chat with a contact centre agent&amp#27;[0m              &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI am on the RH Start Page - method 3&amp#27;[0m                      &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI have selected the Webchat option&amp#27;[0m                        &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mthe current time is in opening hours&amp#27;[0m                      &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mI am presented with a form to enter required information&amp#27;[0m &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI enter all the required information&amp#27;[0m                    &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mWhen &amp#27;[0m&amp#27;[33mI select the “Start Chat” button&amp#27;[0m                         &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mthe current time is in opening hours&amp#27;[0m                      &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mthe information is submitted to Serco&amp#27;[0m                    &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mmy Webchat session starts&amp#27;[0m                                 &amp#27;[90m# null&amp#27;[0m
 ]]></system-out>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;I am on the RH Start Page - method 3&quot; is undefined"/>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;I have selected the Webchat option&quot; is undefined"/>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;the current time is in opening hours&quot; is undefined"/>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;I am presented with a form to enter required information&quot; is undefined"/>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;I enter all the required information&quot; is undefined"/>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;I select the “Start Chat” button&quot; is undefined"/>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;the current time is in opening hours&quot; is undefined"/>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;the information is submitted to Serco&quot; is undefined"/>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="The step &quot;my Webchat session starts&quot; is undefined"/>
   </testcase>
 </testsuite>

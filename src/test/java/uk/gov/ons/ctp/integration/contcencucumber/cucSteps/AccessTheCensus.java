@@ -1,6 +1,6 @@
-package uk.gov.ons.ctp.integration.rhcucumber.cucSteps;
+package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
 
-import uk.gov.ons.ctp.integration.rhcucumber.selenium.pageobject.Start;
+import uk.gov.ons.ctp.integration.contcencucumber.selenium.pageobject.Start;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
