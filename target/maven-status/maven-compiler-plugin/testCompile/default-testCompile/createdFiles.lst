@@ -1,4 +1,3 @@
-uk/gov/ons/ctp/integration/rhcucumber/DevelopTestRunner.class
 uk/gov/ons/ctp/integration/rhcucumber/RunCucumberTest.class
 uk/gov/ons/ctp/integration/rhcucumber/cucSteps/RequestAHouseholdUAC.class
 uk/gov/ons/ctp/integration/rhcucumber/cucSteps/AccessTheCensus.class
