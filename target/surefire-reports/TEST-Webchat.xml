@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="Webchat" time="8.21" tests="4" errors="0" skipped="2" failures="0">
+  <properties>
+    <property name="gopherProxySet" value="false"/>
+    <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
+    <property name="java.specification.version" value="11"/>
+    <property name="sun.cpu.isalist" value=""/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/usr/local/Cellar/maven/3.6.0/libexec/boot/plexus-classworlds-2.5.2.jar"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/London"/>
+    <property name="maven.conf" value="/usr/local/Cellar/maven/3.6.0/libexec/conf"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="11"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="GB"/>
+    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk-11.0.2.jdk/Contents/Home/lib"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher test"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="maven.home" value="/usr/local/Cellar/maven/3.6.0/libexec"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/ellacook"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2019-01-15"/>
+    <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk-11.0.2.jdk/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="11.0.2+9-LTS"/>
+    <property name="user.name" value="ellacook"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="10.14.5"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="18.9"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="/var/folders/b7/4hl22kdj2gj7xyd6cx4prqw00000gq/T/"/>
+    <property name="java.version" value="11.0.2"/>
+    <property name="user.dir" value="/Users/ellacook/Documents/census-int-code/census-rh-cucumber"/>
+    <property name="os.arch" value="x86_64"/>
+    <property name="maven.multiModuleProjectDirectory" value="/Users/ellacook/documents/census-int-code/census-rh-cucumber"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.library.path" value="/Users/ellacook/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.vm.version" value="11.0.2+9-LTS"/>
+    <property name="classworlds.conf" value="/usr/local/Cellar/maven/3.6.0/libexec/bin/m2.conf"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="library.jansi.path" value="/usr/local/Cellar/maven/3.6.0/libexec/lib/jansi-native"/>
+    <property name="java.class.version" value="55.0"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+  </properties>
+  <testcase name="Unhappy path - No UAC entered" classname="Access the Census Questionnaire" time="3.766"/>
+  <testcase name="Unhappy path – Invalid UAC entered" classname="Access the Census Questionnaire" time="4.383"/>
+  <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
+    <skipped message="TODO: implement me"/>
+    <system-out><![CDATA[
+Feature: Request a Household UAC
+  I want to get a new UAC for completing my Household Census Questionnaire
+
+  Scenario: Submit UAC Request to RM                                             &amp#27;[90m# src/test/resources/integrationtests/requestUACForHousehold.feature:9&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI am on the RH Start Page  - method &amp#27;[0m&amp#27;[33m&amp#27;[1m2&amp#27;[0m                                  &amp#27;[90m# RequestAHouseholdUAC.i_am_on_the_RH_Start_Page_method(Integer)&amp#27;[0m
+      &amp#27;[33mcucumber.api.PendingException: TODO: implement me
+	at uk.gov.ons.ctp.integration.rhcucumber.cucSteps.RequestAHouseholdUAC.i_am_on_the_RH_Start_Page_method(RequestAHouseholdUAC.java:23)
+	at ✽.I am on the RH Start Page  - method 2(file:src/test/resources/integrationtests/requestUACForHousehold.feature:10)
+&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI select the “Request UAC” option&amp#27;[0m                                        &amp#27;[90m# RequestAHouseholdUAC.i_select_the_Request_UAC_option()&amp#27;[0m
+    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a form for entering my postcode&amp#27;[0m                     &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_a_form_for_entering_my_postcode()&amp#27;[0m
+    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI enter a valid UK postcode&amp#27;[0m                                            &amp#27;[90m# RequestAHouseholdUAC.i_enter_a_valid_UK_postcode()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI select the “Find Address” option&amp#27;[0m                                       &amp#27;[90m# RequestAHouseholdUAC.i_select_the_Find_Address_option()&amp#27;[0m
+    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with the AI list of available addresses for the postcode&amp#27;[0m &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_the_AI_list_of_available_addresses_for_the_postcode()&amp#27;[0m
+    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI select my address from the AI list&amp#27;[0m                                   &amp#27;[90m# RequestAHouseholdUAC.i_select_my_address_from_the_AI_list()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI select “Continue” - method &amp#27;[0m&amp#27;[36m&amp#27;[1m1&amp#27;[0m                                           &amp#27;[90m# RequestAHouseholdUAC.i_select_Continue_method(Integer)&amp#27;[0m
+    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a page to confirm my address - method &amp#27;[0m&amp#27;[36m&amp#27;[1m2&amp#27;[0m             &amp#27;[90m# AccessTheCensus.i_am_presented_with_a_page_to_confirm_my_address_method(Integer)&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe address confirmation page contains two options - method &amp#27;[0m&amp#27;[36m&amp#27;[1m2&amp#27;[0m            &amp#27;[90m# AccessTheCensus.the_address_confirmation_page_contains_two_options_method(Integer)&amp#27;[0m
+    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI select the &amp#27;[0m&amp#27;[36m&amp#27;[1m"Yes, this address is correct"&amp#27;[0m&amp#27;[36m option - method &amp#27;[0m&amp#27;[36m&amp#27;[1m2&amp#27;[0m          &amp#27;[90m# RequestAHouseholdUAC.i_select_the_option_method(String,Integer)&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe address is one of the addresses that’s in the rehearsal&amp#27;[0m              &amp#27;[90m# RequestAHouseholdUAC.the_address_is_one_of_the_addresses_that_s_in_the_rehearsal()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthere is exactly &amp#27;[0m&amp#27;[36m&amp#27;[1m1&amp#27;[0m&amp#27;[36m HH case that’s associated with the UPRN&amp#27;[0m               &amp#27;[90m# RequestAHouseholdUAC.there_is_exactly_HH_case_that_s_associated_with_the_UPRN(Integer)&amp#27;[0m
+    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a form for entering a mobile no.&amp#27;[0m                    &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_a_form_for_entering_a_mobile_no()&amp#27;[0m
+    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI enter my UK mobile no.&amp#27;[0m                                               &amp#27;[90m# RequestAHouseholdUAC.i_enter_my_UK_mobile_no()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI select “Continue” - method &amp#27;[0m&amp#27;[36m&amp#27;[1m2&amp#27;[0m                                           &amp#27;[90m# RequestAHouseholdUAC.i_select_Continue_method(Integer)&amp#27;[0m
+    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a page to confirm my mobile no.&amp#27;[0m                     &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_a_page_to_confirm_my_mobile_no()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe mobile no. confirmation page contains two options&amp#27;[0m                    &amp#27;[90m# RequestAHouseholdUAC.the_mobile_no_confirmation_page_contains_two_options()&amp#27;[0m
+    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI select the &amp#27;[0m&amp#27;[36m&amp#27;[1m"Yes, send the text now"&amp#27;[0m&amp#27;[36m option&amp#27;[0m                           &amp#27;[90m# RequestAHouseholdUAC.i_select_the_option(String)&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe region associated with the HH case is NOT Wales&amp#27;[0m                      &amp#27;[90m# RequestAHouseholdUAC.the_region_associated_with_the_HH_case_is_NOT_Wales()&amp#27;[0m
+    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mmy UAC request is submitted&amp#27;[0m                                             &amp#27;[90m# RequestAHouseholdUAC.my_UAC_request_is_submitted()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI am presented with a page containing a confirmation message&amp#27;[0m             &amp#27;[90m# RequestAHouseholdUAC.i_am_presented_with_a_page_containing_a_confirmation_message()&amp#27;[0m
+]]></system-out>
+  </testcase>
+  <testcase name="Start a Webchat Session" classname="Webchat" time="0">
+    <skipped message="TODO: implement me"/>
+    <system-out><![CDATA[
+Feature: Webchat
+  I want to chat with a Contact Centre agent
+
+  Scenario: Start a Webchat Session                               &amp#27;[90m# src/test/resources/integrationtests/webchat.feature:9&amp#27;[0m
+    &amp#27;[32mGiven &amp#27;[0m&amp#27;[32mI want to chat with a contact centre agent&amp#27;[0m              &amp#27;[90m# Webchat.i_want_to_chat_with_a_contact_centre_agent()&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI am on the RH Start Page - method &amp#27;[0m&amp#27;[33m&amp#27;[1m3&amp#27;[0m                      &amp#27;[90m# Webchat.i_am_on_the_RH_Start_Page_method(Integer)&amp#27;[0m
+      &amp#27;[33mcucumber.api.PendingException: TODO: implement me
+	at uk.gov.ons.ctp.integration.rhcucumber.cucSteps.Webchat.i_am_on_the_RH_Start_Page_method(Webchat.java:23)
+	at ✽.I am on the RH Start Page - method 3(file:src/test/resources/integrationtests/webchat.feature:11)
+&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mI have selected the Webchat option&amp#27;[0m                        &amp#27;[90m# Webchat.i_have_selected_the_Webchat_option()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe current time is in opening hours&amp#27;[0m                      &amp#27;[90m# Webchat.the_current_time_is_in_opening_hours()&amp#27;[0m
+    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mI am presented with a form to enter required information&amp#27;[0m &amp#27;[90m# Webchat.i_am_presented_with_a_form_to_enter_required_information()&amp#27;[0m
+    &amp#27;[36mGiven &amp#27;[0m&amp#27;[36mI enter all the required information&amp#27;[0m                    &amp#27;[90m# Webchat.i_enter_all_the_required_information()&amp#27;[0m
+    &amp#27;[36mWhen &amp#27;[0m&amp#27;[36mI select the “Start Chat” button&amp#27;[0m                         &amp#27;[90m# Webchat.i_select_the_Start_Chat_button()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mthe current time is in opening hours&amp#27;[0m                      &amp#27;[90m# Webchat.the_current_time_is_in_opening_hours()&amp#27;[0m
+    &amp#27;[36mThen &amp#27;[0m&amp#27;[36mthe information is submitted to Serco&amp#27;[0m                    &amp#27;[90m# Webchat.the_information_is_submitted_to_Serco()&amp#27;[0m
+    &amp#27;[36mAnd &amp#27;[0m&amp#27;[36mmy Webchat session starts&amp#27;[0m                                 &amp#27;[90m# Webchat.my_Webchat_session_starts()&amp#27;[0m
+]]></system-out>
+  </testcase>
+</testsuite>
