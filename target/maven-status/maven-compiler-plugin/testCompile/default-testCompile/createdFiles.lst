@@ -1,0 +1,5 @@
+uk/gov/ons/ctp/integration/contcencucumber/RunCucumberTest.class
+uk/gov/ons/ctp/integration/contcencucumber/cucSteps/AccessTheCensus.class
+uk/gov/ons/ctp/integration/contcencucumber/cucSteps/Webchat.class
+uk/gov/ons/ctp/integration/contcencucumber/selenium/pageobject/Start.class
+uk/gov/ons/ctp/integration/contcencucumber/cucSteps/RequestAHouseholdUAC.class
