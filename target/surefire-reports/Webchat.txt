@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: Webchat
 -------------------------------------------------------------------------------
-Tests run: 41, Failures: 0, Errors: 0, Skipped: 41, Time elapsed: 0.126 s - in Webchat
+Tests run: 45, Failures: 0, Errors: 0, Skipped: 45, Time elapsed: 0.121 s - in Webchat

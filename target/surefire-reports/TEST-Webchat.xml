@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="Webchat" time="0.126" tests="41" errors="0" skipped="41" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="Webchat" time="0.121" tests="45" errors="0" skipped="45" failures="0">
   <properties>
     <property name="gopherProxySet" value="false"/>
     <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
@@ -75,7 +75,7 @@
     &amp#27;[33mThen &amp#27;[0m&amp#27;[33man error message “Please enter your access code.” appears on the same page&amp#27;[0m &amp#27;[90m# null&amp#27;[0m
     &amp#27;[33mAnd &amp#27;[0m&amp#27;[33munderneath the message is a list of telephone numbers to call for advise&amp#27;[0m    &amp#27;[90m# null&amp#27;[0m
 ]]></system-out>
-    <system-err><![CDATA[Jul 09, 2019 11:35:10 AM cucumber.runtime.java.ObjectFactoryLoader loadSingleObjectFactory
+    <system-err><![CDATA[Jul 09, 2019 11:46:42 AM cucumber.runtime.java.ObjectFactoryLoader loadSingleObjectFactory
 WARNING: Use deprecated reflections to load ObjectFactory.
 ]]></system-err>
   </testcase>
@@ -205,6 +205,28 @@ Feature: Request a Household UAC
   </testcase>
   <testcase name="Submit UAC Request to RM" classname="Request a Household UAC" time="0">
     <skipped message="The step &quot;I am presented with a page containing a confirmation message&quot; is undefined"/>
+  </testcase>
+  <testcase name="Test the Version Endpoint" classname="Test the Version Endpoint" time="0">
+    <skipped message="The step &quot;I go to the version endpoint for the Contact Centre&quot; is undefined"/>
+    <system-out><![CDATA[
+Feature: Test the Version Endpoint
+  I want to find out what version of the Contact Centre I'm using
+
+  Scenario: Test the Version Endpoint                                         &amp#27;[90m# src/test/resources/integrationtests/testEndpoints.feature:9&amp#27;[0m
+    &amp#27;[33mGiven &amp#27;[0m&amp#27;[33mI go to the version endpoint for the Contact Centre&amp#27;[0m                 &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mI receive a Rest response&amp#27;[0m                                             &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mThen &amp#27;[0m&amp#27;[33mthe response should contain the following api version number "4.0.2"&amp#27;[0m &amp#27;[90m# null&amp#27;[0m
+    &amp#27;[33mAnd &amp#27;[0m&amp#27;[33mthe response should contain the following data version number "60"&amp#27;[0m    &amp#27;[90m# null&amp#27;[0m
+]]></system-out>
+  </testcase>
+  <testcase name="Test the Version Endpoint" classname="Test the Version Endpoint" time="0">
+    <skipped message="The step &quot;I receive a Rest response&quot; is undefined"/>
+  </testcase>
+  <testcase name="Test the Version Endpoint" classname="Test the Version Endpoint" time="0">
+    <skipped message="The step &quot;the response should contain the following api version number &quot;4.0.2&quot;&quot; is undefined"/>
+  </testcase>
+  <testcase name="Test the Version Endpoint" classname="Test the Version Endpoint" time="0">
+    <skipped message="The step &quot;the response should contain the following data version number &quot;60&quot;&quot; is undefined"/>
   </testcase>
   <testcase name="Start a Webchat Session" classname="Webchat" time="0">
     <skipped message="The step &quot;I want to chat with a contact centre agent&quot; is undefined"/>

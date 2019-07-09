@@ -47,11 +47,12 @@ public class AccessTheCensus {
 		driver.get(baseUrl);
 	}
 	
-	@Given("I enter UAC {string} {string} {string} {string} into the text box")
-	public void i_enter_UAC_into_the_text_box(String uac1, String uac2, String uac3, String uac4) {
-
-		startPage.enterUac(uac1, uac2, uac3, uac4);		
-	}
+//	@Given("I enter UAC {string} {string} {string} {string} into the text box")
+//	public void i_enter_UAC_into_the_text_box(String uac) {
+//
+//	    startPage.enterUac(uac);
+////		startPage.enterUac(uac1, uac2, uac3, uac4);		
+//	}
 
 	@Given("I click the “Start now” button")
 	public void i_click_the_Start_now_button() {
@@ -62,7 +63,9 @@ public class AccessTheCensus {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		driver.findElement(By.xpath("/html/body/div/div[1]/div[3]/div/div/div/div/form/button")).click();
+	
+//		driver.findElement(By.xpath("/html/body/div/div[1]/div[3]/div/div/div/div/form/button")).click();
+	    driver.findElement(By.xpath("//*[@id=\"main-content\"]/button")).click();
 	}
 
 	@Then("I am presented with a page to confirm my address - method {int}")
@@ -122,6 +125,11 @@ public class AccessTheCensus {
 		driver.findElement(By.linkText("Please enter your access code."));
 	}
 
+	@Then("an error message “Enter your access code.” appears on the same page")
+	public void an_error_message_Enter_your_access_code_appears_on_the_same_page() {
+	    driver.findElement(By.linkText("Enter your access code."));
+	}
+	
 	@Then("underneath the message is a list of telephone numbers to call for advise")
 	public void underneath_the_message_is_a_list_of_telephone_numbers_to_call_for_advise() {
 	   
@@ -140,9 +148,9 @@ public class AccessTheCensus {
 	}
 	
 	@Given("I enter invalid UAC {string} {string} {string} {string} into the text box")
-	public void i_enter_invalid_UAC_into_the_text_box(String uac1, String uac2, String uac3, String uac4) {
+	public void i_enter_invalid_UAC_into_the_text_box(String uac) {
 	   
-		startPage.enterUac(uac1, uac2, uac3, uac4);		
+		startPage.enterUac(uac);		
 	}
 
 }
