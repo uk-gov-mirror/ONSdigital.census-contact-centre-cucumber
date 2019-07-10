@@ -53,47 +53,4 @@ formatter.result({
 formatter.after({
   "status": "passed"
 });
-formatter.uri("file:src/test/resources/integrationtests/testEndpoints.feature");
-formatter.feature({
-  "name": "Test the Version Endpoint",
-  "description": "  I want to find out what version of the Contact Centre I\u0027m using",
-  "keyword": "Feature"
-});
-formatter.scenario({
-  "name": "Test the Version Endpoint",
-  "description": "",
-  "keyword": "Scenario"
-});
-formatter.step({
-  "name": "I go to the version endpoint for the Contact Centre",
-  "keyword": "Given "
-});
-formatter.match({});
-formatter.result({
-  "status": "undefined"
-});
-formatter.step({
-  "name": "I receive a Rest response",
-  "keyword": "And "
-});
-formatter.match({});
-formatter.result({
-  "status": "undefined"
-});
-formatter.step({
-  "name": "the response should contain the following api version number \"4.0.2\"",
-  "keyword": "Then "
-});
-formatter.match({});
-formatter.result({
-  "status": "undefined"
-});
-formatter.step({
-  "name": "the response should contain the following data version number \"60\"",
-  "keyword": "And "
-});
-formatter.match({});
-formatter.result({
-  "status": "undefined"
-});
 });
