@@ -6,14 +6,14 @@ import org.springframework.context.annotation.Configuration;
 
 
 /** Application Config bean */
-//@EnableRetry
-//@Configuration
-//@ConfigurationProperties
-//@Data
+@Configuration
+@ConfigurationProperties
+@Data
 public class AppConfig {
-//  private ReportSettings reportSettings;
+    private EventGeneratorSettings eventGeneratorSettings;
+    private Logging logging;
+    
 //  // private Rabbitmq rabbitmq;
-//  private AddressIndexSettings addressIndexSettings;
 //  private CaseServiceSettings caseServiceSettings;
-//  private Logging logging;
+  
 }
