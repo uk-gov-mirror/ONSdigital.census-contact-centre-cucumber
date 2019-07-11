@@ -12,15 +12,17 @@
 	<parent>
 		<groupId>uk.gov.ons.ctp.integration</groupId>
 		<artifactId>census-int-common-config</artifactId>
-		<version>0.0.7</version>
+		<version>0.0.8</version>
 	</parent>
 
 
 	<dependencies>
 
-		<!-- <dependency> <groupId>uk.gov.ons.ctp.integration.common</groupId> 
-			<artifactId>test-framework</artifactId> <version>0.0.4</version> <scope>test</scope> 
-			</dependency> -->
+		<dependency>
+			<groupId>uk.gov.ons.ctp.integration.common</groupId>
+			<artifactId>framework</artifactId>
+			<version>0.0.33</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

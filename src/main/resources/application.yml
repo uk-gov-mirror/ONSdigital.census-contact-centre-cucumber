@@ -36,7 +36,7 @@ management:
       enabled: true 
 
 server:
-  port: 8171
+  port: 80
 
 spring:
   mvc:
@@ -45,8 +45,8 @@ spring:
   
   security:
     user:
-      name: serco_cks
-      password: temporary
+      name: cont_cen
+      password: cucumber
   output:
     ansi:
       enabled: never
@@ -55,11 +55,11 @@ spring:
 
 
 event-generator-settings:
-  generator-path: /generator
+  generator-path: /generate
   rest-client-config:
     scheme: http
     host: local
-    port: 80
+    port: 8171
     
 case-service-settings:
   case-by-id-query-path: /cases/{case-id}
