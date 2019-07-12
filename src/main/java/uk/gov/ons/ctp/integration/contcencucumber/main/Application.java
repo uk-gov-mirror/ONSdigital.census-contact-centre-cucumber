@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import uk.gov.ons.ctp.common.event.EventPublisher;
+import uk.gov.ons.ctp.common.event.EventSender;
+import uk.gov.ons.ctp.common.event.SpringRabbitEventSender;
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.common.rest.RestClientConfig;
 // import uk.gov.ons.ctp.common.rest.RestClient;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.integration.annotation.IntegrationComponentScan;
+import uk.gov.ons.ctp.common.event.EventPublisher;
 
 @ImportResource("springintegration/main.xml")
 @SpringBootApplication
@@ -85,6 +88,7 @@ public class Application {
     template.setExchange(eventExchange);
     template.setChannelTransacted(true);
 
-    return new EventPublisher(template);
+    EventSender sender = new SpringRabbitEventSender(template);
+    return new EventPublisher(sender);
   }
 }

@@ -35,5 +35,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="/framework"/>
+	<classpathentry kind="src" path="/event-generator"/>
+	<classpathentry kind="src" path="/event-publisher"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

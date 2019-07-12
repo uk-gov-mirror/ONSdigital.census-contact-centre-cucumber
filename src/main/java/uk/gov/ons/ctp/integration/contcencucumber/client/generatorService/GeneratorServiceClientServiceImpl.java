@@ -14,6 +14,11 @@ import org.springframework.validation.annotation.Validated;
 import uk.gov.ons.ctp.common.rest.RestClient;
 //import uk.gov.ons.ctp.integration.contactcentresvc.client.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.config.AppConfig;
+import uk.gov.ons.ctp.integration.event.generator.model.GeneratorRequest;
+import uk.gov.ons.ctp.common.event.model.CollectionCaseResponse;
+import uk.gov.ons.ctp.common.event.EventPublisher;
+import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
+
 
 /** This class is responsible for communications with the Case Service. */
 @Service
@@ -26,6 +31,29 @@ public class GeneratorServiceClientServiceImpl {
   @Inject
   @Qualifier("eventGeneratorClient")
   private RestClient eventGeneratorClient;
+  
+  public CollectionCaseResponse postGenerateCaseCreated() {
+    log.debug("postGenerateCaseCreated");
+    
+//  Build map for query params
+    MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+    queryParams.add("caseRef", "hello");
+    queryParams.add("id", "#uuid");
+    
+    //Ask Generator to generate a CaseCreated event
+    String path = appConfig.getEventGeneratorSettings().getGeneratorPath();
+    
+    GeneratorRequest generatorRequest = new GeneratorRequest();
+    generatorRequest.setEventType(EventPublisher.EventType.CASE_CREATED);
+//    generatorRequest.setSource(EventPublisher.EventType
+    
+//    CollectionCaseResponse collectionCases = eventGeneratorClient.postResource(path, objToPost, clazz, pathParams)
+    
+//    return CollectionCaseResponse;
+        
+     return null;
+    
+  }
 
 //  public CaseContainerDTO getCaseById(UUID caseId, Boolean listCaseEvents) {
 //    log.debug("getCaseById. Calling Case Service to find case details by ID: " + caseId);
