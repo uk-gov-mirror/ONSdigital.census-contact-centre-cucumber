@@ -31,11 +31,11 @@ public class GeneratorServiceClientServiceImpl {
 
   @Autowired private AppConfig appConfig;
 
-  @Inject
-  @Qualifier("eventGeneratorClient")
+//  @Inject
+//  @Qualifier("eventGeneratorClient")
   private RestClient eventGeneratorClient;
 //  
-  public CollectionCaseResponse postGenerateCaseCreated() {
+  public CollectionCaseResponse postGenerateCaseCreated(String path) {
     log.debug("postGenerateCaseCreated");
     
 //  Build map for query params
@@ -47,8 +47,9 @@ public class GeneratorServiceClientServiceImpl {
     listForRequest.add(queryParams);
     
     //Ask Generator to generate a CaseCreated event
-    String path = appConfig.getEventGeneratorSettings().getGeneratorPath();
+//    String path = appConfig.getEventGeneratorSettings().getGeneratorPath();
     
+    eventGeneratorClient = new RestClient();
     GeneratorRequest generatorRequest = new GeneratorRequest();
     generatorRequest.setEventType(EventPublisher.EventType.CASE_CREATED);
     generatorRequest.setSource(EventPublisher.Source.RESPONDENT_HOME);

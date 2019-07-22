@@ -53,4 +53,60 @@ formatter.result({
 formatter.after({
   "status": "passed"
 });
+formatter.uri("file:src/test/resources/integrationtests/testEndpoints.feature");
+formatter.feature({
+  "name": "Test Endpoints",
+  "description": "  I want to call endpoints from my cucumber scenarios",
+  "keyword": "Feature"
+});
+formatter.scenario({
+  "name": "Test the UAC Generator",
+  "description": "",
+  "keyword": "Scenario",
+  "tags": [
+    {
+      "name": "@SetUpTestEndpoints"
+    },
+    {
+      "name": "@TearDownTestEndpoints"
+    }
+  ]
+});
+formatter.before({
+  "status": "passed"
+});
+formatter.step({
+  "name": "I post a request to the endpoint for the UAC Generator",
+  "keyword": "Given "
+});
+formatter.match({
+  "location": "TestEndpoints.i_post_a_request_to_the_endpoint_for_the_UAC_Generator()"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "I receive a Rest response that is not null",
+  "keyword": "And "
+});
+formatter.match({
+  "location": "TestEndpoints.i_receive_a_Rest_response_that_is_not_null()"
+});
+formatter.result({
+  "error_message": "cucumber.api.PendingException: TODO: implement me\n\tat uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints.i_receive_a_Rest_response_that_is_not_null(TestEndpoints.java:104)\n\tat ✽.I receive a Rest response that is not null(file:src/test/resources/integrationtests/testEndpoints.feature:13)\n",
+  "status": "pending"
+});
+formatter.step({
+  "name": "the response should contain caseRefs \"hello\" and \"bar\"",
+  "keyword": "Then "
+});
+formatter.match({
+  "location": "TestEndpoints.the_response_should_contain_caseRefs_and(String,String)"
+});
+formatter.result({
+  "status": "skipped"
+});
+formatter.after({
+  "status": "passed"
+});
 });
