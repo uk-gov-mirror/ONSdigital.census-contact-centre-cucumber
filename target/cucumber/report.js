@@ -93,8 +93,7 @@ formatter.match({
   "location": "TestEndpoints.i_receive_a_Rest_response_that_is_not_null()"
 });
 formatter.result({
-  "error_message": "cucumber.api.PendingException: TODO: implement me\n\tat uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints.i_receive_a_Rest_response_that_is_not_null(TestEndpoints.java:104)\n\tat ✽.I receive a Rest response that is not null(file:src/test/resources/integrationtests/testEndpoints.feature:13)\n",
-  "status": "pending"
+  "status": "passed"
 });
 formatter.step({
   "name": "the response should contain caseRefs \"hello\" and \"bar\"",
@@ -104,7 +103,8 @@ formatter.match({
   "location": "TestEndpoints.the_response_should_contain_caseRefs_and(String,String)"
 });
 formatter.result({
-  "status": "skipped"
+  "error_message": "cucumber.api.PendingException: TODO: implement me\n\tat uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints.the_response_should_contain_caseRefs_and(TestEndpoints.java:111)\n\tat ✽.the response should contain caseRefs \"hello\" and \"bar\"(file:src/test/resources/integrationtests/testEndpoints.feature:14)\n",
+  "status": "pending"
 });
 formatter.after({
   "status": "passed"

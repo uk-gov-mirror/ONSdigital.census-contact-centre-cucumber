@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +92,7 @@ public class TestEndpoints {
       builder.setContentType("application/json; charset=UTF-8");
       
       RequestSpecification requestSpec = builder.build();
-      
+      resp = null;
       resp = given().spec(requestSpec).when().post(generatorUrl);
       
 //      assertTrue(resp.getBody().jsonPath().get("caseRef").equals("hello"));
@@ -100,8 +101,7 @@ public class TestEndpoints {
 
   @Given("I receive a Rest response that is not null")
   public void i_receive_a_Rest_response_that_is_not_null() {
-      // Write code here that turns the phrase above into concrete actions
-      throw new cucumber.api.PendingException();
+      assertNotNull(resp);
   }
 
 
