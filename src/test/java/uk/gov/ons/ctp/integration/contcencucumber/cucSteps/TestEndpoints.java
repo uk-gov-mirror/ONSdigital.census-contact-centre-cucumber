@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
 
+import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +12,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+import static com.jayway.restassured.RestAssured.given;
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -32,6 +36,7 @@ public class TestEndpoints {
   private CollectionCaseResponse collectionCaseResponse = null;
   private JSONObject requestJsonObject;
   private JSONObject contextsJsonObject;
+  private Response resp;
   
   @Before("@SetUpTestEndpoints")
   public void setup() {
@@ -64,8 +69,8 @@ public class TestEndpoints {
     
       //Arrange
       RequestSpecBuilder builder = new RequestSpecBuilder();
-      builder.setBaseUri(generatorUrl);
-      builder.setContentType(ContentType.JSON);
+//      builder.setBaseUri(generatorUrl);
+//      builder.setContentType(ContentType.JSON);
       
       //set body
       requestJsonObject = new JSONObject();
@@ -81,20 +86,15 @@ public class TestEndpoints {
       listForRequest.add(contextsJsonObject);
       
       requestJsonObject.put("contexts", listForRequest);
-      
-      
-//      requestJsonObject.put("contexts", null);
-      
-//      Map<String, String> queryParams = new HashMap<String, String>();
-//      queryParams.put("caseRef", "hello");
-//      queryParams.put("id", "#uuid");
-//      
-//      List<Map<String, String>> listForRequest = new ArrayList<Map<String, String>>();
-//      listForRequest.add(queryParams);
-      
-      //NB. 
+       
       builder.setBody(requestJsonObject.toString());
+      builder.setContentType("application/json; charset=UTF-8");
+      
       RequestSpecification requestSpec = builder.build();
+      
+      resp = given().spec(requestSpec).when().post(generatorUrl);
+      
+//      assertTrue(resp.getBody().jsonPath().get("caseRef").equals("hello"));
       
   }
 
