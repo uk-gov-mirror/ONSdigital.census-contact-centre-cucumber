@@ -106,9 +106,13 @@ public class TestEndpoints {
 
 
   @Then("the response should contain caseRefs {string} and {string}")
-  public void the_response_should_contain_caseRefs_and(String string, String string2) {
-      // Write code here that turns the phrase above into concrete actions
-      throw new cucumber.api.PendingException();
+  public void the_response_should_contain_caseRefs_and(String caseRef0, String caseRef1) {
+      String firstCaseRef = "";
+      assertNotNull(resp.getBody());
+      assertNotNull(resp.getBody().jsonPath());
+      log.info("The json path is: " + resp.getBody().jsonPath().toString());
+      log.info("The caseRef is: " + resp.getBody().jsonPath().get("caseRef"));
+//      assertNotNull(resp.getBody().jsonPath().get("caseRef"));
   }
 
   @Then("the response should contain the following api version number {string}")

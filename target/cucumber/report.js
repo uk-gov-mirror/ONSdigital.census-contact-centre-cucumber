@@ -103,8 +103,7 @@ formatter.match({
   "location": "TestEndpoints.the_response_should_contain_caseRefs_and(String,String)"
 });
 formatter.result({
-  "error_message": "cucumber.api.PendingException: TODO: implement me\n\tat uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints.the_response_should_contain_caseRefs_and(TestEndpoints.java:111)\n\tat ✽.the response should contain caseRefs \"hello\" and \"bar\"(file:src/test/resources/integrationtests/testEndpoints.feature:14)\n",
-  "status": "pending"
+  "status": "passed"
 });
 formatter.after({
   "status": "passed"
