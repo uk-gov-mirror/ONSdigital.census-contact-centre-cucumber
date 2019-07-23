@@ -14,6 +14,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.authentication.AuthenticationScheme;
+import com.jayway.restassured.authentication.PreemptiveBasicAuthScheme;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import static com.jayway.restassured.RestAssured.given;
 import com.jayway.restassured.http.ContentType;
@@ -91,6 +93,12 @@ public class TestEndpoints {
       builder.setBody(requestJsonObject.toString());
       builder.setContentType("application/json; charset=UTF-8");
       
+      PreemptiveBasicAuthScheme authScheme = new PreemptiveBasicAuthScheme();
+      authScheme.setUserName("generator");
+      authScheme.setPassword("hitmeup");
+      
+      builder.setAuth(authScheme);
+      
       RequestSpecification requestSpec = builder.build();
       resp = null;
       resp = given().spec(requestSpec).when().post(generatorUrl);
@@ -111,7 +119,7 @@ public class TestEndpoints {
       assertNotNull(resp.getBody());
       assertNotNull(resp.getBody().jsonPath());
       log.info("The json path is: " + resp.getBody().jsonPath().toString());
-      log.info("The caseRef is: " + resp.getBody().jsonPath().get("caseRef"));
+      log.info("The payload is: " + resp.getBody().jsonPath().get("payloads"));
 //      assertNotNull(resp.getBody().jsonPath().get("caseRef"));
   }
 
