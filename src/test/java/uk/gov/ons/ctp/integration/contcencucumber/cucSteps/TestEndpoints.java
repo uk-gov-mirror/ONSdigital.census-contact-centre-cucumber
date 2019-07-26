@@ -38,7 +38,8 @@ public class TestEndpoints {
   private GeneratorServiceClientServiceImpl generatorServiceClientServiceImpl;
   private CollectionCaseResponse collectionCaseResponse = null;
   private JSONObject requestJsonObject;
-  private JSONObject contextsJsonObject;
+  private JSONObject contextsJsonObject1;
+  private JSONObject contextsJsonObject2;
   private Response resp;
   
   @Before("@SetUpTestEndpoints")
@@ -81,12 +82,17 @@ public class TestEndpoints {
       requestJsonObject.put("source", "RESPONDENT_HOME");
       requestJsonObject.put("channel", "RH");
       
-      contextsJsonObject = new JSONObject();
-      contextsJsonObject.put("caseRef", "hello");
-      contextsJsonObject.put("id", "#uuid");
+      contextsJsonObject1 = new JSONObject();
+      contextsJsonObject1.put("caseRef", "hello");
+      contextsJsonObject1.put("id", "#uuid");
+      
+      contextsJsonObject2 = new JSONObject();
+      contextsJsonObject2.put("caseRef", "bar");
+      contextsJsonObject2.put("id", "#uuid");
       
       List<JSONObject> listForRequest = new ArrayList<JSONObject>();
-      listForRequest.add(contextsJsonObject);
+      listForRequest.add(contextsJsonObject1);
+      listForRequest.add(contextsJsonObject2);
       
       requestJsonObject.put("contexts", listForRequest);
        
@@ -115,7 +121,7 @@ public class TestEndpoints {
 
   @Then("the response should contain caseRefs {string} and {string}")
   public void the_response_should_contain_caseRefs_and(String caseRef0, String caseRef1) {
-      String firstCaseRef = "";
+//      String firstCaseRef = "";
       assertNotNull(resp.getBody());
       assertNotNull(resp.getBody().jsonPath());
       log.info("The json path is: " + resp.getBody().jsonPath().toString());
