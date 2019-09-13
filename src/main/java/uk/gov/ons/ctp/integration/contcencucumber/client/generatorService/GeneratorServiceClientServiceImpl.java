@@ -18,7 +18,7 @@ import uk.gov.ons.ctp.common.rest.RestClient;
 //import uk.gov.ons.ctp.integration.contactcentresvc.client.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.config.AppConfig;
 import uk.gov.ons.ctp.integration.contcencucumber.model.GeneratorRequest;
-import uk.gov.ons.ctp.common.event.model.CollectionCaseResponse;
+//import uk.gov.ons.ctp.common.event.model.CollectionCaseResponse;
 import uk.gov.ons.ctp.common.event.EventPublisher;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 
@@ -35,32 +35,28 @@ public class GeneratorServiceClientServiceImpl {
 //  @Qualifier("eventGeneratorClient")
   private RestClient eventGeneratorClient;
 //  
-  public CollectionCaseResponse postGenerateCaseCreated(String path) {
-    log.debug("postGenerateCaseCreated");
-    
-//  Build map for query params
-    Map<String, String> queryParams = new HashMap<String, String>();
-    queryParams.put("caseRef", "hello");
-    queryParams.put("id", "#uuid");
-    
-    List<Map<String, String>> listForRequest = new ArrayList<Map<String, String>>();
-    listForRequest.add(queryParams);
-    
-    //Ask Generator to generate a CaseCreated event
-//    String path = appConfig.getEventGeneratorSettings().getGeneratorPath();
-    
-    eventGeneratorClient = new RestClient();
-    GeneratorRequest generatorRequest = new GeneratorRequest();
-    generatorRequest.setEventType(EventPublisher.EventType.CASE_CREATED);
-    generatorRequest.setSource(EventPublisher.Source.RESPONDENT_HOME);
-    generatorRequest.setChannel(EventPublisher.Channel.RH);
-    generatorRequest.setContexts(listForRequest);
-    
-    CollectionCaseResponse collectionCases = eventGeneratorClient.postResource(path, generatorRequest, CollectionCaseResponse.class, null);
-    
-    return collectionCases;
-    
-  }
+//  public CollectionCaseResponse postGenerateCaseCreated(String path) {
+//    log.debug("postGenerateCaseCreated");
+//    
+//    Map<String, String> queryParams = new HashMap<String, String>();
+//    queryParams.put("caseRef", "hello");
+//    queryParams.put("id", "#uuid");
+//    
+//    List<Map<String, String>> listForRequest = new ArrayList<Map<String, String>>();
+//    listForRequest.add(queryParams);
+//    
+//    eventGeneratorClient = new RestClient();
+//    GeneratorRequest generatorRequest = new GeneratorRequest();
+//    generatorRequest.setEventType(EventPublisher.EventType.CASE_CREATED);
+//    generatorRequest.setSource(EventPublisher.Source.RESPONDENT_HOME);
+//    generatorRequest.setChannel(EventPublisher.Channel.RH);
+//    generatorRequest.setContexts(listForRequest);
+//    
+//    CollectionCaseResponse collectionCases = eventGeneratorClient.postResource(path, generatorRequest, CollectionCaseResponse.class, null);
+//    
+//    return collectionCases;
+//    
+//  }
 
 //  public CaseContainerDTO getCaseById(UUID caseId, Boolean listCaseEvents) {
 //    log.debug("getCaseById. Calling Case Service to find case details by ID: " + caseId);

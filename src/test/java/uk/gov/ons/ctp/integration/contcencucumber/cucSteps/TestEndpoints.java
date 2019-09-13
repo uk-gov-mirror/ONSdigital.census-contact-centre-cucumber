@@ -26,7 +26,7 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import uk.gov.ons.ctp.common.event.model.CollectionCaseResponse;
+//import uk.gov.ons.ctp.common.event.model.CollectionCaseResponse;
 import uk.gov.ons.ctp.integration.contcencucumber.client.generatorService.GeneratorServiceClientServiceImpl;
 
 public class TestEndpoints {
@@ -36,7 +36,7 @@ public class TestEndpoints {
   private String versionUrl;
   private String generatorUrl;
   private GeneratorServiceClientServiceImpl generatorServiceClientServiceImpl;
-  private CollectionCaseResponse collectionCaseResponse = null;
+//  private CollectionCaseResponse collectionCaseResponse = null;
   private JSONObject requestJsonObject;
   private JSONObject contextsJsonObject1;
   private JSONObject contextsJsonObject2;
