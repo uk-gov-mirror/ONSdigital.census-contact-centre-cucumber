@@ -58,8 +58,8 @@ event-generator-settings:
   generator-path: /generate
   rest-client-config:
     scheme: http
-    host: local
-    port: 8171
+    host: localhost
+    port: 8112
     
 case-service-settings:
   case-by-id-query-path: /cases/{case-id}

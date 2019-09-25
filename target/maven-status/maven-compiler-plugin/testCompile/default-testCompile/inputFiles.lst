@@ -1,4 +1,5 @@
-/Users/cookel/Documents/census-int-code/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/RunCucumberTest.java
-/Users/cookel/Documents/census-int-code/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/cucSteps/AccessTheCensus.java
-/Users/cookel/Documents/census-int-code/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/cucSteps/TestEndpoints.java
-/Users/cookel/Documents/census-int-code/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/selenium/pageobject/Start.java
+/Users/andrewjohnys_ons/eclipse-workspace/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/RunCucumberTest.java
+/Users/andrewjohnys_ons/eclipse-workspace/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/cucSteps/AccessTheCensus.java
+/Users/andrewjohnys_ons/eclipse-workspace/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/cucSteps/TestAddressEndpoints.java
+/Users/andrewjohnys_ons/eclipse-workspace/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/selenium/pageobject/Start.java
+/Users/andrewjohnys_ons/eclipse-workspace/census-contact-centre-cucumber/src/test/java/uk/gov/ons/ctp/integration/contcencucumber/cucSteps/TestEndpoints.java

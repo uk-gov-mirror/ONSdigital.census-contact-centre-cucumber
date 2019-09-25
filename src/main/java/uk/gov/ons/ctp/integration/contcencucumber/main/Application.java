@@ -25,11 +25,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.integration.annotation.IntegrationComponentScan;
 import uk.gov.ons.ctp.common.event.EventPublisher;
 
-@ImportResource("springintegration/main.xml")
-@SpringBootApplication
-@IntegrationComponentScan("uk.gov.ons.ctp.integration")
-@ComponentScan(basePackages = {"uk.gov.ons.ctp.integration"})
-@EnableCaching
+//@ImportResource("springintegration/main.xml")
+//@SpringBootApplication
+//@IntegrationComponentScan("uk.gov.ons.ctp.integration")
+//@ComponentScan(basePackages = {"uk.gov.ons.ctp.integration"})
+//@EnableCaching
 public class Application {
 
   private AppConfig appConfig;

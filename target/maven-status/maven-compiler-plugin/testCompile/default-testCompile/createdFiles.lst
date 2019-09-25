@@ -1,4 +1,6 @@
+uk/gov/ons/ctp/integration/contcencucumber/cucSteps/TestAddressEndpoints$1.class
 uk/gov/ons/ctp/integration/contcencucumber/RunCucumberTest.class
 uk/gov/ons/ctp/integration/contcencucumber/cucSteps/AccessTheCensus.class
 uk/gov/ons/ctp/integration/contcencucumber/cucSteps/TestEndpoints.class
+uk/gov/ons/ctp/integration/contcencucumber/cucSteps/TestAddressEndpoints.class
 uk/gov/ons/ctp/integration/contcencucumber/selenium/pageobject/Start.class

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -29,6 +30,7 @@ import cucumber.api.java.en.When;
 //import uk.gov.ons.ctp.common.event.model.CollectionCaseResponse;
 import uk.gov.ons.ctp.integration.contcencucumber.client.generatorService.GeneratorServiceClientServiceImpl;
 
+@Ignore
 public class TestEndpoints {
   
   private static final Logger log = LoggerFactory.getLogger(AccessTheCensus.class);
