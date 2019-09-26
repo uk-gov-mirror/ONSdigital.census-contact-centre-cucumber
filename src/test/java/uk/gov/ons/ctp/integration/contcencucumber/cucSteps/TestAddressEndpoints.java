@@ -47,8 +47,5 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
     public void a_list_of_addresses_for_my_postcode_is_returned() {
         Assert.assertNotNull("Address Query Response must not be null", addressQueryResponseDTO);
         Assert.assertNotEquals("", 0, addressQueryResponseDTO.getAddresses().size());
-        addressQueryResponseDTO.getAddresses().forEach( e -> {
-            Assert.assertTrue("Address must contain test postcode: " + postcode, e.getFormattedAddress().contains(postcode));
-        });
     }
 }

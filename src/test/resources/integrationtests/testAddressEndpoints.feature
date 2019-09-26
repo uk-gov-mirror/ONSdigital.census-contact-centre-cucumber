@@ -14,3 +14,5 @@ Feature: Test Contact centre Address Endpoints
     Examples:
     | postcode  |
     | "EX4 1EH" |
+    | "EX41EH"  |
+ #   | "EX4 1EH "|
