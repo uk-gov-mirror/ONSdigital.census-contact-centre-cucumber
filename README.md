@@ -1,12 +1,19 @@
 # census-contact-centre-cucumber
 Cucumber integration tests for Census Contact Centre Service
 
-This branch (CR-221) has been about proving that rest endpoints can be called from within cucumber tests. I have found that this can be done using the RestAssured framework. The code changes will not be merged but instead we will keep the CR-221 branch in the census-contact-centre-cucumber repo until the code changes are required at some future date. NB. The branch contains the following scenario, which runs successfully but requires RabbitMQ (from the census-rh-service docker image) and the census-int-event-generator (for the endpoint to post to) to both be running too:
-
+This project tests teh functionality of the RH Service
+It currently tests the Address endpoints and validates postcodes returning addresses.
+It uses Spring Boot to create a restTemplate - mapping Json Objects to POJOs
+It also uses Scenario Outlines to utilize tabulated data in tests
 ```
-@SetUpTestEndpoints @TearDownTestEndpoints
-Scenario: Test the UAC Generator
-Given I post a request to the endpoint for the UAC Generator
-And I receive a Rest response that is not null   
-Then the response should contain caseRefs "hello" and "bar"
+  Scenario Outline: I want to verify that address search by postcode works
+    Given I have a valid Postcode <postcode>
+    When I Search Addresses By Postcode
+    Then A list of addresses for my postcode is returned
+
+  Scenario Outline: I want to verify that address search by invalid postcode works
+    Given I have an invalid Postcode <postcode>
+    When I Search Addresses By Invalid Postcode
+    Then An empty list of addresses for my postcode is returned
+
 ```
