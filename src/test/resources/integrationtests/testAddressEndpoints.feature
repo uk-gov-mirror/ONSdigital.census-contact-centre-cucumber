@@ -16,3 +16,13 @@ Feature: Test Contact centre Address Endpoints
     | "EX4 1EH" |
     | "EX41EH"  |
  #   | "EX4 1EH "|
+
+  Scenario Outline: I want to verify that address search by invalid postcode works
+    Given I have an invalid Postcode <postcode>
+    When I Search Addresses By Invalid Postcode
+    Then An empty list of addresses for my postcode is returned
+
+    Examples:
+      | postcode  |
+      | "BD7 4PF" |
+      | "XXX SSS" |
