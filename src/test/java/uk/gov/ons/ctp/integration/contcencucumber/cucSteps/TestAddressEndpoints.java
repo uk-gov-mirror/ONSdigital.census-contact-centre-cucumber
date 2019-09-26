@@ -29,9 +29,9 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
     final static String POSTCODE_URL = "http://localhost:8171/addresses/postcode";
     AddressQueryResponseDTO addressQueryResponseDTO;
 
-    @Given("I have a valid Postcode")
-    public void i_have_a_valid_Postcode() {
-        postcode = "EX4 1EH";
+    @Given("I have a valid Postcode {string}")
+    public void i_have_a_valid_Postcode(final String postcode) {
+        this.postcode = postcode;
     }
 
     @When("I Search Addresses By Postcode")
