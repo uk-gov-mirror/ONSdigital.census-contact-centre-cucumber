@@ -13,10 +13,14 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 import static org.junit.Assert.*;
 
 public class TestAddressEndpoints extends SpringIntegrationTest {
+    protected String ccBaseUrl  = System.getenv("CC_BASE_URL") == null ?
+            "http://localhost:8171" : System.getenv("CC_BASE_URL");
+    protected String ccUsername = "serco_cks";
+    protected String ccPassword = "temporary";
+    private AddressQueryResponseDTO addressQueryResponseDTO;
+    private String postcode = "";
+    private final String postcodeUrl = ccBaseUrl + "/addresses/postcode";
 
-    String postcode = "";
-    final static String POSTCODE_URL = "http://localhost:8171/addresses/postcode";
-    AddressQueryResponseDTO addressQueryResponseDTO;
 
     @Given("I have a valid Postcode {string}")
     public void i_have_a_valid_Postcode(final String postcode) {
@@ -25,9 +29,9 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search Addresses By Postcode")
     public void i_Search_Addresses_By_Postcode() {
-        RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("serco_cks", "temporary").build();
+        RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(POSTCODE_URL)
+                .fromHttpUrl(postcodeUrl)
                 .queryParam("postcode", postcode);
         addressQueryResponseDTO = restTemplate.getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
     }
@@ -47,7 +51,7 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
     public void i_Search_Addresses_By_Invalid_Postcode() {
         RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("serco_cks", "temporary").build();
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(POSTCODE_URL)
+                .fromHttpUrl(postcodeUrl)
                 .queryParam("postcode", postcode);
             try {
                 addressQueryResponseDTO = restTemplate.getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);

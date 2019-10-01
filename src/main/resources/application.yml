@@ -54,7 +54,6 @@ spring:
   application:
     name: ONS ContactCentreCucumberService
 
-
 event-generator-settings:
   generator-path: /generate
   rest-client-config:
@@ -106,3 +105,9 @@ queueconfig:
   
 report-settings:
   cron-expression: "0 * * * * *"
+
+contact-centre-settings:
+    username: serco_cks
+    password: temporary
+    host: ${CC_BASE_URL:localhost}
+    port: ${CC_PORT:8171}
