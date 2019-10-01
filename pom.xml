@@ -203,10 +203,10 @@
 		</plugins>
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
 				<includes>
-					<include>**/*.yml</include>
+					<include>**/application-test.yml</include>
 				</includes>
 			</resource>
 		</resources>

@@ -3,6 +3,7 @@ package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -13,14 +14,19 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 import static org.junit.Assert.*;
 
 public class TestAddressEndpoints extends SpringIntegrationTest {
-    protected String ccBaseUrl  = System.getenv("CC_BASE_URL") == null ?
-            "http://localhost:8171" : System.getenv("CC_BASE_URL");
-    protected String ccUsername = "serco_cks";
-    protected String ccPassword = "temporary";
+
+    @Value("${contact-centre.host}")
+    private String ccBaseUrl;
+    @Value("${contact-centre.port}")
+    private String ccBasePort;
+    @Value("${contact-centre.username}")
+    private String ccUsername;
+    @Value("${contact-centre.password}")
+    private String ccPassword;
+
     private AddressQueryResponseDTO addressQueryResponseDTO;
     private String postcode = "";
-    private final String postcodeUrl = ccBaseUrl + "/addresses/postcode";
-
+    private final String postcodeUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/postcode";
 
     @Given("I have a valid Postcode {string}")
     public void i_have_a_valid_Postcode(final String postcode) {
