@@ -26,7 +26,6 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     private AddressQueryResponseDTO addressQueryResponseDTO;
     private String postcode = "";
-    private final String postcodeUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/postcode";
 
     @Given("I have a valid Postcode {string}")
     public void i_have_a_valid_Postcode(final String postcode) {
@@ -35,6 +34,7 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search Addresses By Postcode")
     public void i_Search_Addresses_By_Postcode() {
+        final String postcodeUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/postcode";
         RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(postcodeUrl)
@@ -55,6 +55,7 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search Addresses By Invalid Postcode")
     public void i_Search_Addresses_By_Invalid_Postcode() {
+        final String postcodeUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/postcode";
         RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("serco_cks", "temporary").build();
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(postcodeUrl)
