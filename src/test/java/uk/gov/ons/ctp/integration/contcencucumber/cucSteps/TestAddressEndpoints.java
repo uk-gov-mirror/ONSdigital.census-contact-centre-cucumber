@@ -3,6 +3,7 @@ package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -14,9 +15,17 @@ import static org.junit.Assert.*;
 
 public class TestAddressEndpoints extends SpringIntegrationTest {
 
-    String postcode = "";
-    final static String POSTCODE_URL = "http://localhost:8171/addresses/postcode";
-    AddressQueryResponseDTO addressQueryResponseDTO;
+    @Value("${contact-centre.host}")
+    private String ccBaseUrl;
+    @Value("${contact-centre.port}")
+    private String ccBasePort;
+    @Value("${contact-centre.username}")
+    private String ccUsername;
+    @Value("${contact-centre.password}")
+    private String ccPassword;
+
+    private AddressQueryResponseDTO addressQueryResponseDTO;
+    private String postcode = "";
 
     @Given("I have a valid Postcode {string}")
     public void i_have_a_valid_Postcode(final String postcode) {
@@ -25,9 +34,10 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search Addresses By Postcode")
     public void i_Search_Addresses_By_Postcode() {
-        RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("serco_cks", "temporary").build();
+        final String postcodeUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/postcode";
+        RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(POSTCODE_URL)
+                .fromHttpUrl(postcodeUrl)
                 .queryParam("postcode", postcode);
         addressQueryResponseDTO = restTemplate.getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
     }
@@ -45,9 +55,10 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search Addresses By Invalid Postcode")
     public void i_Search_Addresses_By_Invalid_Postcode() {
+        final String postcodeUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/postcode";
         RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("serco_cks", "temporary").build();
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(POSTCODE_URL)
+                .fromHttpUrl(postcodeUrl)
                 .queryParam("postcode", postcode);
             try {
                 addressQueryResponseDTO = restTemplate.getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);

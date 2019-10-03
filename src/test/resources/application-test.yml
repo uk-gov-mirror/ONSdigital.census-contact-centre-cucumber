@@ -1,0 +1,5 @@
+contact-centre:
+  username: serco_cks
+  password: temporary
+  host: ${CONTACT_CENTRE_SERVICE_URL:http://localhost}
+  port: ${CONTACT_CENTRE_SERVICE_PORT:8171}
