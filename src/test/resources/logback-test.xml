@@ -2,7 +2,7 @@
   <include
     resource="org/springframework/boot/logging/logback/defaults.xml" />
   <timestamp datePattern="yyyyMMdd'T'HHmmss" key="bySecond" />
-  <property resource="application.yml" />
+  <property resource="application-test.yml" />
   <springProperty name="profile" source="logging.profile" />
   <springProperty name="springAppName" scope="context"
     source="spring.application.name" />
