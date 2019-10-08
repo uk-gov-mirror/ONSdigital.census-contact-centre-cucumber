@@ -26,3 +26,34 @@ Feature: Test Contact centre Address Endpoints
       | postcode  |
       | "BD7 4PF" |
       | "XXX SSS" |
+
+  Scenario Outline: I want to verify that address search by address works
+    Given I have a valid address <address>
+    When I Search Addresses By Address Search
+    Then A list of addresses for my search is returned
+
+    Examples:
+      | address         |
+      | "Chelmsford"    |
+      | "Bristol Street"|
+      | "Plymouth"      |
+
+  Scenario Outline: I want to verify that invalid address search by address works
+    Given I have an invalid address <address>
+    When I Search invalid Addresses By Address Search
+    Then An empty list of addresses for my search is returned
+
+    Examples:
+      | address                 |
+      | "Chimpanzee"            |
+      | "Boaty McBoat Face Ally"|
+      | "Mike Tyson Avenue"     |
+
+ #  Scenario Outline: I want to add a new address
+ #    Given I have a new uprn and address <uprn> <address>
+ #    When I post the new address
+ #    Then The new address is posted successfully
+
+ #    Examples:
+ #      | uprn      | address                 |
+ #      | "1234567" | "14 lawrence Drive,Horton Bank Top,,Bradford,West Yorkshire,BD7 4PF,CREATE,NEW_PROPERTY,Mr,Andrew,Johnys"            |
