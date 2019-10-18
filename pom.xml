@@ -63,6 +63,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.8</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
 
 		<dependency>
@@ -194,7 +200,7 @@
 					<!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
 					<testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
 					<includes>
-						<include>**/*RunCucumberTest.java</include>
+						<include>**/RunCucumberTest*.java</include>
 					</includes>
 					<!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude> </excludes> -->
 				</configuration>

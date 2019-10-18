@@ -1,31 +1,19 @@
-package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
+package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.address;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressUpdateRequestDTO;
-import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
+import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints;
 
 import java.util.Date;
 
 import static org.junit.Assert.*;
 
-public class TestAddressEndpoints extends SpringIntegrationTest {
-
-    @Value("${contact-centre.host}")
-    private String ccBaseUrl;
-    @Value("${contact-centre.port}")
-    private String ccBasePort;
-    @Value("${contact-centre.username}")
-    private String ccUsername;
-    @Value("${contact-centre.password}")
-    private String ccPassword;
+public class TestAddressEndpoints extends TestEndpoints {
 
     private AddressQueryResponseDTO addressQueryResponseDTO;
     private AddressUpdateRequestDTO addressUpdateRequestDTO;
@@ -40,9 +28,11 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search Addresses By Postcode")
     public void i_Search_Addresses_By_Postcode() {
-        final String postcodeUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/postcode";
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(postcodeUrl)
+                .fromHttpUrl(ccBaseUrl)
+                .port(ccBasePort)
+                .pathSegment("addresses")
+                .pathSegment("postcode")
                 .queryParam("postcode", postcode);
         addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
     }
@@ -60,9 +50,11 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search Addresses By Invalid Postcode")
     public void i_Search_Addresses_By_Invalid_Postcode() {
-        final String postcodeUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/postcode";
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(postcodeUrl)
+                .fromHttpUrl(ccBaseUrl)
+                .port(ccBasePort)
+                .pathSegment("addresses")
+                .pathSegment("postcode")
                 .queryParam("postcode", postcode);
             try {
                 addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
@@ -87,9 +79,10 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search Addresses By Address Search")
     public void i_Search_Addresses_By_Address_Search() {
-        final String addressUrl = ccBaseUrl + ":" + ccBasePort + "/addresses";
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(addressUrl)
+                .fromHttpUrl(ccBaseUrl)
+                .port(ccBasePort)
+                .pathSegment("addresses")
                 .queryParam("input", addressSearchString);
         addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
     }
@@ -100,10 +93,6 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
         assertNotEquals("Address list size must not be zero", 0, addressQueryResponseDTO.getAddresses().size());
     }
 
-    private RestTemplate getRestTemplate() {
-        return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
-    }
-
     @Given("I have an invalid address {string}")
     public void i_have_an_invalid_address(String addressSearchString) {
         this.addressSearchString = addressSearchString;
@@ -111,9 +100,10 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I Search invalid Addresses By Address Search")
     public void i_Search_invalid_Addresses_By_Address_Search() {
-        final String addressUrl = ccBaseUrl + ":" + ccBasePort + "/addresses";
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(addressUrl)
+                .fromHttpUrl(ccBaseUrl)
+                .port(ccBasePort)
+                .pathSegment("addresses")
                 .queryParam("input", addressSearchString);
         try {
             addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
@@ -139,11 +129,12 @@ public class TestAddressEndpoints extends SpringIntegrationTest {
 
     @When("I post the new address")
     public void i_post_the_new_address() {
-        final String updateAddressUrl = ccBaseUrl + ":" + ccBasePort + "/addresses/" + uprn;
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(updateAddressUrl);
-        addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
-        getRestTemplate().postForObject(updateAddressUrl, addressUpdateRequestDTO, String.class);
+                .fromHttpUrl(ccBaseUrl)
+                .port(ccBasePort)
+                .pathSegment("addresses")
+                .pathSegment(uprn);
+        getRestTemplate().postForObject(builder.build().encode().toUri(), addressUpdateRequestDTO, String.class);
     }
 
     @Then("The new address is posted successfully")

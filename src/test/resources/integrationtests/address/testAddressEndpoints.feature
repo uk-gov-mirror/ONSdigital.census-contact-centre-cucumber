@@ -1,4 +1,4 @@
-#Author: andreiw.johnys@ext.ons.gov.uk
+#Author: andrew.johnys@ext.ons.gov.uk
 #Keywords Summary : CC CONTACT CENTRE SERVICE
 #Feature: Test Contact centre Address Endpoints
 #Scenario: Get a list of addresses by valid postcode
@@ -46,7 +46,7 @@ Feature: Test Contact centre Address Endpoints
     Examples:
       | address                 |
       | "Chimpanzee"            |
-      | "Boaty McBoat Face Ally"|
+      | "Boaty McBoat Face "|
       | "Mike Tyson Avenue"     |
 
  #  Scenario Outline: I want to add a new address
