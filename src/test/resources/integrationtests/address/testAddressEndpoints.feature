@@ -15,7 +15,6 @@ Feature: Test Contact centre Address Endpoints
     | postcode  |
     | "EX4 1EH" |
     | "EX41EH"  |
- #   | "EX4 1EH "|
 
   Scenario Outline: I want to verify that address search by invalid postcode works
     Given I have an invalid Postcode <postcode>
@@ -24,7 +23,7 @@ Feature: Test Contact centre Address Endpoints
 
     Examples:
       | postcode  |
-      | "BD7 4PF" |
+      | "ZZ99 9ZZ" |
       | "XXX SSS" |
 
   Scenario Outline: I want to verify that address search by address works
@@ -47,13 +46,4 @@ Feature: Test Contact centre Address Endpoints
       | address                 |
       | "Chimpanzee"            |
       | "Boaty McBoat Face "|
-      | "Mike Tyson Avenue"     |
-
- #  Scenario Outline: I want to add a new address
- #    Given I have a new uprn and address <uprn> <address>
- #    When I post the new address
- #    Then The new address is posted successfully
-
- #    Examples:
- #      | uprn      | address                 |
- #      | "1234567" | "14 lawrence Drive,Horton Bank Top,,Bradford,West Yorkshire,BD7 4PF,CREATE,NEW_PROPERTY,Mr,Andrew,Johnys"            |
+      | "Strawberry Laces"     |
