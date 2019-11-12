@@ -115,8 +115,8 @@ public class TestCaseEndpoints extends TestEndpoints {
     @Then("the correct cases for my UPRN are returned {string}")
     public void the_correct_cases_for_my_UPRN_are_returned(String caseIds) {
         final List<String> caseIdList = Arrays.stream(caseIds.split(",")).collect(Collectors.toList());
-        caseDTOList.forEach(acase -> {
-            String caseID = acase.getId().toString().trim();
+        caseDTOList.forEach(caseDetails -> {
+            String caseID = caseDetails.getId().toString().trim();
             assertTrue("case ID must be in case list - ", caseIdList.contains(caseID));
         });
     }

@@ -46,6 +46,22 @@ It also uses Scenario Outlines to utilize tabulated data in tests
     Given I have an invalid UPRN <uprn>
     When I Search cases By invalid UPRN
     Then no cases for my UPRN are returned <httpError>
+
+  Scenario Outline: I want to verify that the get Fulfilments endpoint works
+    Given I have a valid case Type <caseType> and region <region>
+    When I Search fulfilments
+    Then A list of fulfilments is returned of size <size> <caseType> <region>
+
+  Scenario Outline: I want to verify that Fulfilments work end to end
+    Given I have a valid address search String <address>
+    When I Search Addresses By Address Search String
+    Then A list of addresses for my search is returned containing the address I require
+    Given I have a valid UPRN from my found address <uprn>
+    When I Search cases By UPRN
+    Then the correct cases for my UPRN are returned <case_ids>
+    Given I have a valid case from my search UPRN
+    When I Search fulfilments
+    Then the correct fulfilments are returned for my case <fulfilments>
 ```
 
 To run these tests - the following services need to be running:-

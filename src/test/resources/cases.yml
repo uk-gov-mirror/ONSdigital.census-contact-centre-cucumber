@@ -1,0 +1,45 @@
+casedata:
+  cases: '[
+      {
+       "caseRef": "987654",
+       "arid": "2344266233",
+       "estabArid": "AABBCC",
+       "estabType": "ET",
+       "uprn": "100041141569",
+       "createdDateTime": "2019-04-14T13:45:26.564+01:00",
+       "addressLine1": "8A, Okehampton Road",
+       "addressLine2": "",
+       "addressLine3": "",
+       "townName": "Exeter",
+       "postcode": "EX4 1EH",
+       "organisationName": "ON",
+       "addressLevel": "E",
+       "abpCode": "AACC",
+       "latitude": "41.40338",
+       "longitude": "2.17403",
+       "oa": "EE22",
+       "lsoa": "x1",
+       "msoa": "x2",
+       "lad": "H1",
+       "caseEvents": [
+        {
+          "id": "101",
+          "eventType": "CASE_UPDATED",
+          "description": "Initial creation of case",
+          "createdDateTime": "2019-04-14T13:45:26.564+01:00"
+        },
+        {
+          "id": "102",
+          "eventType": null,
+          "description": "Create Household Visit",
+          "createdDateTime": "2019-04-14T13:45:26.564+01:00"
+        }
+        ],
+       "id": "3305e937-6fb1-4ce1-9d4c-077f147789bb",
+       "caseType": "HH",
+       "region": "E",
+       "state": "ACTIONABLE",
+       "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
+       "surveyType": "CENSUS"
+     }
+     ]'
