@@ -11,74 +11,71 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.apache.commons.lang3.StringUtils;
 
 public class UniquePropertyReferenceNumber {
-    @JsonProperty("uprn")
-    @JsonSerialize(
-            using = ToStringSerializer.class
-    )
-    private long value;
+  @JsonProperty("uprn")
+  @JsonSerialize(using = ToStringSerializer.class)
+  private long value;
 
-    public UniquePropertyReferenceNumber() {
-    }
+  public UniquePropertyReferenceNumber() {}
 
-    public UniquePropertyReferenceNumber(String str) {
-        setValue(str);
-    }
+  public UniquePropertyReferenceNumber(String str) {
+    setValue(str);
+  }
 
-    public long getValue() {
-        return this.value;
-    }
+  public long getValue() {
+    return this.value;
+  }
 
-    public void setValue(long value) {
-        this.value = value;
-    }
+  public void setValue(long value) {
+    this.value = value;
+  }
 
-    public void setValue(String str) {
-        if (!StringUtils.isBlank(str)) {
-            try {
-                Long uprn = Long.parseLong(str);
-                if (uprn < 0L || uprn > 999999999999L) {
-                    throw new IllegalArgumentException("String '" + uprn + "' is not a valid UPRN");
-                }
-
-                this.value = uprn;
-            } catch (NumberFormatException var3) {
-                throw new IllegalArgumentException();
-            }
+  public void setValue(String str) {
+    if (!StringUtils.isBlank(str)) {
+      try {
+        Long uprn = Long.parseLong(str);
+        if (uprn < 0L || uprn > 999999999999L) {
+          throw new IllegalArgumentException("String '" + uprn + "' is not a valid UPRN");
         }
-    }
 
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        } else if (!(o instanceof UniquePropertyReferenceNumber)) {
-            return false;
-        } else {
-            UniquePropertyReferenceNumber other = (UniquePropertyReferenceNumber)o;
-            if (!other.canEqual(this)) {
-                return false;
-            } else {
-                return this.getValue() == other.getValue();
-            }
-        }
+        this.value = uprn;
+      } catch (NumberFormatException var3) {
+        throw new IllegalArgumentException();
+      }
     }
+  }
 
-    protected boolean canEqual(Object other) {
-        return other instanceof UniquePropertyReferenceNumber;
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    } else if (!(o instanceof UniquePropertyReferenceNumber)) {
+      return false;
+    } else {
+      UniquePropertyReferenceNumber other = (UniquePropertyReferenceNumber) o;
+      if (!other.canEqual(this)) {
+        return false;
+      } else {
+        return this.getValue() == other.getValue();
+      }
     }
+  }
 
-    public int hashCode() {
-        //int PRIME = true;
-        int result = 1;
-        long $value = this.getValue();
-         result = result * 59 + (int)($value >>> 32 ^ $value);
-        return result;
-    }
+  protected boolean canEqual(Object other) {
+    return other instanceof UniquePropertyReferenceNumber;
+  }
 
-    public String toString() {
-        return "UniquePropertyReferenceNumber(value=" + this.getValue() + ")";
-    }
+  public int hashCode() {
+    // int PRIME = true;
+    int result = 1;
+    long $value = this.getValue();
+    result = result * 59 + (int) ($value >>> 32 ^ $value);
+    return result;
+  }
 
-    public UniquePropertyReferenceNumber(long value) {
-        this.value = value;
-    }
+  public String toString() {
+    return "UniquePropertyReferenceNumber(value=" + this.getValue() + ")";
+  }
+
+  public UniquePropertyReferenceNumber(long value) {
+    this.value = value;
+  }
 }
