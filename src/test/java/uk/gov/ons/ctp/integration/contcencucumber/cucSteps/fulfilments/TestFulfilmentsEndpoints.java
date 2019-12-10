@@ -1,13 +1,8 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.fulfilments;
 
-import static org.junit.Assert.*;
-
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -19,6 +14,12 @@ import uk.gov.ons.ctp.integration.common.product.model.Product;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.*;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpointsFFData;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.*;
 
 public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
 
@@ -110,12 +111,15 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
   @Then("A list of addresses for my search is returned containing the address I require")
   public void a_list_of_addresses_for_my_search_is_returned_containing_the_address_I_require() {
     assertNotNull("Address Query Response must not be null", addressQueryResponseDTO);
-    assertEquals("Address list size must be 1", 1, addressQueryResponseDTO.getAddresses().size());
+    assertTrue("Address list size must be > 0", addressQueryResponseDTO.getAddresses().size() > 0);
   }
 
   @Given("I have a valid UPRN from my found address {string}")
-  public void i_have_a_valid_UPRN_from_my_found_address(String expectedUPRN) {
-    this.uprn = addressQueryResponseDTO.getAddresses().get(0).getUprn();
+  public void i_have_a_valid_UPRN_from_my_found_address(final String expectedUPRN) {
+
+    List<AddressDTO> addressList = addressQueryResponseDTO.getAddresses().stream()
+            .filter( aq -> aq.getUprn().equals(expectedUPRN)).collect(Collectors.toList());
+    this.uprn = addressList.get(0).getUprn();
     assertEquals("Should have returned the correct UPRN", expectedUPRN, this.uprn);
   }
 
