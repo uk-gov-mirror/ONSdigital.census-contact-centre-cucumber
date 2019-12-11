@@ -4,10 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +15,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 @Component
 @EnableConfigurationProperties
@@ -44,12 +45,6 @@ public class TestEndpointsFFData extends SpringIntegrationTest {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  @Value("${mock-case-service.username}")
-  private String mcsUsername;
-
-  @Value("${mock-case-service.password}")
-  private String mcsPassword;
-
   private static final Logger log = LoggerFactory.getLogger(TestEndpointsFFData.class);
 
   public void setCases(final String cases) throws IOException {
@@ -70,7 +65,7 @@ public class TestEndpointsFFData extends SpringIntegrationTest {
     for (CaseContainerDTO caseContainer : caseList) {
       final List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainer);
       try {
-        getRestTemplate()
+        getAuthenticationFreeRestTemplate()
             .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
       } catch (HttpClientErrorException ex) {
         log.warn(
@@ -82,5 +77,9 @@ public class TestEndpointsFFData extends SpringIntegrationTest {
 
   protected RestTemplate getRestTemplate() {
     return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
+  }
+
+  private RestTemplate getAuthenticationFreeRestTemplate() {
+    return new RestTemplateBuilder().build();
   }
 }
