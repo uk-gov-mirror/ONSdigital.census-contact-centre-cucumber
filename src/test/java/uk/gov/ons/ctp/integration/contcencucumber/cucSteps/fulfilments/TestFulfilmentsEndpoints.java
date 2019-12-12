@@ -16,6 +16,7 @@ import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpointsFFData;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -119,8 +120,13 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
 
     List<AddressDTO> addressList = addressQueryResponseDTO.getAddresses().stream()
             .filter( aq -> aq.getUprn().equals(expectedUPRN)).collect(Collectors.toList());
-    this.uprn = addressList.get(0).getUprn();
-    assertEquals("Should have returned the correct UPRN", expectedUPRN, this.uprn);
+    if (addressList.isEmpty()) {
+      fail("i_have_a_valid_UPRN_from_my_found_address - filtered address list must not be empty: expected UPRN " + expectedUPRN);
+    }
+    else {
+      this.uprn = addressList.get(0).getUprn();
+      assertEquals("Should have returned the correct UPRN", expectedUPRN, this.uprn);
+    }
   }
 
   @When("I Search cases By UPRN")
@@ -147,20 +153,30 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
 
   @Then("the correct cases for my UPRN are returned {string}")
   public void the_correct_cases_for_my_UPRN_are_returned(String caseIds) {
-    List caseIdList =
-        Arrays.stream(caseIds.split(","))
-            .filter(item -> !item.isEmpty())
-            .collect(Collectors.toList());
-    caseDTOList.forEach(
-        caseDetails -> {
-          assertEquals(
-              "Cases must have the correct UPRN",
-              uprn,
-              Long.toString(caseDetails.getUprn().getValue()));
-          assertTrue(
-              "Cases must have the correct ID" + caseIds,
-              caseIdList.contains(caseDetails.getId().toString()));
-        });
+    if (caseIds.isEmpty()) {
+      assertNull(caseDTOList);
+      caseDTOList = new ArrayList<>();
+    }
+    else {
+      List caseIdList =
+              Arrays.stream(caseIds.split(","))
+                      .filter(item -> !item.isEmpty())
+                      .collect(Collectors.toList());
+      try {
+        caseDTOList.forEach(
+                caseDetails -> {
+                  assertEquals(
+                          "Cases must have the correct UPRN",
+                          uprn,
+                          Long.toString(caseDetails.getUprn().getValue()));
+                  assertTrue(
+                          "Cases must have the correct ID" + caseIds,
+                          caseIdList.contains(caseDetails.getId().toString()));
+                });
+      } catch (NullPointerException npe) {
+        fail("Null pointer exception on case list for UPRN: " + uprn);
+      }
+    }
   }
 
   @Given("I have a valid case from my search UPRN")
