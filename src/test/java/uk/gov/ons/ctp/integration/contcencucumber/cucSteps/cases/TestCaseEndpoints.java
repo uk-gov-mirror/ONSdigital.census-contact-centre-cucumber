@@ -1,8 +1,13 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
+import static org.junit.Assert.*;
+
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +16,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
 
 public class TestCaseEndpoints extends TestEndpoints {
 

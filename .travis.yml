@@ -1,0 +1,27 @@
+---
+sudo: required
+
+services:
+  - docker
+
+language: java
+jdk: openjdk11
+
+before_install:
+  - cp .maven.settings.xml $HOME/.m2/settings.xml
+  - mvn fmt:check
+
+script:
+  - travis_wait mvn install -DskipTests -Dmaven.repo.local=m2/repository
+  - cp $HOME/.m2/settings.xml local-maven-repo
+
+after_success:
+  - ./scripts/docker_push.sh
+
+cache:
+  directories:
+    - $HOME/.m2
+
+branches:
+  only:
+    - master

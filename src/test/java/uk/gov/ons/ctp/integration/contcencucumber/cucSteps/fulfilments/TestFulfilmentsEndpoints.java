@@ -1,8 +1,14 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.fulfilments;
 
+import static org.junit.Assert.*;
+
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -14,13 +20,6 @@ import uk.gov.ons.ctp.integration.common.product.model.Product;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.*;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpointsFFData;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
-
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
 
 public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
 
@@ -118,12 +117,17 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
   @Given("I have a valid UPRN from my found address {string}")
   public void i_have_a_valid_UPRN_from_my_found_address(final String expectedUPRN) {
 
-    List<AddressDTO> addressList = addressQueryResponseDTO.getAddresses().stream()
-            .filter( aq -> aq.getUprn().equals(expectedUPRN)).collect(Collectors.toList());
+    List<AddressDTO> addressList =
+        addressQueryResponseDTO
+            .getAddresses()
+            .stream()
+            .filter(aq -> aq.getUprn().equals(expectedUPRN))
+            .collect(Collectors.toList());
     if (addressList.isEmpty()) {
-      fail("i_have_a_valid_UPRN_from_my_found_address - filtered address list must not be empty: expected UPRN " + expectedUPRN);
-    }
-    else {
+      fail(
+          "i_have_a_valid_UPRN_from_my_found_address - filtered address list must not be empty: expected UPRN "
+              + expectedUPRN);
+    } else {
       this.uprn = addressList.get(0).getUprn();
       assertEquals("Should have returned the correct UPRN", expectedUPRN, this.uprn);
     }
@@ -156,23 +160,22 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
     if (caseIds.isEmpty()) {
       assertNull(caseDTOList);
       caseDTOList = new ArrayList<>();
-    }
-    else {
+    } else {
       List caseIdList =
-              Arrays.stream(caseIds.split(","))
-                      .filter(item -> !item.isEmpty())
-                      .collect(Collectors.toList());
+          Arrays.stream(caseIds.split(","))
+              .filter(item -> !item.isEmpty())
+              .collect(Collectors.toList());
       try {
         caseDTOList.forEach(
-                caseDetails -> {
-                  assertEquals(
-                          "Cases must have the correct UPRN",
-                          uprn,
-                          Long.toString(caseDetails.getUprn().getValue()));
-                  assertTrue(
-                          "Cases must have the correct ID" + caseIds,
-                          caseIdList.contains(caseDetails.getId().toString()));
-                });
+            caseDetails -> {
+              assertEquals(
+                  "Cases must have the correct UPRN",
+                  uprn,
+                  Long.toString(caseDetails.getUprn().getValue()));
+              assertTrue(
+                  "Cases must have the correct ID" + caseIds,
+                  caseIdList.contains(caseDetails.getId().toString()));
+            });
       } catch (NullPointerException npe) {
         fail("Null pointer exception on case list for UPRN: " + uprn);
       }

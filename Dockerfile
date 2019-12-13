@@ -14,4 +14,4 @@ RUN chown -R rhsvc:rhsvc /home/rhsvc/census-cc-cucumber
 COPY .maven.settings.xml /home/rhsvc/.m2/settings.xml
 WORKDIR /home/rhsvc/census-cc-cucumber
 USER rhsvc
-CMD [ "mvn", "verify", "-Dmaven.repo.local=m2/repository"]
+CMD [ "mvn", "install", "-Dmaven.repo.local=m2/repository -DskipTests"]
