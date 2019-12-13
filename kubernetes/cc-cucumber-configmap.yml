@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  rh-host-scheme: http
+  rh-host-ip: test-cc.int.census-gcp.onsdigital.uk
+kind: ConfigMap
+metadata:
+  annotations: {}
+  name: cc-cucumber-config
+  namespace: default
