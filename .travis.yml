@@ -12,11 +12,15 @@ before_install:
   - mvn fmt:check
 
 script:
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - travis_wait mvn install -DskipTests -Dmaven.repo.local=m2/repository
   - cp $HOME/.m2/settings.xml local-maven-repo
 
 after_success:
-  - ./scripts/docker_push.sh
+  - if [ "$BRANCH" != "master" ]; then
+      ./scripts/docker_push.sh
+    fi
 
 cache:
   directories:
