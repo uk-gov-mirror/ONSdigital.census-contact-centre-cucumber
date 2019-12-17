@@ -71,18 +71,6 @@ contact-centre-service
 census-mock-case-api-service
 
 
-To deploy this project for travis to build we need to include the maven dependencies.
-An Entry has been added to the maven pom
-
-```
-	<repositories>
-		<repository>
-			<id>local-maven-repo</id>
-			<url>file:///${project.basedir}/m2</url>
-		</repository>
-	</repositories>
-```
-
 A new travis.yml contains a script which runs the maven build, populates the local maven repo and copies the maven 
 settings.xml file. Tests are skipped as this would run the cucumber.
 
@@ -90,9 +78,4 @@ settings.xml file. Tests are skipped as this would run the cucumber.
 script:
   - travis_wait mvn install -DskipTests -Dmaven.repo.local=local-maven-repo/repository
   - cp $HOME/.m2/settings.xml m2
-```
-The Dockerfle has been modified to run the maven target
-
-```
-CMD [ "mvn", "install", "-Dmaven.repo.local=m2/repository -DskipTests"]
 ```
