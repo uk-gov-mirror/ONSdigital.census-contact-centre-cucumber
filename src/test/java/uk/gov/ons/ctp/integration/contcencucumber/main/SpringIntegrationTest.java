@@ -4,7 +4,6 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
@@ -19,5 +18,4 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
   uk.gov.ons.ctp.integration.contcencucumber.main.service.impl.ProductServiceImpl.class,
   uk.gov.ons.ctp.integration.common.product.ProductReference.class
 })
-@ActiveProfiles("test")
 public class SpringIntegrationTest {}
