@@ -135,7 +135,7 @@
 		<!-- ONS libraries -->
 
 
-	    <dependency>
+		<dependency>
 			<groupId>uk.gov.ons.ctp.integration</groupId>
 			<artifactId>contactcentreserviceapi</artifactId>
 			<version>0.0.50</version>
@@ -189,6 +189,7 @@
 					<!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
 					<testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
 					<includes>
+						<include>**/RunCucumberSmokeTest.java</include>
 						<include>**/RunCucumberTest*.java</include>
 					</includes>
 					<!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude> </excludes> -->
