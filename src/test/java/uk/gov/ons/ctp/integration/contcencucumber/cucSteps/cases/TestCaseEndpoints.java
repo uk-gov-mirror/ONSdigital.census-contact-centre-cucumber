@@ -38,9 +38,9 @@ public class TestCaseEndpoints extends TestEndpoints {
 		log.info("Check that the Contact Centre service is running");
 		checkContCenSvc_SmokeTest();
 	}
-
-	@Then("I receive a response with a status of {int}")
-	public void i_receive_a_response_with_a_status_of(Integer int1) {
+	
+	@Then("I receive a response from the contact centre service with a status of {int}")
+	public void i_receive_a_response_from_the_contact_centre_service_with_a_status_of(Integer int1) {
 		assertEquals("The Contact Centre Service may not be running - it does not give a response code of 200", HttpStatus.OK, ccResponse);
 	}
 	
