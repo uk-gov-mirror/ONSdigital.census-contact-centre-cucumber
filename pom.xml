@@ -189,7 +189,6 @@
 					<!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
 					<testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
 					<includes>
-						<include>**/RunCucumberSmokeTest.java</include>
 						<include>**/RunCucumberTest*.java</include>
 					</includes>
 					<!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude> </excludes> -->
