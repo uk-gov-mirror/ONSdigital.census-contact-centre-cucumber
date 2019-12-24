@@ -79,3 +79,10 @@ script:
   - travis_wait mvn install -DskipTests -Dmaven.repo.local=local-maven-repo/repository
   - cp $HOME/.m2/settings.xml m2
 ```
+
+A smokeTests.feature has now been added. The smoke tests will run before the other tests during a normal run. However, the smoke tests are tagged with @smoke so that, if preferred, they can be run separately from the other tests as follows:
+
+```
+mvn test -Dcucumber.options="--tags @smoke"
+```
+The advantage of running the smoke tests separately is that, if they find an error (such as that one of the services is not running), then the tests will fail faster than if the whole set of cucumber tests is run (otherwise the other tests would continue to run).
