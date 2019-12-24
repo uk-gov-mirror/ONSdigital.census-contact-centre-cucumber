@@ -188,8 +188,7 @@
 				<configuration>
 					<testSourceDirectory>census-contact-centre-cucumber/src/test/java</testSourceDirectory>
 					<includes>
-						<!-- <include>**/RunCucumberTest*.java</include> -->
-						<include>**/RunCucumberTestCases.java</include>
+						<include>**/RunCucumberTest*.java</include>
 					</includes>
 				</configuration>
 			</plugin>

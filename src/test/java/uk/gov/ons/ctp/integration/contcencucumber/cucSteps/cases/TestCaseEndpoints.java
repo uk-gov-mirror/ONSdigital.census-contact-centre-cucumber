@@ -32,28 +32,28 @@ public class TestCaseEndpoints extends TestEndpoints {
 	private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
 	private HttpStatus ccResponse = null;
 
-	@Given("I access the Fulfilments endpoint")
-	public void i_access_the_Fulfilments_endpoint() {
-		log.info("Check that the Contact Centre service is running");
+	@Given("I am about to do a smoke test to by going to a contact centre endpoint")
+	public void i_am_about_to_do_a_smoke_test_to_by_going_to_a_contact_centre_endpoint() {
+		log.info("About to check that the Contact Centre service is running...");
+	}
 
+	@Then("I do the smoke test and receive a response of OK from the contact centre service")
+	public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_contact_centre_service() {
 		try {
 			checkContCenSvc_SmokeTest();
+			assertEquals("THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
+					HttpStatus.OK, ccResponse);
 		} catch (ResourceAccessException e) {
-			log.error("A ResourceAccessException has occurred, which indicates that the Contact Centre Service may not be running");
+			log.error("THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING: A ResourceAccessException has occurred.");
 			log.error(e.getMessage());
 			fail();
 			System.exit(0);
 		} catch (Exception e) {
+			log.error("THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING: An unexpected has occurred.");
 			log.error(e.getMessage());
 			fail();
 			System.exit(0);
 		}
-	}
-
-	@Then("I receive a response from the contact centre service with a status of {int}")
-	public void i_receive_a_response_from_the_contact_centre_service_with_a_status_of(Integer int1) {
-		assertEquals("The Contact Centre Service may not be running - it does not give a response code of 200",
-				HttpStatus.OK, ccResponse);
 	}
 
 	@Given("I have a valid case ID {string}")
@@ -166,23 +166,16 @@ public class TestCaseEndpoints extends TestEndpoints {
 	}
 
 	private void checkContCenSvc_SmokeTest() {
-
 		log.info(
 				"Using the following endpoint to check that the contact centre service is running: http://localhost:8171/fulfilments");
 		final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
 				.pathSegment("/fulfilments");
 
-		try {
-			ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse = getRestTemplate().exchange(
-					builder.build().encode().toUri(), HttpMethod.GET, null,
-					new ParameterizedTypeReference<List<FulfilmentDTO>>() {
-					});
-			ccResponse = fulfilmentResponse.getStatusCode();
-			log.with(ccResponse).info("Smoke Test: The response from http://localhost:8171/fulfilments");
-		} catch (HttpClientErrorException httpClientErrorException) {
-			log.error(httpClientErrorException.getMessage());
-			fail();
-			System.exit(0);
-		}
+		ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse = getRestTemplate().exchange(
+				builder.build().encode().toUri(), HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<FulfilmentDTO>>() {
+				});
+		ccResponse = fulfilmentResponse.getStatusCode();
+		log.with(ccResponse).info("Smoke Test: The response from http://localhost:8171/fulfilments");
 	}
 }
