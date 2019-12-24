@@ -186,12 +186,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.20</version>
 				<configuration>
-					<!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
-					<testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
+					<testSourceDirectory>census-contact-centre-cucumber/src/test/java</testSourceDirectory>
 					<includes>
-						<include>**/RunCucumberTest*.java</include>
+						<!-- <include>**/RunCucumberTest*.java</include> -->
+						<include>**/RunCucumberTestCases.java</include>
 					</includes>
-					<!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude> </excludes> -->
 				</configuration>
 			</plugin>
 

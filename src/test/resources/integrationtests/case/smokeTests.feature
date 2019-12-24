@@ -6,6 +6,7 @@
 Feature: Smoke Tests for Contact Centre and Mock Case Api Services
   I want to verify that the contact centre and mock case api services are running
   
+  @smoke
   Scenario: I want to check that contact centre service is running
   	Given I access the Fulfilments endpoint
   	Then I receive a response from the contact centre service with a status of 200
