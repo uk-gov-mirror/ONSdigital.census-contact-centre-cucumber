@@ -67,8 +67,21 @@ public class TestCaseEndpoints extends TestEndpoints {
 
 	@Then("I do the smoke test and receive a response of OK from the mock case api service")
 	public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		try {
+			checkMockCaseApiSvc_SmokeTest();
+			assertEquals("THE MOCK CASE API SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
+					HttpStatus.OK, mcsResponse);
+		} catch (ResourceAccessException e) {
+			log.error("THE MOCK CASE API SERVICE MAY NOT BE RUNNING: A ResourceAccessException has occurred.");
+			log.error(e.getMessage());
+			fail();
+			System.exit(0);
+		} catch (Exception e) {
+			log.error("THE MOCK CASE API SERVICE MAY NOT BE RUNNING: An unexpected has occurred.");
+			log.error(e.getMessage());
+			fail();
+			System.exit(0);
+		}
 	}
 
 	@Given("I have a valid case ID {string}")
