@@ -10,6 +10,8 @@ import cucumber.api.java.en.When;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
@@ -31,6 +34,7 @@ public class TestCaseEndpoints extends TestEndpoints {
 	private Exception exception;
 	private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
 	private HttpStatus ccResponse = null;
+	private HttpStatus mcsResponse = null;
 
 	@Given("I am about to do a smoke test to by going to a contact centre endpoint")
 	public void i_am_about_to_do_a_smoke_test_to_by_going_to_a_contact_centre_endpoint() {
@@ -54,6 +58,17 @@ public class TestCaseEndpoints extends TestEndpoints {
 			fail();
 			System.exit(0);
 		}
+	}
+
+	@Given("I am about to do a smoke test to by going to a mock case api endpoint")
+	public void i_am_about_to_do_a_smoke_test_to_by_going_to_a_mock_case_api_endpoint() {
+		log.info("About to check that the mock case api service is running...");
+	}
+
+	@Then("I do the smoke test and receive a response of OK from the mock case api service")
+	public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
+		// Write code here that turns the phrase above into concrete actions
+		throw new cucumber.api.PendingException();
 	}
 
 	@Given("I have a valid case ID {string}")
@@ -177,5 +192,22 @@ public class TestCaseEndpoints extends TestEndpoints {
 				});
 		ccResponse = fulfilmentResponse.getStatusCode();
 		log.with(ccResponse).info("Smoke Test: The response from http://localhost:8171/fulfilments");
+	}
+
+	private void checkMockCaseApiSvc_SmokeTest() {
+		log.info(
+				"Using the following endpoint to check that the mock case api service is running: http://localhost:8161/cases/info");
+		final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(mcsBaseUrl).port(mcsBasePort)
+				.pathSegment("/cases/info");
+
+		String mockCaseApiInfo = "nothing";
+
+		RestTemplate restTemplate = getAuthenticationFreeRestTemplate();
+
+		ResponseEntity<String> mockCaseApiResponse = restTemplate.getForEntity(builder.build().encode().toUri(),
+				String.class);
+
+		mcsResponse = mockCaseApiResponse.getStatusCode();
+		log.with(mcsResponse).info("Smoke Test: The response from http://localhost:8161/cases/info");
 	}
 }
