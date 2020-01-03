@@ -33,7 +33,7 @@ public class TestCaseEndpoints extends TestEndpoints {
 	private List<CaseDTO> caseDTOList;
 	private Exception exception;
 	private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
-	
+
 	@Given("I am about to do a smoke test by going to a contact centre endpoint")
 	public void i_am_about_to_do_a_smoke_test_by_going_to_a_contact_centre_endpoint() {
 		log.info("About to check that the Contact Centre service is running...");
@@ -42,7 +42,7 @@ public class TestCaseEndpoints extends TestEndpoints {
 	@Then("I do the smoke test and receive a response of OK from the contact centre service")
 	public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_contact_centre_service() {
 		try {
-			HttpStatus contactCentreStatus = checkContCenSvc_SmokeTest();
+			HttpStatus contactCentreStatus = checkContactCentreRunning();
 			log.with(contactCentreStatus).info("Smoke Test: The response from http://localhost:8171/fulfilments");
 			assertEquals("THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
 					HttpStatus.OK, contactCentreStatus);
@@ -63,11 +63,11 @@ public class TestCaseEndpoints extends TestEndpoints {
 	public void i_am_about_to_do_a_smoke_test_by_going_to_a_mock_case_api_endpoint() {
 		log.info("About to check that the mock case api service is running...");
 	}
-	
+
 	@Then("I do the smoke test and receive a response of OK from the mock case api service")
 	public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
 		try {
-			HttpStatus mockCaseApiStatus = checkMockCaseApiSvc_SmokeTest();
+			HttpStatus mockCaseApiStatus = checkMockCaseApiRunning();
 			log.with(mockCaseApiStatus).info("Smoke Test: The response from http://localhost:8161/cases/info");
 			assertEquals("THE MOCK CASE API SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
 					HttpStatus.OK, mockCaseApiStatus);
@@ -193,7 +193,7 @@ public class TestCaseEndpoints extends TestEndpoints {
 		assertNull("UPRN response must be null", caseDTOList);
 	}
 
-	private HttpStatus checkContCenSvc_SmokeTest() {
+	private HttpStatus checkContactCentreRunning() {
 		log.info(
 				"Using the following endpoint to check that the contact centre service is running: http://localhost:8171/fulfilments");
 		final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
@@ -203,11 +203,11 @@ public class TestCaseEndpoints extends TestEndpoints {
 				builder.build().encode().toUri(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<FulfilmentDTO>>() {
 				});
-		
+
 		return fulfilmentResponse.getStatusCode();
 	}
 
-	private HttpStatus checkMockCaseApiSvc_SmokeTest() {
+	private HttpStatus checkMockCaseApiRunning() {
 		log.info(
 				"Using the following endpoint to check that the mock case api service is running: http://localhost:8161/cases/info");
 		final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(mcsBaseUrl).port(mcsBasePort)
