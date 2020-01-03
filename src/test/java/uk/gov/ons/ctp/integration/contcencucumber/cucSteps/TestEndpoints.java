@@ -7,29 +7,29 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 
 public class TestEndpoints extends SpringIntegrationTest {
 
-	@Value("${contact-centre.host}")
-	protected String ccBaseUrl;
+  @Value("${contact-centre.host}")
+  protected String ccBaseUrl;
 
-	@Value("${contact-centre.port}")
-	protected String ccBasePort;
+  @Value("${contact-centre.port}")
+  protected String ccBasePort;
 
-	@Value("${contact-centre.username}")
-	private String ccUsername;
+  @Value("${contact-centre.username}")
+  private String ccUsername;
 
-	@Value("${contact-centre.password}")
-	private String ccPassword;
+  @Value("${contact-centre.password}")
+  private String ccPassword;
 
-	@Value("${mock-case-service.host}")
-	protected String mcsBaseUrl;
+  @Value("${mock-case-service.host}")
+  protected String mcsBaseUrl;
 
-	@Value("${mock-case-service.port}")
-	protected String mcsBasePort;
+  @Value("${mock-case-service.port}")
+  protected String mcsBasePort;
 
-	protected RestTemplate getRestTemplate() {
-		return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
-	}
+  protected RestTemplate getRestTemplate() {
+    return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
+  }
 
-	protected RestTemplate getAuthenticationFreeRestTemplate() {
-		return new RestTemplateBuilder().build();
-	}
+  protected RestTemplate getAuthenticationFreeRestTemplate() {
+    return new RestTemplateBuilder().build();
+  }
 }
