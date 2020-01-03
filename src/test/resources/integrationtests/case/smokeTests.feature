@@ -9,11 +9,11 @@ Feature: Smoke Tests for Contact Centre and Mock Case Api Services
 
   @smoke
   Scenario: I want to check that I can connect to the contact centre service
-    Given I am about to do a smoke test to by going to a contact centre endpoint
+    Given I am about to do a smoke test by going to a contact centre endpoint
     Then I do the smoke test and receive a response of OK from the contact centre service
 
   @smoke
   Scenario: I want to check that I can connect to the mock case api service
-    Given I am about to do a smoke test to by going to a mock case api endpoint
+    Given I am about to do a smoke test by going to a mock case api endpoint
     Then I do the smoke test and receive a response of OK from the mock case api service
    

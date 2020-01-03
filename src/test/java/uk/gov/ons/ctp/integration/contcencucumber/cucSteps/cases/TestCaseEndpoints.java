@@ -35,9 +35,9 @@ public class TestCaseEndpoints extends TestEndpoints {
 	private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
 	private HttpStatus ccResponse = null;
 	private HttpStatus mcsResponse = null;
-
-	@Given("I am about to do a smoke test to by going to a contact centre endpoint")
-	public void i_am_about_to_do_a_smoke_test_to_by_going_to_a_contact_centre_endpoint() {
+	
+	@Given("I am about to do a smoke test by going to a contact centre endpoint")
+	public void i_am_about_to_do_a_smoke_test_by_going_to_a_contact_centre_endpoint() {
 		log.info("About to check that the Contact Centre service is running...");
 	}
 
@@ -60,11 +60,11 @@ public class TestCaseEndpoints extends TestEndpoints {
 		}
 	}
 
-	@Given("I am about to do a smoke test to by going to a mock case api endpoint")
-	public void i_am_about_to_do_a_smoke_test_to_by_going_to_a_mock_case_api_endpoint() {
+	@Given("I am about to do a smoke test by going to a mock case api endpoint")
+	public void i_am_about_to_do_a_smoke_test_by_going_to_a_mock_case_api_endpoint() {
 		log.info("About to check that the mock case api service is running...");
 	}
-
+	
 	@Then("I do the smoke test and receive a response of OK from the mock case api service")
 	public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
 		try {
