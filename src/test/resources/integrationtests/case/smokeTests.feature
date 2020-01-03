@@ -1,4 +1,4 @@
-#Author: andrew.johnys@ext.ons.gov.uk
+#Author: eleanor.cook@ons.gov.uk
 #Keywords Summary : CC CONTACT CENTRE SERVICE
 #Feature: Smoke Tests for Contact Centre and Mock Case Api Services
 #Scenario: I want to check that I can connect to the contact centre service
