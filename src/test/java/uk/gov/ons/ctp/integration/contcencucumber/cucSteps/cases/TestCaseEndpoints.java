@@ -2,6 +2,8 @@ package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
 import static org.junit.Assert.*;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -10,11 +12,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints;
 
 public class TestCaseEndpoints extends TestEndpoints {
@@ -24,6 +30,65 @@ public class TestCaseEndpoints extends TestEndpoints {
   private CaseDTO caseDTO;
   private List<CaseDTO> caseDTOList;
   private Exception exception;
+  private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
+
+  @Given("I am about to do a smoke test by going to a contact centre endpoint")
+  public void i_am_about_to_do_a_smoke_test_by_going_to_a_contact_centre_endpoint() {
+    log.info("About to check that the Contact Centre service is running...");
+  }
+
+  @Then("I do the smoke test and receive a response of OK from the contact centre service")
+  public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_contact_centre_service() {
+    try {
+      HttpStatus contactCentreStatus = checkContactCentreRunning();
+      log.with(contactCentreStatus)
+          .info("Smoke Test: The response from http://localhost:8171/fulfilments");
+      assertEquals(
+          "THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus);
+    } catch (ResourceAccessException e) {
+      log.error(
+          "THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING: An unexpected has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+  }
+
+  @Given("I am about to do a smoke test by going to a mock case api endpoint")
+  public void i_am_about_to_do_a_smoke_test_by_going_to_a_mock_case_api_endpoint() {
+    log.info("About to check that the mock case api service is running...");
+  }
+
+  @Then("I do the smoke test and receive a response of OK from the mock case api service")
+  public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
+    try {
+      HttpStatus mockCaseApiStatus = checkMockCaseApiRunning();
+      log.with(mockCaseApiStatus)
+          .info("Smoke Test: The response from http://localhost:8161/cases/info");
+      assertEquals(
+          "THE MOCK CASE API SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
+          HttpStatus.OK,
+          mockCaseApiStatus);
+    } catch (ResourceAccessException e) {
+      log.error(
+          "THE MOCK CASE API SERVICE MAY NOT BE RUNNING: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("THE MOCK CASE API SERVICE MAY NOT BE RUNNING: An unexpected has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+  }
 
   @Given("I have a valid case ID {string}")
   public void i_have_a_valid_case_ID(String caseId) {
@@ -162,5 +227,36 @@ public class TestCaseEndpoints extends TestEndpoints {
         exception.getMessage() != null && exception.getMessage().contains(httpError));
 
     assertNull("UPRN response must be null", caseDTOList);
+  }
+
+  private HttpStatus checkContactCentreRunning() {
+    log.info(
+        "Using the following endpoint to check that the contact centre service is running: http://localhost:8171/fulfilments");
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("/fulfilments");
+
+    ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse =
+        getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<FulfilmentDTO>>() {});
+
+    return fulfilmentResponse.getStatusCode();
+  }
+
+  private HttpStatus checkMockCaseApiRunning() {
+    log.info(
+        "Using the following endpoint to check that the mock case api service is running: http://localhost:8161/cases/info");
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl).port(mcsBasePort).pathSegment("/cases/info");
+
+    RestTemplate restTemplate = getAuthenticationFreeRestTemplate();
+
+    ResponseEntity<String> mockCaseApiResponse =
+        restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
+
+    return mockCaseApiResponse.getStatusCode();
   }
 }
