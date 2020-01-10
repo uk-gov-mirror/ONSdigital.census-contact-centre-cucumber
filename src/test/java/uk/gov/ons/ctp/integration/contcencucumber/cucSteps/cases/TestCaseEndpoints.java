@@ -30,6 +30,8 @@ public class TestCaseEndpoints extends TestEndpoints {
   private List<CaseDTO> caseDTOList;
   private Exception exception;
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
+  private String ccSmokeTestUrl;
+  private String mockCaseSvcSmokeTestUrl;
 
   @Given("I am about to do a smoke test by going to a contact centre endpoint")
   public void i_am_about_to_do_a_smoke_test_by_going_to_a_contact_centre_endpoint() {
@@ -41,7 +43,7 @@ public class TestCaseEndpoints extends TestEndpoints {
     try {
       HttpStatus contactCentreStatus = checkContactCentreRunning();
       log.with(contactCentreStatus)
-          .info("Smoke Test: The response from http://localhost:8171/fulfilments");
+          .info("Smoke Test: The response from " + ccSmokeTestUrl);
       assertEquals(
           "THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
           HttpStatus.OK, contactCentreStatus);
@@ -69,7 +71,7 @@ public class TestCaseEndpoints extends TestEndpoints {
     try {
       HttpStatus mockCaseApiStatus = checkMockCaseApiRunning();
       log.with(mockCaseApiStatus)
-          .info("Smoke Test: The response from http://localhost:8161/cases/info");
+          .info("Smoke Test: The response from " + mockCaseSvcSmokeTestUrl);
       assertEquals(
           "THE MOCK CASE API SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
           HttpStatus.OK, mockCaseApiStatus);
@@ -204,10 +206,10 @@ public class TestCaseEndpoints extends TestEndpoints {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("fulfilments");
 
-    String urlStr = builder.build().encode().toUri().toString();
+    ccSmokeTestUrl = builder.build().encode().toUri().toString();
 
     log.info("Using the following endpoint to check that the contact centre service is running: "
-        + urlStr);
+        + ccSmokeTestUrl);
 
     ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse =
         getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET, null,
@@ -223,10 +225,10 @@ public class TestCaseEndpoints extends TestEndpoints {
 
     RestTemplate restTemplate = getAuthenticationFreeRestTemplate();
 
-    String urlStr = builder.build().encode().toUri().toString();
+    mockCaseSvcSmokeTestUrl = builder.build().encode().toUri().toString();
 
     log.info("Using the following endpoint to check that the mock case api service is running: "
-        + urlStr);
+        + mockCaseSvcSmokeTestUrl);
 
     ResponseEntity<String> mockCaseApiResponse =
         restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
