@@ -263,7 +263,7 @@ public class TestCaseEndpoints extends TestEndpoints {
 
     mockCaseSvcSmokeTestUrl = builder.build().encode().toUri().toString();
 
-    log.info(
+log.info(
         "Using the following endpoint to check that the mock case api service is running: "
             + mockCaseSvcSmokeTestUrl);
 
@@ -271,5 +271,10 @@ public class TestCaseEndpoints extends TestEndpoints {
         restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
 
     return mockCaseApiResponse.getStatusCode();
+  }
+  
+  @Given("the CC advisor has the respondent address")
+  public void the_CC_advisor_has_the_respondent_address() {
+    log.info("nothing to do here - we can assume that the CC advisor has the respondent address");
   }
 }
