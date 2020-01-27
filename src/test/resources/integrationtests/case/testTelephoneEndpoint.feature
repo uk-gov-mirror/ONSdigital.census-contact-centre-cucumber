@@ -12,6 +12,7 @@ Feature: Test Contact Centre Telephone Capture Endpoint
     Given the CC advisor has the respondent address
     And the respondent case type is a household
     When the CC advisor confirms the address
+    And confirms the CaseType=HH
     Then a HH EQ is launched
 
   @SetUpRHEngScot @TearDown
