@@ -277,4 +277,10 @@ log.info(
   public void the_CC_advisor_has_the_respondent_address() {
     log.info("nothing to do here - we can assume that the CC advisor has the respondent address");
   }
+  
+  @Given("the respondent case type is a household")
+  public void the_respondent_case_type_is_a_household() {
+    log.info("nothing to do here - we can assume that the case type is a household");
+  }
+
 }
