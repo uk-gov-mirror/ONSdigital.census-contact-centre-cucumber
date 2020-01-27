@@ -20,6 +20,6 @@ Feature: Test Contact Centre Telephone Capture Endpoint
     Given the CC advisor has the respondent address
     And the respondent case type is a household individual or a CE individual
     When the CC advisor confirms the address
-    Then a HH EQ is launched
+    Then a HI EQ is launched
     
  

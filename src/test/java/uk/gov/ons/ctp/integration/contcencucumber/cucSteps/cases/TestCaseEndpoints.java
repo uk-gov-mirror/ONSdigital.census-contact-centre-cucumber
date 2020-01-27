@@ -34,6 +34,7 @@ public class TestCaseEndpoints extends TestEndpoints {
   private String ccSmokeTestUrl;
   private String mockCaseSvcSmokeTestUrl;
   private String telephoneEndpointUrl;
+  private String telephoneEndpointBody;
 
   @Given("I am about to do a smoke test by going to a contact centre endpoint")
   public void i_am_about_to_do_a_smoke_test_by_going_to_a_contact_centre_endpoint() {
@@ -272,6 +273,18 @@ public class TestCaseEndpoints extends TestEndpoints {
     }
   }
 
+  @Then("a HH EQ is launched")
+  public void a_HH_EQ_is_launched() {
+    String hhEqToken;
+
+    log.info(
+        "Create a substring that removes the first part of the telephoneEndpointBody to leave just the EQ token value");
+
+    hhEqToken = telephoneEndpointBody.substring(37);
+
+    log.info("The EQ token is: " + hhEqToken);
+  }
+
   private HttpStatus checkContactCentreRunning() {
     log.info("Entering checkContactCentreRunning method");
     final UriComponentsBuilder builder =
@@ -322,6 +335,7 @@ public class TestCaseEndpoints extends TestEndpoints {
             .port(ccBasePort)
             .pathSegment("cases")
             .pathSegment("3305e937-6fb1-4ce1-9d4c-077f147789ab")
+            .pathSegment("launch")
             .queryParam("agentId", 1)
             .queryParam("individual", false);
 
@@ -331,6 +345,8 @@ public class TestCaseEndpoints extends TestEndpoints {
 
     ResponseEntity<String> ccLaunchEqResponse =
         getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+
+    telephoneEndpointBody = ccLaunchEqResponse.getBody();
 
     return ccLaunchEqResponse.getStatusCode();
   }
