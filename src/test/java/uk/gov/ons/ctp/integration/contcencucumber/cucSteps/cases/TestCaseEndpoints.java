@@ -1,15 +1,14 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
-import static org.junit.Assert.*;
-
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,12 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
@@ -43,9 +48,12 @@ public class TestCaseEndpoints extends TestEndpoints {
   private static final String SIGNING_PUBLIC_SHA1 = "57db285d00430f8c9dbaa3e1fb281f7053acd977";
 
   private static final String ENCRYPTION_PRIVATE_SHA1 = "1fd9125153420767a7259ee3dada222e74812f82";
+  
+//  @Autowired
+//  private AppConfig appConfig;
 
-  // @Value("${keystore.keys}")
-  // private String cryptoKeys;
+   @Value("${keystore}")
+   private String keyStore;
 
   private static final String SIGNING_PUBLIC_VALUE =
       "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAuTeQiTUPhOTEh/tIYx1R\nHjw0gLrfL2yFPh2bmWPirhLFiEZCIl8Nci7as8ta6HykUajUgvl0"
@@ -335,7 +343,7 @@ public class TestCaseEndpoints extends TestEndpoints {
   }
 
   @Then("a HH EQ is launched")
-  public void a_HH_EQ_is_launched() throws CTPException {
+  public void a_HH_EQ_is_launched() throws Exception {
     String hhEqToken;
 
     log.info(
@@ -347,15 +355,16 @@ public class TestCaseEndpoints extends TestEndpoints {
 
     EQJOSEProvider coderDecoder = new Codec();
 
-    KeyStore keyStoreDecryption = new KeyStore(JWTKEYS_DECRYPTION);
+//    KeyStore keyStoreDecryption = new KeyStore(JWTKEYS_DECRYPTION);
 
     // JWEHelper jweHelper = new JWEHelper();
 
     // String kid = jweHelper.getKid(hhEqToken);
     //
     // log.info("The kid is: " + kid);
+    
 
-    String decryptedEqToken = coderDecoder.decrypt(hhEqToken, keyStoreDecryption);
+    String decryptedEqToken = coderDecoder.decrypt(hhEqToken, new KeyStore(keyStore));
 
     log.info("The decrypted String is: " + decryptedEqToken);
   }
@@ -425,4 +434,5 @@ public class TestCaseEndpoints extends TestEndpoints {
 
     return ccLaunchEqResponse.getStatusCode();
   }
+  
 }
