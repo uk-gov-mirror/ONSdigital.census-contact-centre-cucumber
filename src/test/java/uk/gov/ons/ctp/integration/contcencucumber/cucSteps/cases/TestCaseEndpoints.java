@@ -389,15 +389,25 @@ public class TestCaseEndpoints extends TestEndpoints {
         "Must have the correct channel", "cc", result1.get("channel"));
     assertEquals(
         "Must have the correct case type", "HH", result1.get("case_type"));
+    
     log.info("The following assert will need to be changed if the eq_id value, which is hard-coded in the CCSVC, is updated");
     assertEquals(
         "Must have the correct eq id", "census", result1.get("eq_id"));
+    
     log.info("The following assert will need to be changed if the form_type value, which is hard-coded in the CCSVC, is updated");
     assertEquals(
         "Must have the correct form type", "individual_gb_eng", result1.get("form_type"));
+    
     assertNotEquals(
         "Must have different tx_id values", result1.get("tx_id"), result2.get("tx_id"));
-    
+    assertEquals(
+        "Must have the correct ru_ref value", "1347459999", result1.get("ru_ref"));
+    assertEquals(
+        "Must have the correct language_code value", "en", result1.get("language_code"));
+    assertEquals(
+        "Must have the correct user_id value", "1", result1.get("user_id"));
+    assertEquals(
+        "Must have the correct collection_exercise_sid value", "49871667-117d-4a63-9101-f6a0660f73f6", result1.get("collection_exercise_sid"));
   }
 
   private HttpStatus checkContactCentreRunning() {
