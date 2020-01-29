@@ -264,7 +264,7 @@ public class TestCaseEndpoints extends TestEndpoints {
   }
 
   @When("confirms the CaseType=HH")
-  public void confirms_the_CaseType_HH() {
+  public void confirms_the_CaseType_HH() throws InterruptedException {
     log.info(
         "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
 
@@ -290,7 +290,8 @@ public class TestCaseEndpoints extends TestEndpoints {
       System.exit(0);
     }
     
-    log.info("Repeat launching EQ for HH so that the two responses can be compared");
+    log.info("Repeat launching EQ for HH so that the two responses can be compared. Wait a second to get different time values.");
+    Thread.sleep(1000);
     
     try {
       ResponseEntity<String> eqResponse2 = getEqTokenForHH();
@@ -408,6 +409,23 @@ public class TestCaseEndpoints extends TestEndpoints {
         "Must have the correct user_id value", "1", result1.get("user_id"));
     assertEquals(
         "Must have the correct collection_exercise_sid value", "49871667-117d-4a63-9101-f6a0660f73f6", result1.get("collection_exercise_sid"));
+    assertEquals(
+        "Must have the correct case_id value", "3305e937-6fb1-4ce1-9d4c-077f147789ab", result1.get("case_id"));
+    assertEquals(
+        "Must have the correct survey value", "CENSUS", result1.get("survey"));
+    assertNotEquals(
+        "Must have different exp values", result1.get("exp"), result2.get("exp"));
+    
+    log.info("The following assert will need to be changed if the period_id value, which is hard-coded in the CCSVC, is updated");
+    assertEquals(
+        "Must have the correct period id", "2019", result1.get("period_id"));
+    
+    assertNotEquals(
+        "Must have different iat values", result1.get("iat"), result2.get("iat")); 
+    assertNotEquals(
+        "Must have different jti values", result1.get("jti"), result2.get("jti")); 
+    assertEquals(
+        "Must have the correct region code", "GB-ENG", result1.get("region_code"));
   }
 
   private HttpStatus checkContactCentreRunning() {
