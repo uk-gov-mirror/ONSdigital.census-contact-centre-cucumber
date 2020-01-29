@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +46,8 @@ public class TestCaseEndpoints extends TestEndpoints {
   private String ccSmokeTestUrl;
   private String mockCaseSvcSmokeTestUrl;
   private String telephoneEndpointUrl;
-  private String telephoneEndpointBody;
+  private String telephoneEndpointBody1;
+  private String telephoneEndpointBody2;
 
   @Value("${keystore}")
   private String keyStore;
@@ -267,13 +269,39 @@ public class TestCaseEndpoints extends TestEndpoints {
         "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
 
     try {
-      HttpStatus contactCentreStatus = getEqTokenForHH();
-      log.with(contactCentreStatus)
+      ResponseEntity<String> eqResponse1 = getEqTokenForHH();
+      telephoneEndpointBody1 = eqResponse1.getBody();
+      HttpStatus contactCentreStatus1 = eqResponse1.getStatusCode();
+      log.with(contactCentreStatus1)
           .info("Launch EQ for HH: The response from " + telephoneEndpointUrl);
       assertEquals(
           "LAUNCHING EQ FOR HH HAS FAILED -  the contact centre does not give a response code of 200",
           HttpStatus.OK,
-          contactCentreStatus);
+          contactCentreStatus1);
+    } catch (ResourceAccessException e) {
+      log.error("LAUNCHING EQ FOR HH HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("LAUNCHING EQ FOR HH HAS FAILED: An unexpected has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+    
+    log.info("Repeat launching EQ for HH so that the two responses can be compared");
+    
+    try {
+      ResponseEntity<String> eqResponse2 = getEqTokenForHH();
+      telephoneEndpointBody2 = eqResponse2.getBody();
+      HttpStatus contactCentreStatus2 = eqResponse2.getStatusCode();
+      log.with(contactCentreStatus2)
+          .info("Launch EQ for HH: The response from " + telephoneEndpointUrl);
+      assertEquals(
+          "LAUNCHING EQ FOR HH HAS FAILED -  the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus2);
     } catch (ResourceAccessException e) {
       log.error("LAUNCHING EQ FOR HH HAS FAILED: A ResourceAccessException has occurred.");
       log.error(e.getMessage());
@@ -289,28 +317,36 @@ public class TestCaseEndpoints extends TestEndpoints {
 
   @Then("a HH EQ is launched")
   public void a_HH_EQ_is_launched() throws Exception {
-    String hhEqToken;
+    String hhEqToken1;
+    String hhEqToken2;
 
     log.info(
         "Create a substring that removes the first part of the telephoneEndpointBody to leave just the EQ token value");
 
-    hhEqToken = telephoneEndpointBody.substring(37);
+    hhEqToken1 = telephoneEndpointBody1.substring(37);
+    hhEqToken2 = telephoneEndpointBody2.substring(37);
 
-    log.info("The EQ token is: " + hhEqToken);
+    log.info("The first EQ token is: " + hhEqToken1);
+    log.info("The second EQ token is: " + hhEqToken2);
 
     EQJOSEProvider coderDecoder = new Codec();
 
-    String decryptedEqToken = coderDecoder.decrypt(hhEqToken, new KeyStore(keyStore));
+    String decryptedEqToken1 = coderDecoder.decrypt(hhEqToken1, new KeyStore(keyStore));
+    String decryptedEqToken2 = coderDecoder.decrypt(hhEqToken2, new KeyStore(keyStore));
 
-    log.info("The decrypted String is: " + decryptedEqToken);
+    log.info("The first decrypted EQ token is: " + decryptedEqToken1);
+    log.info("The second decrypted EQ token is: " + decryptedEqToken2);
 
     @SuppressWarnings("unchecked")
-    HashMap<String, String> result = new ObjectMapper().readValue(decryptedEqToken, HashMap.class);
+    HashMap<String, String> result1 = new ObjectMapper().readValue(decryptedEqToken1, HashMap.class);
+    
+    @SuppressWarnings("unchecked")
+    HashMap<String, String> result2 = new ObjectMapper().readValue(decryptedEqToken2, HashMap.class);
 
     log.info(
         "Assert that the "
-            + result.size()
-            + " keys in the hashmap are the ones that we expect e.g. it should not contain accountServiceUrl or accountServiceLogoutUrl");
+            + result1.size()
+            + " keys in the first hashmap are the ones that we expect e.g. it should not contain accountServiceUrl or accountServiceLogoutUrl");
 
     ArrayList<String> hashKeysExpected = new ArrayList<>();
     hashKeysExpected.add("questionnaire_id");
@@ -335,7 +371,7 @@ public class TestCaseEndpoints extends TestEndpoints {
 
     log.info("The hash keys expected are: " + hashKeysExpected.toString());
 
-    List<String> hashKeysFound = new ArrayList<>(result.keySet());
+    List<String> hashKeysFound = new ArrayList<>(result1.keySet());
 
     log.info("The hash keys found are: " + hashKeysFound.toString());
 
@@ -343,6 +379,15 @@ public class TestCaseEndpoints extends TestEndpoints {
         "Must have the correct number of hash keys", hashKeysExpected.size(), hashKeysFound.size());
     assertEquals(
         "Must have the correct hash keys", hashKeysExpected.toString(), hashKeysFound.toString());
+    assertNotEquals(
+        "Must have different questionnaire_id values", result1.get("questionnaire_id"), result2.get("questionnaire_id"));
+    assertNotEquals(
+        "Must have different response_id values", result1.get("response_id"), result2.get("response_id"));
+    assertEquals(
+        "Must have the correct address", "Napier House, 88 Harbour Street", result1.get("display_address"));
+    assertEquals(
+        "Must have the correct channel", "cc", result1.get("channel"));
+    
   }
 
   private HttpStatus checkContactCentreRunning() {
@@ -389,7 +434,29 @@ public class TestCaseEndpoints extends TestEndpoints {
     return mockCaseApiResponse.getStatusCode();
   }
 
-  private HttpStatus getEqTokenForHH() {
+//  private HttpStatus getEqTokenForHH() {
+//    final UriComponentsBuilder builder =
+//        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+//            .port(ccBasePort)
+//            .pathSegment("cases")
+//            .pathSegment("3305e937-6fb1-4ce1-9d4c-077f147789ab")
+//            .pathSegment("launch")
+//            .queryParam("agentId", 1)
+//            .queryParam("individual", false);
+//
+//    telephoneEndpointUrl = builder.build().encode().toUri().toString();
+//
+//    log.info("Using the following endpoint to launch EQ for HH: " + telephoneEndpointUrl);
+//
+//    ResponseEntity<String> ccLaunchEqResponse =
+//        getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+//
+//    telephoneEndpointBody = ccLaunchEqResponse.getBody();
+//
+//    return ccLaunchEqResponse.getStatusCode();
+//  }
+  
+  private ResponseEntity<String> getEqTokenForHH() {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
@@ -406,8 +473,6 @@ public class TestCaseEndpoints extends TestEndpoints {
     ResponseEntity<String> ccLaunchEqResponse =
         getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
 
-    telephoneEndpointBody = ccLaunchEqResponse.getBody();
-
-    return ccLaunchEqResponse.getStatusCode();
+    return ccLaunchEqResponse;
   }
 }
