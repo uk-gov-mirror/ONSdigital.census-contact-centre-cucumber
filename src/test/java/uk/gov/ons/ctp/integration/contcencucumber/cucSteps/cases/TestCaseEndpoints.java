@@ -387,6 +387,16 @@ public class TestCaseEndpoints extends TestEndpoints {
         "Must have the correct address", "Napier House, 88 Harbour Street", result1.get("display_address"));
     assertEquals(
         "Must have the correct channel", "cc", result1.get("channel"));
+    assertEquals(
+        "Must have the correct case type", "HH", result1.get("case_type"));
+    log.info("The following assert will need to be changed if the eq_id value, which is hard-coded in the CCSVC, is updated");
+    assertEquals(
+        "Must have the correct eq id", "census", result1.get("eq_id"));
+    log.info("The following assert will need to be changed if the form_type value, which is hard-coded in the CCSVC, is updated");
+    assertEquals(
+        "Must have the correct form type", "individual_gb_eng", result1.get("form_type"));
+    assertNotEquals(
+        "Must have different tx_id values", result1.get("tx_id"), result2.get("tx_id"));
     
   }
 
