@@ -1,15 +1,12 @@
 package uk.gov.ons.ctp.integration.contcencucumber.main;
 
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
-import uk.gov.ons.ctp.integration.eqlaunch.crypto.Key;
-import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
 @ContextConfiguration(
     classes = {SpringIntegrationTest.class, ProductService.class},
