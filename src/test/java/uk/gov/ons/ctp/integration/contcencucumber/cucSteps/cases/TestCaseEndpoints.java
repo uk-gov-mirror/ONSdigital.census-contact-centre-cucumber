@@ -326,9 +326,60 @@ public class TestCaseEndpoints extends TestEndpoints {
   }
 
   @When("confirms the CaseType=HI")
-  public void confirms_the_CaseType_HI() {
-    // Write code here that turns the phrase above into concrete actions
-    throw new cucumber.api.PendingException();
+  public void confirms_the_CaseType_HI() throws InterruptedException {
+    log.info(
+        "The CC advisor clicks a button to confirm that the case type is HI and then launch EQ...");
+
+    String caseId = "3305e937-6fb1-4ce1-9d4c-077f147789bb";
+
+    try {
+      ResponseEntity<String> eqResponse1 = getEqToken(caseId, true);
+      telephoneEndpointBody1 = eqResponse1.getBody();
+      HttpStatus contactCentreStatus1 = eqResponse1.getStatusCode();
+      log.with(contactCentreStatus1)
+          .info("Launch EQ for HI: The response from " + telephoneEndpointUrl);
+      assertEquals(
+          "LAUNCHING EQ FOR HI HAS FAILED -  the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus1);
+    } catch (ResourceAccessException e) {
+      log.error("LAUNCHING EQ FOR HI HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("LAUNCHING EQ FOR HI HAS FAILED: An unexpected has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+
+    log.info(
+        "Repeat launching EQ for HI so that the two responses can be compared. Wait a second to get different time values.");
+    
+    Thread.sleep(1000);
+
+    try {
+      ResponseEntity<String> eqResponse2 = getEqToken(caseId, true);
+      telephoneEndpointBody2 = eqResponse2.getBody();
+      HttpStatus contactCentreStatus2 = eqResponse2.getStatusCode();
+      log.with(contactCentreStatus2)
+          .info("Launch EQ for HI: The response from " + telephoneEndpointUrl);
+      assertEquals(
+          "LAUNCHING EQ FOR HI HAS FAILED -  the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus2);
+    } catch (ResourceAccessException e) {
+      log.error("LAUNCHING EQ FOR HI HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("LAUNCHING EQ FOR HI HAS FAILED: An unexpected has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } 
   }
 
   @Then("a HH EQ is launched")
