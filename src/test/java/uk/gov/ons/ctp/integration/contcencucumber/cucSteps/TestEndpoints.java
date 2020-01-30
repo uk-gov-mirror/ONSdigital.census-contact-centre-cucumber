@@ -24,7 +24,7 @@ public class TestEndpoints extends SpringIntegrationTest {
 
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
-  
+
   protected RestTemplate getRestTemplate() {
     return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
   }
