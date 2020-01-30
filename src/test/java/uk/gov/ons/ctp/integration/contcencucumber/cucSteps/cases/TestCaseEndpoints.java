@@ -391,11 +391,15 @@ public class TestCaseEndpoints extends TestEndpoints {
     assertEquals(
         "Must have the correct case type", "HH", result1.get("case_type"));
     
-    log.info("The following assert will need to be changed if the eq_id value, which is hard-coded in the CCSVC, is updated");
+    /*
+     * The following assert will need to be changed if the eq_id value, which is hard-coded in the CCSVC, is updated
+     */
     assertEquals(
         "Must have the correct eq id", "census", result1.get("eq_id"));
     
-    log.info("The following assert will need to be changed if the form_type value, which is hard-coded in the CCSVC, is updated");
+    /*
+     * The following assert will need to be changed if the form_type value, which is hard-coded in the CCSVC, is updated
+     */
     assertEquals(
         "Must have the correct form type", "individual_gb_eng", result1.get("form_type"));
     
@@ -416,7 +420,9 @@ public class TestCaseEndpoints extends TestEndpoints {
     assertNotEquals(
         "Must have different exp values", result1.get("exp"), result2.get("exp"));
     
-    log.info("The following assert will need to be changed if the period_id value, which is hard-coded in the CCSVC, is updated");
+    /*
+     * The following assert will need to be changed if the period_id value, which is hard-coded in the CCSVC, is updated
+     */
     assertEquals(
         "Must have the correct period id", "2019", result1.get("period_id"));
     
@@ -472,27 +478,7 @@ public class TestCaseEndpoints extends TestEndpoints {
     return mockCaseApiResponse.getStatusCode();
   }
 
-//  private HttpStatus getEqTokenForHH() {
-//    final UriComponentsBuilder builder =
-//        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-//            .port(ccBasePort)
-//            .pathSegment("cases")
-//            .pathSegment("3305e937-6fb1-4ce1-9d4c-077f147789ab")
-//            .pathSegment("launch")
-//            .queryParam("agentId", 1)
-//            .queryParam("individual", false);
-//
-//    telephoneEndpointUrl = builder.build().encode().toUri().toString();
-//
-//    log.info("Using the following endpoint to launch EQ for HH: " + telephoneEndpointUrl);
-//
-//    ResponseEntity<String> ccLaunchEqResponse =
-//        getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
-//
-//    telephoneEndpointBody = ccLaunchEqResponse.getBody();
-//
-//    return ccLaunchEqResponse.getStatusCode();
-//  }
+
   
   private ResponseEntity<String> getEqTokenForHH() {
     final UriComponentsBuilder builder =
