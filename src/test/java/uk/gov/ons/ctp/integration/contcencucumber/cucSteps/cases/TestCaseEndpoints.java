@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints;
+import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
@@ -51,6 +53,9 @@ public class TestCaseEndpoints extends TestEndpoints {
 
   @Value("${keystore}")
   private String keyStore;
+  
+  @Autowired private ProductService productService;
+
 
   @Given("I am about to do a smoke test by going to a contact centre endpoint")
   public void i_am_about_to_do_a_smoke_test_by_going_to_a_contact_centre_endpoint() {
@@ -385,7 +390,7 @@ public class TestCaseEndpoints extends TestEndpoints {
     assertNotEquals(
         "Must have different response_id values", result1.get("response_id"), result2.get("response_id"));
     assertEquals(
-        "Must have the correct address", "Napier House, 88 Harbour Street", result1.get("display_address"));
+        "Must have the correct address", "4, Okehampton Road, ", result1.get("display_address"));
     assertEquals(
         "Must have the correct channel", "cc", result1.get("channel"));
     assertEquals(
@@ -406,7 +411,7 @@ public class TestCaseEndpoints extends TestEndpoints {
     assertNotEquals(
         "Must have different tx_id values", result1.get("tx_id"), result2.get("tx_id"));
     assertEquals(
-        "Must have the correct ru_ref value", "1347459999", result1.get("ru_ref"));
+        "Must have the correct ru_ref value", "100041045599", result1.get("ru_ref"));
     assertEquals(
         "Must have the correct language_code value", "en", result1.get("language_code"));
     assertEquals(
@@ -414,7 +419,7 @@ public class TestCaseEndpoints extends TestEndpoints {
     assertEquals(
         "Must have the correct collection_exercise_sid value", "49871667-117d-4a63-9101-f6a0660f73f6", result1.get("collection_exercise_sid"));
     assertEquals(
-        "Must have the correct case_id value", "3305e937-6fb1-4ce1-9d4c-077f147789ab", result1.get("case_id"));
+        "Must have the correct case_id value", "3305e937-6fb1-4ce1-9d4c-077f147789bb", result1.get("case_id"));
     assertEquals(
         "Must have the correct survey value", "CENSUS", result1.get("survey"));
     assertNotEquals(
@@ -485,7 +490,7 @@ public class TestCaseEndpoints extends TestEndpoints {
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
             .pathSegment("cases")
-            .pathSegment("3305e937-6fb1-4ce1-9d4c-077f147789ab")
+            .pathSegment("3305e937-6fb1-4ce1-9d4c-077f147789bb")
             .pathSegment("launch")
             .queryParam("agentId", 1)
             .queryParam("individual", false);
