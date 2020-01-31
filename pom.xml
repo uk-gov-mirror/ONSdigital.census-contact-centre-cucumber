@@ -14,7 +14,6 @@
 		<artifactId>census-int-common-config</artifactId>
 		<version>0.0.13</version>
 	</parent>
-
 	<dependencies>
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>

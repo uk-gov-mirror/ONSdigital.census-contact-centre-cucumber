@@ -6,13 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints;
@@ -496,6 +499,117 @@ public class TestCaseEndpoints extends TestEndpoints {
     assertEquals("Must have the correct region code", "GB-ENG", result1.get("region_code"));
   }
 
+  @Then("a HI EQ is launched")
+  public void a_HI_EQ_is_launched() throws CTPException, JsonParseException, JsonMappingException, IOException {
+    String hhEqToken1;
+    String hhEqToken2;
+
+    log.info(
+        "Create a substring that removes the first part of the telephoneEndpointBody to leave just the EQ token value");
+
+    hhEqToken1 = telephoneEndpointBody1.substring(37);
+    hhEqToken2 = telephoneEndpointBody2.substring(37);
+
+    log.info("The first EQ token is: " + hhEqToken1);
+    log.info("The second EQ token is: " + hhEqToken2);
+
+    EQJOSEProvider coderDecoder = new Codec();
+
+    String decryptedEqToken1 = coderDecoder.decrypt(hhEqToken1, new KeyStore(keyStore));
+    String decryptedEqToken2 = coderDecoder.decrypt(hhEqToken2, new KeyStore(keyStore));
+
+    log.info("The first decrypted EQ token is: " + decryptedEqToken1);
+    log.info("The second decrypted EQ token is: " + decryptedEqToken2);
+
+    @SuppressWarnings("unchecked")
+    HashMap<String, String> result1 =
+        new ObjectMapper().readValue(decryptedEqToken1, HashMap.class);
+
+    @SuppressWarnings("unchecked")
+    HashMap<String, String> result2 =
+        new ObjectMapper().readValue(decryptedEqToken2, HashMap.class);
+
+    log.info(
+        "Assert that the "
+            + result1.size()
+            + " keys in the first hashmap are the ones that we expect e.g. it should not contain accountServiceUrl or accountServiceLogoutUrl");
+
+    ArrayList<String> hashKeysExpected = new ArrayList<>();
+    hashKeysExpected.add("questionnaire_id");
+    hashKeysExpected.add("response_id");
+    hashKeysExpected.add("display_address");
+    hashKeysExpected.add("channel");
+    hashKeysExpected.add("case_type");
+    hashKeysExpected.add("eq_id");
+    hashKeysExpected.add("form_type");
+    hashKeysExpected.add("tx_id");
+    hashKeysExpected.add("ru_ref");
+    hashKeysExpected.add("language_code");
+    hashKeysExpected.add("user_id");
+    hashKeysExpected.add("collection_exercise_sid");
+    hashKeysExpected.add("case_id");
+    hashKeysExpected.add("survey");
+    hashKeysExpected.add("exp");
+    hashKeysExpected.add("period_id");
+    hashKeysExpected.add("iat");
+    hashKeysExpected.add("jti");
+    hashKeysExpected.add("region_code");
+    
+    log.info("The hash keys expected are: " + hashKeysExpected.toString());
+
+    List<String> hashKeysFound = new ArrayList<>(result1.keySet());
+
+    log.info("The hash keys found are: " + hashKeysFound.toString());
+
+    assertEquals(
+        "Must have the correct number of hash keys", hashKeysExpected.size(), hashKeysFound.size());
+    assertEquals(
+        "Must have the correct hash keys", hashKeysExpected.toString(), hashKeysFound.toString());
+    assertNotEquals(
+        "Must have different questionnaire_id values",
+        result1.get("questionnaire_id"),
+        result2.get("questionnaire_id"));
+    assertNotEquals(
+        "Must have different response_id values",
+        result1.get("response_id"),
+        result2.get("response_id"));
+    assertEquals(
+        "Must have the correct address", "4, Okehampton Road, ", result1.get("display_address"));
+    assertEquals("Must have the correct channel", "cc", result1.get("channel"));
+    assertEquals("Must have the correct case type", "HI", result1.get("case_type"));
+
+    /*
+     * The following assert will need to be changed if the eq_id value, which is hard-coded in the CCSVC, is updated
+     */
+    assertEquals("Must have the correct eq id", "census", result1.get("eq_id"));
+
+    /*
+     * The following assert will need to be changed if the form_type value, which is hard-coded in the CCSVC, is updated
+     */
+    assertEquals("Must have the correct form type", "individual_gb_eng", result1.get("form_type"));
+
+    assertNotEquals("Must have different tx_id values", result1.get("tx_id"), result2.get("tx_id"));
+    assertEquals("Must have the correct ru_ref value", "100041045599", result1.get("ru_ref"));
+    assertEquals("Must have the correct language_code value", "en", result1.get("language_code"));
+    assertEquals("Must have the correct user_id value", "1", result1.get("user_id"));
+    assertEquals(
+        "Must have the correct collection_exercise_sid value",
+        "49871667-117d-4a63-9101-f6a0660f73f6",
+        result1.get("collection_exercise_sid"));
+    assertNotEquals("Must have a different case_id values as an HI case should have been created, which will have a different case_id from the associated HH case", "3305e937-6fb1-4ce1-9d4c-077f147789bb", result1.get("case_id"));
+    assertEquals("Must have the correct survey value", "CENSUS", result1.get("survey"));
+    assertNotEquals("Must have different exp values", result1.get("exp"), result2.get("exp"));
+
+    /*
+     * The following assert will need to be changed if the period_id value, which is hard-coded in the CCSVC, is updated
+     */
+    assertEquals("Must have the correct period id", "2019", result1.get("period_id"));
+
+    assertNotEquals("Must have different iat values", result1.get("iat"), result2.get("iat"));
+    assertNotEquals("Must have different jti values", result1.get("jti"), result2.get("jti"));
+    assertEquals("Must have the correct region code", "GB-ENG", result1.get("region_code"));
+  }
+  
   private HttpStatus checkContactCentreRunning() {
     log.info("Entering checkContactCentreRunning method");
     final UriComponentsBuilder builder =
