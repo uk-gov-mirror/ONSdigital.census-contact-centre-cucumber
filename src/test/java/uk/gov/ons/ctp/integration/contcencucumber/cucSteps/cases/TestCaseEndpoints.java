@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -359,7 +360,7 @@ public class TestCaseEndpoints extends TestEndpoints {
 
     log.info(
         "Repeat launching EQ for HI so that the two responses can be compared. Wait a second to get different time values.");
-    
+
     Thread.sleep(1000);
 
     try {
@@ -382,7 +383,7 @@ public class TestCaseEndpoints extends TestEndpoints {
       log.error(e.getMessage());
       fail();
       System.exit(0);
-    } 
+    }
   }
 
   @Then("a HH EQ is launched")
@@ -500,7 +501,8 @@ public class TestCaseEndpoints extends TestEndpoints {
   }
 
   @Then("a HI EQ is launched")
-  public void a_HI_EQ_is_launched() throws CTPException, JsonParseException, JsonMappingException, IOException {
+  public void a_HI_EQ_is_launched()
+      throws CTPException, JsonParseException, JsonMappingException, IOException {
     String hhEqToken1;
     String hhEqToken2;
 
@@ -554,7 +556,7 @@ public class TestCaseEndpoints extends TestEndpoints {
     hashKeysExpected.add("iat");
     hashKeysExpected.add("jti");
     hashKeysExpected.add("region_code");
-    
+
     log.info("The hash keys expected are: " + hashKeysExpected.toString());
 
     List<String> hashKeysFound = new ArrayList<>(result1.keySet());
@@ -596,7 +598,10 @@ public class TestCaseEndpoints extends TestEndpoints {
         "Must have the correct collection_exercise_sid value",
         "49871667-117d-4a63-9101-f6a0660f73f6",
         result1.get("collection_exercise_sid"));
-    assertNotEquals("Must have a different case_id values as an HI case should have been created, which will have a different case_id from the associated HH case", "3305e937-6fb1-4ce1-9d4c-077f147789bb", result1.get("case_id"));
+    assertNotEquals(
+        "Must have a different case_id values as an HI case should have been created, which will have a different case_id from the associated HH case",
+        "3305e937-6fb1-4ce1-9d4c-077f147789bb",
+        result1.get("case_id"));
     assertEquals("Must have the correct survey value", "CENSUS", result1.get("survey"));
     assertNotEquals("Must have different exp values", result1.get("exp"), result2.get("exp"));
 
@@ -609,7 +614,7 @@ public class TestCaseEndpoints extends TestEndpoints {
     assertNotEquals("Must have different jti values", result1.get("jti"), result2.get("jti"));
     assertEquals("Must have the correct region code", "GB-ENG", result1.get("region_code"));
   }
-  
+
   private HttpStatus checkContactCentreRunning() {
     log.info("Entering checkContactCentreRunning method");
     final UriComponentsBuilder builder =
