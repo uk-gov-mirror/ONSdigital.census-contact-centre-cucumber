@@ -22,9 +22,6 @@ Feature: Test Contact centre Fulfilments Endpoints
       | "CE"      | "E"           |
       | "CE"      | "N"           |
       | "CE"      | "W"           |
-      | "CI"      | "E"           |
-      | "CI"      | "N"           |
-      | "CI"      | "W"           |
 
   Scenario Outline: I want to verify that Fulfilments work end to end
     Given I have a valid address search String <address>
