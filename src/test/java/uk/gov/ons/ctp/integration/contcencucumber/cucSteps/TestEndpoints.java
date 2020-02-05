@@ -19,7 +19,17 @@ public class TestEndpoints extends SpringIntegrationTest {
   @Value("${contact-centre.password}")
   private String ccPassword;
 
+  @Value("${mock-case-service.host}")
+  protected String mcsBaseUrl;
+
+  @Value("${mock-case-service.port}")
+  protected String mcsBasePort;
+
   protected RestTemplate getRestTemplate() {
     return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
+  }
+
+  protected RestTemplate getAuthenticationFreeRestTemplate() {
+    return new RestTemplateBuilder().build();
   }
 }
