@@ -86,6 +86,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.jayway.jsonpath</groupId>
 			<artifactId>json-path</artifactId>
 			<scope>test</scope>
@@ -115,7 +120,23 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-test-autoconfigure</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test-autoconfigure</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<!-- SPRING END -->
@@ -135,10 +156,10 @@
 		<!-- ONS libraries -->
 
 
-		<dependency>
+	    <dependency>
 			<groupId>uk.gov.ons.ctp.integration</groupId>
 			<artifactId>contactcentreserviceapi</artifactId>
-			<version>0.0.53</version>
+			<version>0.0.61</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -156,7 +177,7 @@
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>census-int-case-api-client</artifactId>
-			<version>0.0.4</version>
+			<version>0.0.7</version>
 		</dependency>
 
 		<dependency>
@@ -186,10 +207,12 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.20</version>
 				<configuration>
-					<testSourceDirectory>census-contact-centre-cucumber/src/test/java</testSourceDirectory>
+					<!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
+					<testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
 					<includes>
 						<include>**/RunCucumberTest*.java</include>
 					</includes>
+					<!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude> </excludes> -->
 				</configuration>
 			</plugin>
 
