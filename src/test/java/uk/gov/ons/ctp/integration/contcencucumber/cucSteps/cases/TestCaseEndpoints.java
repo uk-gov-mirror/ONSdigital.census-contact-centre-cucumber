@@ -659,26 +659,6 @@ public class TestCaseEndpoints extends TestEndpoints {
     return mockCaseApiResponse.getStatusCode();
   }
 
-  //  private ResponseEntity<String> getEqTokenForHH() {
-  //    final UriComponentsBuilder builder =
-  //        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-  //            .port(ccBasePort)
-  //            .pathSegment("cases")
-  //            .pathSegment("3305e937-6fb1-4ce1-9d4c-077f147789bb")
-  //            .pathSegment("launch")
-  //            .queryParam("agentId", 1)
-  //            .queryParam("individual", false);
-  //
-  //    telephoneEndpointUrl = builder.build().encode().toUri().toString();
-  //
-  //    log.info("Using the following endpoint to launch EQ for HH: " + telephoneEndpointUrl);
-  //
-  //    ResponseEntity<String> ccLaunchEqResponse =
-  //        getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
-  //
-  //    return ccLaunchEqResponse;
-  //  }
-
   private ResponseEntity<String> getEqToken(String caseId, boolean forIndividual) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
