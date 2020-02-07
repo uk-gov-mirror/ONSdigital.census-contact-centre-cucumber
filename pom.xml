@@ -14,7 +14,6 @@
 		<artifactId>census-int-common-config</artifactId>
 		<version>0.0.13</version>
 	</parent>
-
 	<dependencies>
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
@@ -55,6 +54,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>uk.gov.ons.ctp.integration.common</groupId>
+			<artifactId>eq-launcher</artifactId>
+			<version>0.0.21</version>
+		</dependency>
+
+		<!-- <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
@@ -65,7 +70,7 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.9.8</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
 
