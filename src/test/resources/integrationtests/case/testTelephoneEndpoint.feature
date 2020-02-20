@@ -22,5 +22,5 @@ Feature: Test Contact Centre Telephone Capture Endpoint
     When the CC advisor confirms the address
     And confirms the CaseType=HI
     Then a HI EQ is launched
-    
+
  
