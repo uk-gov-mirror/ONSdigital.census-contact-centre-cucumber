@@ -40,7 +40,8 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
   @Autowired private ProductService productService;
 
   @Given("I have a valid case Type {string} and region {string} and individual {string}")
-  public void i_have_a_valid_case_Type_and_region(String caseType, String region, String individual) {
+  public void i_have_a_valid_case_Type_and_region(
+      String caseType, String region, String individual) {
     this.caseType = caseType;
     this.region = region;
     this.individual = individual;
@@ -203,7 +204,6 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
     region = caseDTO == null ? "-" : caseDTO.getRegion();
     requestChannel = "CC";
     individual = "false";
-
   }
 
   @Then("the correct fulfilments are returned for my case")
@@ -269,5 +269,4 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
     }
     return containsChannel;
   }
-
 }
