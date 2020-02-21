@@ -53,6 +53,7 @@ public class TestEndpointsFFData extends SpringIntegrationTest {
   }
 
   private void postCasesToMockService(final List<CaseContainerDTO> caseList) {
+    resetData();
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
             .port(mcsBasePort)
@@ -75,5 +76,21 @@ public class TestEndpointsFFData extends SpringIntegrationTest {
 
   protected RestTemplate getRestTemplate() {
     return getRestTemplate(ccUsername, ccPassword);
+  }
+
+  protected void resetData() {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+            .port(mcsBasePort)
+            .pathSegment("cases")
+            .pathSegment("data")
+            .pathSegment("cases")
+            .pathSegment("reset");
+    try {
+      getAuthenticationFreeRestTemplate()
+          .getForObject(builder.build().encode().toUri(), HashMap.class);
+    } catch (HttpClientErrorException ex) {
+      log.warn("Unable to RESET Mock case api service: ");
+    }
   }
 }

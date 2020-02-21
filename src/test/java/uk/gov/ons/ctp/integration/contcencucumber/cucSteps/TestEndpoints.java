@@ -28,5 +28,4 @@ public class TestEndpoints extends SpringIntegrationTest {
   protected RestTemplate getRestTemplate() {
     return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
   }
-
 }

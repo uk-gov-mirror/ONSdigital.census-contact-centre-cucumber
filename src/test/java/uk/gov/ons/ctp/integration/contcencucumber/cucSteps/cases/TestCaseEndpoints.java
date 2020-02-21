@@ -270,7 +270,8 @@ public class TestCaseEndpoints extends TestEndpointsFFData {
   }
 
   @Given("confirmed CaseType {string} {string}")
-  public void confirmed_caseType(final String caseId, final String individual) throws InterruptedException {
+  public void confirmed_caseType(final String caseId, final String individual)
+      throws InterruptedException {
     boolean isIndividual = Boolean.parseBoolean(individual);
     log.info(
         "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
@@ -325,7 +326,8 @@ public class TestCaseEndpoints extends TestEndpointsFFData {
   }
 
   @Then("EQ is launched {string} {string} {string}")
-  public void eq_is_launched(final String caseType, final String caseId, final String individual) throws Exception {
+  public void eq_is_launched(final String caseType, final String caseId, final String individual)
+      throws Exception {
     String hhEqToken1;
     String hhEqToken2;
     final boolean isIndividual = Boolean.parseBoolean(individual);
@@ -424,8 +426,7 @@ public class TestCaseEndpoints extends TestEndpointsFFData {
         result1.get("collection_exercise_sid"));
     if (isIndividual) {
       assertNotEquals("Must NOT have the correct case_id value", caseId, result1.get("case_id"));
-    }
-    else {
+    } else {
       assertEquals("Must have the correct case_id value", caseId, result1.get("case_id"));
     }
 
@@ -441,7 +442,6 @@ public class TestCaseEndpoints extends TestEndpointsFFData {
     assertNotEquals("Must have different jti values", result1.get("jti"), result2.get("jti"));
     assertEquals("Must have the correct region code", "GB-ENG", result1.get("region_code"));
   }
-
 
   private HttpStatus checkContactCentreRunning() {
     log.info("Entering checkContactCentreRunning method");

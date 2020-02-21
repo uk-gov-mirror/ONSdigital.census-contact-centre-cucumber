@@ -29,5 +29,4 @@ public class SpringIntegrationTest {
   protected RestTemplate getRestTemplate(final String username, final String password) {
     return new RestTemplateBuilder().basicAuthentication(username, password).build();
   }
-
 }
