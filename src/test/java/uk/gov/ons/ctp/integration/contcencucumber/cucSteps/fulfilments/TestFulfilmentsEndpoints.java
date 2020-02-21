@@ -27,6 +27,7 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
   private Exception exception;
   private String caseType;
   private String region;
+  private String individual;
   private AddressQueryResponseDTO addressQueryResponseDTO;
   private AddressUpdateRequestDTO addressUpdateRequestDTO;
   private String postcode = "";
@@ -38,10 +39,11 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
 
   @Autowired private ProductService productService;
 
-  @Given("I have a valid case Type {string} and region {string}")
-  public void i_have_a_valid_case_Type_and_region(String caseType, String region) {
+  @Given("I have a valid case Type {string} and region {string} and individual {string}")
+  public void i_have_a_valid_case_Type_and_region(String caseType, String region, String individual) {
     this.caseType = caseType;
     this.region = region;
+    this.individual = individual;
   }
 
   @When("I Search fulfilments")
@@ -51,7 +53,9 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
             .port(ccBasePort)
             .pathSegment("/fulfilments")
             .queryParam("caseType", caseType)
-            .queryParam("region", region);
+            .queryParam("region", region)
+            .queryParam("individual", individual);
+
     try {
       ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse =
           getRestTemplate()
@@ -66,13 +70,14 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
     }
   }
 
-  @Then("A list of fulfilments is returned of the correct products {string} {string}")
+  @Then("A list of fulfilments is returned of the correct products {string} {string} {string}")
   public void a_list_of_fulfilments_is_returned_of_the_correct_products(
-      String caseType, String region) throws CTPException {
+      String caseType, String region, String individual) throws CTPException {
 
     this.caseType = caseType;
     this.region = region;
     this.requestChannel = "CC";
+    this.individual = individual;
     List<Product> expectedProducts = getExpectedProducts();
 
     assertEquals(
@@ -81,14 +86,23 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
         Integer.valueOf(fulfilmentDTOList.size()));
     fulfilmentDTOList.forEach(
         fulfilment -> {
-          assertEquals(
-              "Fulfilment should be of correct caseType",
-              caseType,
-              fulfilment.getCaseType().name());
           assertTrue(
               "Fulfilment should be of correct caseType",
+              fulfilmentContainsCaseType(fulfilment, caseType));
+          assertTrue(
+              "Fulfilment should be of correct region",
               fulfilment.getRegions().contains(Region.valueOf(region)));
         });
+  }
+
+  private boolean fulfilmentContainsCaseType(final FulfilmentDTO dto, final String caseType) {
+    boolean containsCaseType = false;
+    for (CaseType caseType1 : dto.getCaseTypes()) {
+      if (caseType1.name().equalsIgnoreCase(caseType)) {
+        containsCaseType = true;
+      }
+    }
+    return containsCaseType;
   }
 
   @Given("I have a valid address search String {string}")
@@ -188,10 +202,15 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
     caseType = caseDTO == null ? "-" : caseDTO.getCaseType();
     region = caseDTO == null ? "-" : caseDTO.getRegion();
     requestChannel = "CC";
+    individual = "false";
+
   }
 
   @Then("the correct fulfilments are returned for my case")
   public void the_correct_fulfilments_are_returned_for_my_case() throws CTPException {
+    if (caseDTO != null && caseType.endsWith("I")) {
+      individual = "true";
+    }
     List<Product> expectedProducts = getExpectedProducts();
     List<String> expectedCodes =
         expectedProducts.stream().map(ex -> ex.getFulfilmentCode()).collect(Collectors.toList());
@@ -214,9 +233,41 @@ public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
     return productService
         .getProducts()
         .stream()
-        .filter(p1 -> p1.getCaseType().name().equalsIgnoreCase(caseType))
-        .filter(p2 -> p2.getRegions().contains(Product.Region.valueOf(region)))
-        .filter(p3 -> p3.getRequestChannels().contains(Product.RequestChannel.valueOf("CC")))
+        .filter(p1 -> (containsCaseType(p1)))
+        .filter(p2 -> (containsRegion(p2)))
+        .filter(p3 -> containsChannel(p3))
+        .filter(p4 -> p4.getIndividual().equals(Boolean.parseBoolean(individual)))
         .collect(Collectors.toList());
   }
+
+  private boolean containsCaseType(final Product product) {
+    boolean containsCaseType = false;
+    for (Product.CaseType pCaseType : product.getCaseTypes()) {
+      if (pCaseType.name().equalsIgnoreCase(caseType)) {
+        containsCaseType = true;
+      }
+    }
+    return containsCaseType;
+  }
+
+  private boolean containsRegion(final Product product) {
+    boolean containsRegion = false;
+    for (Product.Region pRegion : product.getRegions()) {
+      if (pRegion.name().equalsIgnoreCase(region)) {
+        containsRegion = true;
+      }
+    }
+    return containsRegion;
+  }
+
+  private boolean containsChannel(final Product product) {
+    boolean containsChannel = false;
+    for (Product.RequestChannel pRequestChannel : product.getRequestChannels()) {
+      if (pRequestChannel.name().equalsIgnoreCase(requestChannel)) {
+        containsChannel = true;
+      }
+    }
+    return containsChannel;
+  }
+
 }
