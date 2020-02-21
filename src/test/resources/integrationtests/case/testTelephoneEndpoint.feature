@@ -5,22 +5,13 @@
 #Scenario: Launch EQ for an Individual
 ## (Comments)
 Feature: Test Contact Centre Telephone Capture Endpoint
-  I want to verify that the telephone capture endpoint in CC-SERVICE works correctly
 
-  @SetUpRHEngScot @TearDown
-  Scenario: Launch EQ for a household
-    Given the CC advisor has the respondent address
-    And the respondent case type is a household
-    When the CC advisor confirms the address
-    And confirms the CaseType=HH
-    Then a HH EQ is launched
+  Scenario Outline:   I want to verify that the telephone capture endpoint in CC-SERVICE works correctly
 
-  @SetUpRHEngScot @TearDown
-  Scenario: Launch EQ for an Individual
-    Given the CC advisor has the respondent address
-    And the respondent case type is a household individual or a CE individual
-    When the CC advisor confirms the address
-    And confirms the CaseType=HI
-    Then a HI EQ is launched
+    Given confirmed CaseType <caseId> <individual>
+    Then EQ is launched <caseType> <caseId> <individual>
 
- 
+    Examples:
+      | caseId                                  | individual   | caseType  |
+      | "3305e937-6fb1-4ce1-9d4c-077f147789bb"  | "false"      | "HH"      |
+      | "3305e937-6fb1-4ce1-9d4c-077f147789bb"  | "true"       | "HI"      |

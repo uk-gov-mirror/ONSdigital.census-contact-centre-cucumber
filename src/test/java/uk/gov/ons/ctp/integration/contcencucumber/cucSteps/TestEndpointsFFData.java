@@ -11,7 +11,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -75,10 +74,6 @@ public class TestEndpointsFFData extends SpringIntegrationTest {
   }
 
   protected RestTemplate getRestTemplate() {
-    return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
-  }
-
-  private RestTemplate getAuthenticationFreeRestTemplate() {
-    return new RestTemplateBuilder().build();
+    return getRestTemplate(ccUsername, ccPassword);
   }
 }
