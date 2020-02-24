@@ -5,7 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 
-public class TestEndpoints extends SpringIntegrationTest {
+public class TestBase extends SpringIntegrationTest {
 
   @Value("${contact-centre.host}")
   protected String ccBaseUrl;
@@ -27,9 +27,5 @@ public class TestEndpoints extends SpringIntegrationTest {
 
   protected RestTemplate getRestTemplate() {
     return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
-  }
-
-  protected RestTemplate getAuthenticationFreeRestTemplate() {
-    return new RestTemplateBuilder().build();
   }
 }

@@ -1,6 +1,9 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.address;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -10,9 +13,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressUpdateRequestDTO;
-import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpoints;
+import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestBase;
 
-public class TestAddressEndpoints extends TestEndpoints {
+public class TestAddressEndpoints extends TestBase {
 
   private AddressQueryResponseDTO addressQueryResponseDTO;
   private AddressUpdateRequestDTO addressUpdateRequestDTO;
