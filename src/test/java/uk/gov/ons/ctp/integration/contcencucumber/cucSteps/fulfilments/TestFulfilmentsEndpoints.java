@@ -35,7 +35,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("I Search fulfilments")
   public void i_Search_fulfilments() {
-      searchFulfillments(caseDTO.getCaseType(), caseDTO.getRegion(), "true");
+    searchFulfillments(caseDTO.getCaseType(), caseDTO.getRegion(), "true");
   }
 
   @Given("I Search fulfilments {string} {string} {string}")
@@ -197,7 +197,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Then("the correct fulfilments are returned for my case")
   public void the_correct_fulfilments_are_returned_for_my_case() throws CTPException {
-    List<Product> expectedProducts = getExpectedProducts(caseDTO.getCaseType(), caseDTO.getRegion(), "true");
+    List<Product> expectedProducts =
+        getExpectedProducts(caseDTO.getCaseType(), caseDTO.getRegion(), "true");
     List<String> expectedCodes =
         expectedProducts.stream().map(ex -> ex.getFulfilmentCode()).collect(Collectors.toList());
 
@@ -215,8 +216,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  private List<Product> getExpectedProducts(final String caseType, final String region,
-      final String individual) throws CTPException {
+  private List<Product> getExpectedProducts(
+      final String caseType, final String region, final String individual) throws CTPException {
 
     return productService
         .getProducts()
