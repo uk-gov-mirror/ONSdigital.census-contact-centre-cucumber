@@ -23,7 +23,7 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 @EnableConfigurationProperties
 @PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:cases.yml")
 @ConfigurationProperties("casedata")
-public class TestEndpointsFFData extends SpringIntegrationTest {
+public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
 
   @Value("${contact-centre.host}")
   protected String ccBaseUrl;
@@ -43,9 +43,12 @@ public class TestEndpointsFFData extends SpringIntegrationTest {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  private static final Logger log = LoggerFactory.getLogger(TestEndpointsFFData.class);
+  private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiAndPostCasesBase.class);
 
   public void setCases(final String cases) throws IOException {
+    log.info("Resetting Mock Case API Data");
+    resetData();
+
     final ObjectMapper objectMapper = new ObjectMapper();
     final List<CaseContainerDTO> caseList =
         objectMapper.readValue(cases, new TypeReference<List<CaseContainerDTO>>() {});
@@ -53,7 +56,6 @@ public class TestEndpointsFFData extends SpringIntegrationTest {
   }
 
   private void postCasesToMockService(final List<CaseContainerDTO> caseList) {
-    resetData();
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
             .port(mcsBasePort)

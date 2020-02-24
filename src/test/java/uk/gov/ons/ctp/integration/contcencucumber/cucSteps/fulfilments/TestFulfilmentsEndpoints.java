@@ -18,10 +18,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.*;
-import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestEndpointsFFData;
+import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
-public class TestFulfilmentsEndpoints extends TestEndpointsFFData {
+public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private List<FulfilmentDTO> fulfilmentDTOList;
   private Exception exception;
