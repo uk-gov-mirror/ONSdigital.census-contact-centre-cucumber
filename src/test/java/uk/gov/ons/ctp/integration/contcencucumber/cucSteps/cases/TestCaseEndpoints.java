@@ -247,28 +247,6 @@ public class TestCaseEndpoints extends TestEndpointsFFData {
     assertNull("UPRN response must be null", caseDTOList);
   }
 
-  @Given("the CC advisor has the respondent address")
-  public void the_CC_advisor_has_the_respondent_address() {
-    log.info(
-        "nothing to do here - we can assume that the CC advisor has the respondent's address and its UPRN");
-  }
-
-  @Given("the respondent case type")
-  public void the_respondent_case_type() {
-    log.info("nothing to do here - we can assume that the case type is a household");
-  }
-
-  @Given("the respondent case type is a household individual or a CE individual")
-  public void the_respondent_case_type_is_a_household_individual_or_a_CE_individual() {
-    log.info(
-        "nothing to do here - we can assume that the case type is either a household individual or a CE individual");
-  }
-
-  @When("the CC advisor confirms the address")
-  public void the_CC_advisor_confirms_the_address() {
-    log.info("nothing to do here - the CC advisor clicks a button to confirm the address");
-  }
-
   @Given("confirmed CaseType {string} {string}")
   public void confirmed_caseType(final String caseId, final String individual)
       throws InterruptedException {
