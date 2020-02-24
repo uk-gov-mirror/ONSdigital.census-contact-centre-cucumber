@@ -403,7 +403,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "49871667-117d-4a63-9101-f6a0660f73f6",
         result1.get("collection_exercise_sid"));
     if (isIndividual) {
-      assertNotEquals("Must NOT have the correct case_id value", caseId, result1.get("case_id"));
+      assertNotEquals("Must have a new case_id value", caseId, result1.get("case_id"));
     } else {
       assertEquals("Must have the correct case_id value", caseId, result1.get("case_id"));
     }
