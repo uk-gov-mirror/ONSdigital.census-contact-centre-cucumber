@@ -1,5 +1,7 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
 
+import static org.junit.Assert.fail;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
@@ -80,7 +82,7 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
     return getRestTemplate(ccUsername, ccPassword);
   }
 
-  protected void resetData() {
+  private void resetData() {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
             .port(mcsBasePort)
@@ -92,7 +94,7 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
       getAuthenticationFreeRestTemplate()
           .getForObject(builder.build().encode().toUri(), HashMap.class);
     } catch (HttpClientErrorException ex) {
-      log.warn("Unable to RESET Mock case api service: ");
+      fail("Unable to RESET Mock case api service: ");
     }
   }
 }

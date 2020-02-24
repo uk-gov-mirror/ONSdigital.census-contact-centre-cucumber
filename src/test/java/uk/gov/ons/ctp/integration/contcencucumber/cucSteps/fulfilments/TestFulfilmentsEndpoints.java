@@ -24,14 +24,8 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private List<FulfilmentDTO> fulfilmentDTOList;
-  private Exception exception;
-  private String caseType;
-  private String region;
-  private String individual;
   private AddressQueryResponseDTO addressQueryResponseDTO;
-  private AddressUpdateRequestDTO addressUpdateRequestDTO;
-  private String postcode = "";
-  private String addressSearchString = "";
+  private String addressSearchString;
   private String uprn;
   private List<CaseDTO> caseDTOList;
   private CaseDTO caseDTO;
@@ -39,16 +33,17 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Autowired private ProductService productService;
 
-  @Given("I have a valid case Type {string} and region {string} and individual {string}")
-  public void i_have_a_valid_case_Type_and_region(
-      String caseType, String region, String individual) {
-    this.caseType = caseType;
-    this.region = region;
-    this.individual = individual;
+  @Given("I Search fulfilments")
+  public void i_Search_fulfilments() {
+      searchFulfillments(caseDTO.getCaseType(), caseDTO.getRegion(), "true");
   }
 
-  @When("I Search fulfilments")
-  public void i_Search_fulfilments() {
+  @Given("I Search fulfilments {string} {string} {string}")
+  public void i_Search_fulfilments(String caseType, String region, String individual) {
+    searchFulfillments(caseType, region, individual);
+  }
+
+  private void searchFulfillments(String caseType, String region, String individual) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
@@ -67,7 +62,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
                   new ParameterizedTypeReference<List<FulfilmentDTO>>() {});
       fulfilmentDTOList = fulfilmentResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
-      this.exception = httpClientErrorException;
+      fail(httpClientErrorException.getMessage());
     }
   }
 
@@ -75,11 +70,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void a_list_of_fulfilments_is_returned_of_the_correct_products(
       String caseType, String region, String individual) throws CTPException {
 
-    this.caseType = caseType;
-    this.region = region;
     this.requestChannel = "CC";
-    this.individual = individual;
-    List<Product> expectedProducts = getExpectedProducts();
+    List<Product> expectedProducts = getExpectedProducts(caseType, region, individual);
 
     assertEquals(
         "Fulfilments list size should be " + expectedProducts.size(),
@@ -166,7 +158,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
                   new ParameterizedTypeReference<List<CaseDTO>>() {});
       caseDTOList = caseResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
-      this.exception = httpClientErrorException;
+      fail(httpClientErrorException.getMessage());
     }
   }
 
@@ -200,18 +192,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("I have a valid case from my search UPRN")
   public void i_have_a_valid_case_from_my_search_UPRN() {
     caseDTO = caseDTOList.isEmpty() ? null : caseDTOList.get(0);
-    caseType = caseDTO == null ? "-" : caseDTO.getCaseType();
-    region = caseDTO == null ? "-" : caseDTO.getRegion();
     requestChannel = "CC";
-    individual = "false";
   }
 
   @Then("the correct fulfilments are returned for my case")
   public void the_correct_fulfilments_are_returned_for_my_case() throws CTPException {
-    if (caseDTO != null && caseType.endsWith("I")) {
-      individual = "true";
-    }
-    List<Product> expectedProducts = getExpectedProducts();
+    List<Product> expectedProducts = getExpectedProducts(caseDTO.getCaseType(), caseDTO.getRegion(), "true");
     List<String> expectedCodes =
         expectedProducts.stream().map(ex -> ex.getFulfilmentCode()).collect(Collectors.toList());
 
@@ -229,18 +215,20 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  private List<Product> getExpectedProducts() throws CTPException {
+  private List<Product> getExpectedProducts(final String caseType, final String region,
+      final String individual) throws CTPException {
+
     return productService
         .getProducts()
         .stream()
-        .filter(p1 -> (containsCaseType(p1)))
-        .filter(p2 -> (containsRegion(p2)))
+        .filter(p1 -> (containsCaseType(p1, caseType)))
+        .filter(p2 -> (containsRegion(p2, region)))
         .filter(p3 -> containsChannel(p3))
         .filter(p4 -> p4.getIndividual().equals(Boolean.parseBoolean(individual)))
         .collect(Collectors.toList());
   }
 
-  private boolean containsCaseType(final Product product) {
+  private boolean containsCaseType(final Product product, final String caseType) {
     boolean containsCaseType = false;
     for (Product.CaseType pCaseType : product.getCaseTypes()) {
       if (pCaseType.name().equalsIgnoreCase(caseType)) {
@@ -250,7 +238,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     return containsCaseType;
   }
 
-  private boolean containsRegion(final Product product) {
+  private boolean containsRegion(final Product product, final String region) {
     boolean containsRegion = false;
     for (Product.Region pRegion : product.getRegions()) {
       if (pRegion.name().equalsIgnoreCase(region)) {
