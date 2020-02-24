@@ -357,7 +357,6 @@ public class TestCaseEndpoints extends TestEndpointsFFData {
     HashMap<String, String> result2 =
         new ObjectMapper().readValue(decryptedEqToken2, HashMap.class);
 
-
     log.info(
         "Assert that the "
             + result1.size()
