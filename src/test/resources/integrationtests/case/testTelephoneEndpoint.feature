@@ -6,7 +6,7 @@
 ## (Comments)
 Feature: Test Contact Centre Telephone Capture Endpoint
 
-  Scenario Outline:   I want to verify that the telephone capture endpoint in CC-SERVICE works correctly
+  Scenario Outline: [CX-123,CZ456] I want to verify that the telephone capture endpoint in CC-SERVICE works correctly
 
     Given confirmed CaseType <caseId> <individual>
     Then EQ is launched <caseType> <caseId> <individual>

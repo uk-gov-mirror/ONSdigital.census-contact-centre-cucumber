@@ -31,7 +31,7 @@ I want to verify that all endpoints in CC-SERVICE work correctly
       | "40474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc"  | "404"       |
       | "50074ef9-2a0c-4a5c-bb69-d3fc5bfa10dc"  | "500"       |
 
-  Scenario Outline: I want to verify that the case search by case UPRN works
+  Scenario Outline: [CR123] I want to verify that the case search by case UPRN works
     Given I have a valid UPRN <uprn>
     When I Search cases By UPRN
     Then the correct cases for my UPRN are returned <case_ids>
