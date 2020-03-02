@@ -6,7 +6,7 @@
 Feature: Test Contact centre Address Endpoints
   I want to verify that all address endpoints in CC-SERVICE work correctly
 
-  Scenario Outline: I want to verify that address search by postcode works
+  Scenario Outline: [CR-T129] I want to verify that address search by postcode works
     Given I have a valid Postcode <postcode>
     When I Search Addresses By Postcode
     Then A list of addresses for my postcode is returned
@@ -16,7 +16,7 @@ Feature: Test Contact centre Address Endpoints
     | "EX4 1EH" |
     | "EX41EH"  |
 
-  Scenario Outline: I want to verify that address search by invalid postcode works
+  Scenario Outline: [CR-T130] I want to verify that address search by invalid postcode works
     Given I have an invalid Postcode <postcode>
     When I Search Addresses By Invalid Postcode
     Then An empty list of addresses for my postcode is returned
@@ -26,7 +26,7 @@ Feature: Test Contact centre Address Endpoints
       | "ZZ99 9ZZ" |
       | "XXX SSS" |
 
-  Scenario Outline: I want to verify that address search by address works
+  Scenario Outline: [CR-T131] I want to verify that address search by address works
     Given I have a valid address <address>
     When I Search Addresses By Address Search
     Then A list of addresses for my search is returned
@@ -37,7 +37,7 @@ Feature: Test Contact centre Address Endpoints
       | "Bristol Street"|
       | "Plymouth"      |
 
-  Scenario Outline: I want to verify that invalid address search by address works
+  Scenario Outline: [CR-T132] I want to verify that invalid address search by address works
     Given I have an invalid address <address>
     When I Search invalid Addresses By Address Search
     Then An empty list of addresses for my search is returned
