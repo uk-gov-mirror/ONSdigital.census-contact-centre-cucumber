@@ -10,26 +10,26 @@ Feature: Test Contact centre Fulfilments Endpoints
     When I Search fulfilments <caseType> <region> <individual>
     Then A list of fulfilments is returned of the correct products <caseType> <region> <individual>
 
-    Examples:
-      | caseType  | region        | individual |
-      | "HH"      | "E"           | "true"     |
-      | "HH"      | "N"           | "true"     |
-      | "HH"      | "W"           | "true"     |
-      | "CE"      | "E"           | "true"     |
-      | "CE"      | "N"           | "true"     |
-      | "CE"      | "W"           | "true"     |
-      | "SPG"     | "E"           | "true"     |
-      | "SPG"     | "N"           | "true"     |
-      | "SPG"     | "W"           | "true"     |
-      | "HH"      | "E"           | "false"     |
-      | "HH"      | "N"           | "false"     |
-      | "HH"      | "W"           | "false"     |
-      | "CE"      | "E"           | "false"     |
-      | "CE"      | "N"           | "false"     |
-      | "CE"      | "W"           | "false"     |
-      | "SPG"      | "E"          | "false"     |
-      | "SPG"      | "N"          | "false"     |
-      | "SPG"      | "W"          | "false"     |
+    Examples: 
+      | caseType | region | individual |
+      | "HH"     | "E"    | "true"     |
+      | "HH"     | "N"    | "true"     |
+      | "HH"     | "W"    | "true"     |
+      | "CE"     | "E"    | "true"     |
+      | "CE"     | "N"    | "true"     |
+      | "CE"     | "W"    | "true"     |
+      | "SPG"    | "E"    | "true"     |
+      | "SPG"    | "N"    | "true"     |
+      | "SPG"    | "W"    | "true"     |
+      | "HH"     | "E"    | "false"    |
+      | "HH"     | "N"    | "false"    |
+      | "HH"     | "W"    | "false"    |
+      | "CE"     | "E"    | "false"    |
+      | "CE"     | "N"    | "false"    |
+      | "CE"     | "W"    | "false"    |
+      | "SPG"    | "E"    | "false"    |
+      | "SPG"    | "N"    | "false"    |
+      | "SPG"    | "W"    | "false"    |
 
   Scenario Outline: I want to verify that Fulfilments work end to end
     Given I have a valid address search String <address>
@@ -42,8 +42,15 @@ Feature: Test Contact centre Fulfilments Endpoints
     When I Search fulfilments
     Then the correct fulfilments are returned for my case
 
+    Examples: 
+      | address               | uprn           | case_ids                               |
+      | "70, Magdalen Street" | "100040222798" | "3305e937-6fb1-4ce1-9d4c-077f147789de" |
+      | "33 Serge Court"      | "100041131297" | "03f58cb5-9af4-4d40-9d60-c124c5bddfff" |
 
-    Examples:
-      | address                             | uprn           | case_ids                                 |
-      | "70, Magdalen Street"               |"100040222798"  | "3305e937-6fb1-4ce1-9d4c-077f147789de"   |
-      | "33 Serge Court"                    |"100041131297"  | "03f58cb5-9af4-4d40-9d60-c124c5bddfff"   |
+  Scenario: I want to request an UAC for a HH Respondent in NI via POST
+    Given the CC advisor has provided a valid UPRN with individual flag = "false"
+    And the CC advisor selects the address
+    When the Case endpoint returns a case asscoiated to the UPRN
+    Then a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
+    Given CC Advisor select the product code for HH UAC via Post
+    Then an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post

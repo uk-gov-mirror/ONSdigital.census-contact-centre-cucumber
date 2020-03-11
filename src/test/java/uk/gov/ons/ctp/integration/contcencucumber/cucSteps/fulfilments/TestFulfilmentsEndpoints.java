@@ -258,4 +258,41 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
     return containsChannel;
   }
+  
+  @Given("the CC advisor has provided a valid UPRN with individual flag = {string}")
+  public void the_CC_advisor_has_provided_a_valid_UPRN_with_individual_flag(String string) {
+      // Write code here that turns the phrase above into concrete actions
+//      throw new cucumber.api.PendingException();
+  }
+
+  @Given("the CC advisor selects the address")
+  public void the_CC_advisor_selects_the_address() {
+      // Write code here that turns the phrase above into concrete actions
+//      throw new cucumber.api.PendingException();
+  }
+
+  @When("the Case endpoint returns a case asscoiated to the UPRN")
+  public void the_Case_endpoint_returns_a_case_asscoiated_to_the_UPRN() {
+      // Write code here that turns the phrase above into concrete actions
+//      throw new cucumber.api.PendingException();
+  }
+
+  @Then("a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
+  public void a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(String string, String string2) {
+      // Write code here that turns the phrase above into concrete actions
+//      throw new cucumber.api.PendingException();
+  }
+
+  @Given("CC Advisor select the product code for HH UAC via Post")
+  public void cc_Advisor_select_the_product_code_for_HH_UAC_via_Post() {
+      // Write code here that turns the phrase above into concrete actions
+//      throw new cucumber.api.PendingException();
+  }
+
+  @Then("an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
+  public void an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() {
+      // Write code here that turns the phrase above into concrete actions
+//      throw new cucumber.api.PendingException();
+  }
+
 }
