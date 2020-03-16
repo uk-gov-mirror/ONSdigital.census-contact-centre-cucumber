@@ -16,8 +16,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
@@ -39,6 +41,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private List<CaseDTO> caseDTOList;
   private CaseDTO caseDTO;
   private String requestChannel = "";
+  private String caseByUprnBody;
+  private String caseForUprnUrl;
 
   @Autowired private ProductService productService;
 
@@ -285,6 +289,27 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     //    caseToBeReturned.setRegion("N");
     //
     //    postCaseToMockService(caseToBeReturned);
+    try {
+      ResponseEntity<String> caseUprnResponse = getCaseForUprn("1347459999");
+      caseByUprnBody = caseUprnResponse.getBody();
+      HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
+      log.with(contactCentreStatus)
+          .info("GET CASE BY UPRN: The response from " + caseForUprnUrl);
+      assertEquals(
+          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus);
+    } catch (ResourceAccessException e) {
+      log.error("GET CASE BY UPRN HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("GET CASE BY UPRN HAS FAILED: An unexpected error has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
   }
 
   @When("the Case endpoint returns a case associated with the UPRN")
@@ -316,6 +341,19 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     // throw new cucumber.api.PendingException();
   }
 
+  private ResponseEntity<String> getCaseForUprn(String uprn) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprn);
+
+    caseForUprnUrl = builder.build().encode().toUri().toString();
+    log.info("Using the following endpoint to get case by UPRN: " + caseForUprnUrl);
+    return getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+  }
+  
   //  private void postCaseToMockService(CaseContainerDTO caseToPost) {
   //    UriComponentsBuilder builder =
   // UriComponentsBuilder.fromHttpUrl(mcsBaseUrl).port(mcsBasePort)
