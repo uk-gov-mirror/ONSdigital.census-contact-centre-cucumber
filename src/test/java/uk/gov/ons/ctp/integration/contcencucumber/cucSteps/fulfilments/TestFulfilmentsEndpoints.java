@@ -274,27 +274,11 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("the CC advisor has provided a valid UPRN with caseType HH")
   public void the_CC_advisor_has_provided_a_valid_UPRN_with_caseType_HH() {
-    // Add a case to the mock case service, which has a valid UPRN and region N
-    // Idea: Put this in an @before step
-    //    UUID caseId = UUID.fromString("3305e937-6fb1-4ce1-9d4c-077f147789aa");
-
-    // CaseContainerDTO caseToBeReturned = new CaseContainerDTO();
-    //    caseToBeReturned.setCaseRef("123123");
-    //    caseToBeReturned.setUprn("1347459999");
-    //    caseToBeReturned.setAddressLine1("Northern Irish House");
-    //    caseToBeReturned.setAddressLine2("44 Northern Irish Street");
-    //    caseToBeReturned.setAddressLine3("Belfast");
-    //    caseToBeReturned.setId(UUID.randomUUID());
-    //    caseToBeReturned.setCaseType("HH");
-    //    caseToBeReturned.setRegion("N");
-    //
-    //    postCaseToMockService(caseToBeReturned);
     try {
       ResponseEntity<String> caseUprnResponse = getCaseForUprn("1347459999");
       caseByUprnBody = caseUprnResponse.getBody();
       HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
-      log.with(contactCentreStatus)
-          .info("GET CASE BY UPRN: The response from " + caseForUprnUrl);
+      log.with(contactCentreStatus).info("GET CASE BY UPRN: The response from " + caseForUprnUrl);
       assertEquals(
           "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
           HttpStatus.OK,
@@ -314,8 +298,10 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("the Case endpoint returns a case associated with the UPRN")
   public void the_Case_endpoint_returns_a_case_associated_with_the_UPRN() {
-    // Write code here that turns the phrase above into concrete actions
-    // throw new cucumber.api.PendingException();
+    //    String uprnFound = caseByUprnBody.get(0)
+    //    JacksonJsonParser parser = new JacksonJsonParser();
+    //    JSONObject jsonList = (JSONObject) parser.parseList(caseByUprnBody);
+    //    log.with(jsonList).info("The parsed json list");
   }
 
   @Then(
@@ -353,7 +339,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("Using the following endpoint to get case by UPRN: " + caseForUprnUrl);
     return getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
   }
-  
+
   //  private void postCaseToMockService(CaseContainerDTO caseToPost) {
   //    UriComponentsBuilder builder =
   // UriComponentsBuilder.fromHttpUrl(mcsBaseUrl).port(mcsBasePort)
