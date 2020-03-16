@@ -11,7 +11,6 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.error.CTPException;
-import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
@@ -273,18 +271,24 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("the CC advisor has provided a valid UPRN with caseType HH")
   public void the_CC_advisor_has_provided_a_valid_UPRN_with_caseType_HH() {
     // Add a case to the mock case service, which has a valid UPRN and region N
-    // Idea: Put this in an @before step and retrieve in a combination of this step and the next one
-    CaseContainerDTO caseToBeReturned = new CaseContainerDTO();
-    caseToBeReturned.setCaseRef("123123");
-    caseToBeReturned.setUprn("1347459999");
-    caseToBeReturned.setAddressLine1("Northern Irish House");
-    caseToBeReturned.setAddressLine2("44 Northern Irish Street");
-    caseToBeReturned.setAddressLine3("Belfast");
-    caseToBeReturned.setRegion("N");
+    // Idea: Put this in an @before step
+    //    UUID caseId = UUID.fromString("3305e937-6fb1-4ce1-9d4c-077f147789aa");
+
+    // CaseContainerDTO caseToBeReturned = new CaseContainerDTO();
+    //    caseToBeReturned.setCaseRef("123123");
+    //    caseToBeReturned.setUprn("1347459999");
+    //    caseToBeReturned.setAddressLine1("Northern Irish House");
+    //    caseToBeReturned.setAddressLine2("44 Northern Irish Street");
+    //    caseToBeReturned.setAddressLine3("Belfast");
+    //    caseToBeReturned.setId(UUID.randomUUID());
+    //    caseToBeReturned.setCaseType("HH");
+    //    caseToBeReturned.setRegion("N");
+    //
+    //    postCaseToMockService(caseToBeReturned);
   }
 
-  @When("the Case endpoint returns a case asscoiated to the UPRN")
-  public void the_Case_endpoint_returns_a_case_asscoiated_to_the_UPRN() {
+  @When("the Case endpoint returns a case associated with the UPRN")
+  public void the_Case_endpoint_returns_a_case_associated_with_the_UPRN() {
     // Write code here that turns the phrase above into concrete actions
     // throw new cucumber.api.PendingException();
   }
@@ -312,23 +316,19 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     // throw new cucumber.api.PendingException();
   }
 
-  private void postCaseToMockService(CaseContainerDTO caseToPost) {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
-            .port(mcsBasePort)
-            .pathSegment("cases")
-            .pathSegment("data")
-            .pathSegment("cases")
-            .pathSegment("add");
-
-    List<CaseContainerDTO> caseListToPost = Arrays.asList(caseToPost);
-    try {
-      getAuthenticationFreeRestTemplate()
-          .postForObject(builder.build().encode().toUri(), caseListToPost, HashMap.class);
-    } catch (HttpClientErrorException ex) {
-      log.warn(
-          "Posted duplicate cases - exception thrown by mock case service - case: "
-              + caseToPost.getId());
-    }
-  }
+  //  private void postCaseToMockService(CaseContainerDTO caseToPost) {
+  //    UriComponentsBuilder builder =
+  // UriComponentsBuilder.fromHttpUrl(mcsBaseUrl).port(mcsBasePort)
+  //        .pathSegment("cases").pathSegment("data").pathSegment("cases").pathSegment("add");
+  //
+  //    List<CaseContainerDTO> caseListToPost = Arrays.asList(caseToPost);
+  //    System.out.println("The case to post is: " + "\n" + caseListToPost);
+  //    try {
+  //      getAuthenticationFreeRestTemplate().postForObject(builder.build().encode().toUri(),
+  //          caseListToPost, HashMap.class);
+  //    } catch (HttpClientErrorException ex) {
+  //      log.warn("Posted duplicate cases - exception thrown by mock case service - case: "
+  //          + caseToPost.getId());
+  //    }
+  //  }
 }
