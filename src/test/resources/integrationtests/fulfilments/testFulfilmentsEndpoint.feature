@@ -48,8 +48,7 @@ Feature: Test Contact centre Fulfilments Endpoints
       | "33 Serge Court"      | "100041131297" | "03f58cb5-9af4-4d40-9d60-c124c5bddfff" |
 
   Scenario: I want to request an UAC for a HH Respondent in NI via POST
-    Given the CC advisor has provided a valid UPRN with individual flag = "false"
-    And the CC advisor selects the address
+    Given the CC advisor has provided a valid UPRN with caseType HH
     When the Case endpoint returns a case asscoiated to the UPRN
     Then a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
     Given CC Advisor select the product code for HH UAC via Post

@@ -215,7 +215,8 @@
 					<!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
 					<testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
 					<includes>
-						<include>**/RunCucumberTest*.java</include>
+						<!-- <include>**/RunCucumberTest*.java</include> -->
+						<include>**/RunCucumberTestFulfilments</include>
 					</includes>
 					<!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude> </excludes> -->
 				</configuration>

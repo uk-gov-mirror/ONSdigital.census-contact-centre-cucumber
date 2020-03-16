@@ -1,12 +1,17 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.fulfilments;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +21,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.error.CTPException;
+import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
-import uk.gov.ons.ctp.integration.contactcentresvc.representation.*;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseType;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
@@ -258,41 +269,66 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
     return containsChannel;
   }
-  
-  @Given("the CC advisor has provided a valid UPRN with individual flag = {string}")
-  public void the_CC_advisor_has_provided_a_valid_UPRN_with_individual_flag(String string) {
-      // Write code here that turns the phrase above into concrete actions
-//      throw new cucumber.api.PendingException();
-  }
 
-  @Given("the CC advisor selects the address")
-  public void the_CC_advisor_selects_the_address() {
-      // Write code here that turns the phrase above into concrete actions
-//      throw new cucumber.api.PendingException();
+  @Given("the CC advisor has provided a valid UPRN with caseType HH")
+  public void the_CC_advisor_has_provided_a_valid_UPRN_with_caseType_HH() {
+    // Add a case to the mock case service, which has a valid UPRN and region N
+    // Idea: Put this in an @before step and retrieve in a combination of this step and the next one
+    CaseContainerDTO caseToBeReturned = new CaseContainerDTO();
+    caseToBeReturned.setCaseRef("123123");
+    caseToBeReturned.setUprn("1347459999");
+    caseToBeReturned.setAddressLine1("Northern Irish House");
+    caseToBeReturned.setAddressLine2("44 Northern Irish Street");
+    caseToBeReturned.setAddressLine3("Belfast");
+    caseToBeReturned.setRegion("N");
   }
 
   @When("the Case endpoint returns a case asscoiated to the UPRN")
   public void the_Case_endpoint_returns_a_case_asscoiated_to_the_UPRN() {
-      // Write code here that turns the phrase above into concrete actions
-//      throw new cucumber.api.PendingException();
+    // Write code here that turns the phrase above into concrete actions
+    // throw new cucumber.api.PendingException();
   }
 
-  @Then("a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
-  public void a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(String string, String string2) {
-      // Write code here that turns the phrase above into concrete actions
-//      throw new cucumber.api.PendingException();
+  @Then(
+      "a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
+  public void
+      a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
+          String string, String string2) {
+    // Write code here that turns the phrase above into concrete actions
+    // throw new cucumber.api.PendingException();
   }
 
   @Given("CC Advisor select the product code for HH UAC via Post")
   public void cc_Advisor_select_the_product_code_for_HH_UAC_via_Post() {
-      // Write code here that turns the phrase above into concrete actions
-//      throw new cucumber.api.PendingException();
+    // Write code here that turns the phrase above into concrete actions
+    // throw new cucumber.api.PendingException();
   }
 
-  @Then("an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
-  public void an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() {
-      // Write code here that turns the phrase above into concrete actions
-//      throw new cucumber.api.PendingException();
+  @Then(
+      "an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
+  public void
+      an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() {
+    // Write code here that turns the phrase above into concrete actions
+    // throw new cucumber.api.PendingException();
   }
 
+  private void postCaseToMockService(CaseContainerDTO caseToPost) {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+            .port(mcsBasePort)
+            .pathSegment("cases")
+            .pathSegment("data")
+            .pathSegment("cases")
+            .pathSegment("add");
+
+    List<CaseContainerDTO> caseListToPost = Arrays.asList(caseToPost);
+    try {
+      getAuthenticationFreeRestTemplate()
+          .postForObject(builder.build().encode().toUri(), caseListToPost, HashMap.class);
+    } catch (HttpClientErrorException ex) {
+      log.warn(
+          "Posted duplicate cases - exception thrown by mock case service - case: "
+              + caseToPost.getId());
+    }
+  }
 }
