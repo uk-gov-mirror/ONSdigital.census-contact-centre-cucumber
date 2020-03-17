@@ -320,9 +320,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     //    try {
     ResponseEntity<List<Product>> productsResponse = getProducts("HH", region, individual);
     listOfProducts = productsResponse.getBody();
-          HttpStatus contactCentreStatus = productsResponse.getStatusCode();
-          log.with(contactCentreStatus).info("GET PRODUCTS: The response from " +
-     caseForUprnUrl);
+    HttpStatus contactCentreStatus = productsResponse.getStatusCode();
+    log.with(contactCentreStatus).info("GET PRODUCTS: The response from " + caseForUprnUrl);
     //      assertEquals(
     //          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of
     // 200",
