@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -45,7 +44,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String caseForUprnUrl;
   private List<CaseDTO> listOfCasesWithUprn;
 
-  @Autowired private ProductService productService;
+  @Autowired
+  private ProductService productService;
 
   @Given("I Search fulfilments")
   public void i_Search_fulfilments() {
@@ -58,22 +58,14 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   private void searchFulfillments(String caseType, String region, String individual) {
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("/fulfilments")
-            .queryParam("caseType", caseType)
-            .queryParam("region", region)
-            .queryParam("individual", individual);
+    final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+        .port(ccBasePort).pathSegment("/fulfilments").queryParam("caseType", caseType)
+        .queryParam("region", region).queryParam("individual", individual);
 
     try {
       ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse =
-          getRestTemplate()
-              .exchange(
-                  builder.build().encode().toUri(),
-                  HttpMethod.GET,
-                  null,
-                  new ParameterizedTypeReference<List<FulfilmentDTO>>() {});
+          getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET, null,
+              new ParameterizedTypeReference<List<FulfilmentDTO>>() {});
       fulfilmentDTOList = fulfilmentResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
       fail(httpClientErrorException.getMessage());
@@ -81,25 +73,20 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @Then("A list of fulfilments is returned of the correct products {string} {string} {string}")
-  public void a_list_of_fulfilments_is_returned_of_the_correct_products(
-      String caseType, String region, String individual) throws CTPException {
+  public void a_list_of_fulfilments_is_returned_of_the_correct_products(String caseType,
+      String region, String individual) throws CTPException {
 
     this.requestChannel = "CC";
     List<Product> expectedProducts = getExpectedProducts(caseType, region, individual);
 
-    assertEquals(
-        "Fulfilments list size should be " + expectedProducts.size(),
-        Integer.valueOf(expectedProducts.size()),
-        Integer.valueOf(fulfilmentDTOList.size()));
-    fulfilmentDTOList.forEach(
-        fulfilment -> {
-          assertTrue(
-              "Fulfilment should be of correct caseType",
-              fulfilmentContainsCaseType(fulfilment, caseType));
-          assertTrue(
-              "Fulfilment should be of correct region",
-              fulfilment.getRegions().contains(Region.valueOf(region)));
-        });
+    assertEquals("Fulfilments list size should be " + expectedProducts.size(),
+        Integer.valueOf(expectedProducts.size()), Integer.valueOf(fulfilmentDTOList.size()));
+    fulfilmentDTOList.forEach(fulfilment -> {
+      assertTrue("Fulfilment should be of correct caseType",
+          fulfilmentContainsCaseType(fulfilment, caseType));
+      assertTrue("Fulfilment should be of correct region",
+          fulfilment.getRegions().contains(Region.valueOf(region)));
+    });
   }
 
   private boolean fulfilmentContainsCaseType(final FulfilmentDTO dto, final String caseType) {
@@ -119,14 +106,10 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("I Search Addresses By Address Search String")
   public void i_Search_Addresses_By_Address_Search_String() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("addresses")
-            .queryParam("input", addressSearchString);
-    addressQueryResponseDTO =
-        getRestTemplate()
-            .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
+        .pathSegment("addresses").queryParam("input", addressSearchString);
+    addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(),
+        AddressQueryResponseDTO.class);
   }
 
   @Then("A list of addresses for my search is returned containing the address I require")
@@ -138,12 +121,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("I have a valid UPRN from my found address {string}")
   public void i_have_a_valid_UPRN_from_my_found_address(final String expectedUPRN) {
 
-    List<AddressDTO> addressList =
-        addressQueryResponseDTO
-            .getAddresses()
-            .stream()
-            .filter(aq -> aq.getUprn().equals(expectedUPRN))
-            .collect(Collectors.toList());
+    List<AddressDTO> addressList = addressQueryResponseDTO.getAddresses().stream()
+        .filter(aq -> aq.getUprn().equals(expectedUPRN)).collect(Collectors.toList());
     if (addressList.isEmpty()) {
       fail(
           "i_have_a_valid_UPRN_from_my_found_address - filtered address list must not be empty: expected UPRN "
@@ -156,20 +135,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("I Search cases By UPRN")
   public void i_Search_cases_By_UPRN() {
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment("uprn")
-            .pathSegment(uprn);
+    final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+        .port(ccBasePort).pathSegment("cases").pathSegment("uprn").pathSegment(uprn);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          getRestTemplate()
-              .exchange(
-                  builder.build().encode().toUri(),
-                  HttpMethod.GET,
-                  null,
-                  new ParameterizedTypeReference<List<CaseDTO>>() {});
+          getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET, null,
+              new ParameterizedTypeReference<List<CaseDTO>>() {});
       caseDTOList = caseResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
       fail(httpClientErrorException.getMessage());
@@ -182,21 +153,15 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       assertNull(caseDTOList);
       caseDTOList = new ArrayList<>();
     } else {
-      List caseIdList =
-          Arrays.stream(caseIds.split(","))
-              .filter(item -> !item.isEmpty())
-              .collect(Collectors.toList());
+      List caseIdList = Arrays.stream(caseIds.split(",")).filter(item -> !item.isEmpty())
+          .collect(Collectors.toList());
       try {
-        caseDTOList.forEach(
-            caseDetails -> {
-              assertEquals(
-                  "Cases must have the correct UPRN",
-                  uprn,
-                  Long.toString(caseDetails.getUprn().getValue()));
-              assertTrue(
-                  "Cases must have the correct ID" + caseIds,
-                  caseIdList.contains(caseDetails.getId().toString()));
-            });
+        caseDTOList.forEach(caseDetails -> {
+          assertEquals("Cases must have the correct UPRN", uprn,
+              Long.toString(caseDetails.getUprn().getValue()));
+          assertTrue("Cases must have the correct ID" + caseIds,
+              caseIdList.contains(caseDetails.getId().toString()));
+        });
       } catch (NullPointerException npe) {
         fail("Null pointer exception on case list for UPRN: " + uprn);
       }
@@ -217,28 +182,20 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         expectedProducts.stream().map(ex -> ex.getFulfilmentCode()).collect(Collectors.toList());
 
     if (caseDTO != null) {
-      assertEquals(
-          "Fulfilments list size should be " + expectedProducts.size(),
-          Integer.valueOf(expectedProducts.size()),
-          Integer.valueOf(fulfilmentDTOList.size()));
-      fulfilmentDTOList.forEach(
-          fulfilment -> {
-            assertTrue(
-                "Case: " + caseDTO + " Fulfilment should be of correct code ",
-                expectedCodes.contains(fulfilment.getFulfilmentCode()));
-          });
+      assertEquals("Fulfilments list size should be " + expectedProducts.size(),
+          Integer.valueOf(expectedProducts.size()), Integer.valueOf(fulfilmentDTOList.size()));
+      fulfilmentDTOList.forEach(fulfilment -> {
+        assertTrue("Case: " + caseDTO + " Fulfilment should be of correct code ",
+            expectedCodes.contains(fulfilment.getFulfilmentCode()));
+      });
     }
   }
 
-  private List<Product> getExpectedProducts(
-      final String caseType, final String region, final String individual) throws CTPException {
+  private List<Product> getExpectedProducts(final String caseType, final String region,
+      final String individual) throws CTPException {
 
-    return productService
-        .getProducts()
-        .stream()
-        .filter(p1 -> (containsCaseType(p1, caseType)))
-        .filter(p2 -> (containsRegion(p2, region)))
-        .filter(p3 -> containsChannel(p3))
+    return productService.getProducts().stream().filter(p1 -> (containsCaseType(p1, caseType)))
+        .filter(p2 -> (containsRegion(p2, region))).filter(p3 -> containsChannel(p3))
         .filter(p4 -> p4.getIndividual().equals(Boolean.parseBoolean(individual)))
         .collect(Collectors.toList());
   }
@@ -282,8 +239,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       log.with(contactCentreStatus).info("GET CASE BY UPRN: The response from " + caseForUprnUrl);
       assertEquals(
           "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
-          HttpStatus.OK,
-          contactCentreStatus);
+          HttpStatus.OK, contactCentreStatus);
     } catch (ResourceAccessException e) {
       log.error("GET CASE BY UPRN HAS FAILED: A ResourceAccessException has occurred.");
       log.error(e.getMessage());
@@ -299,25 +255,36 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Then("the Case endpoint returns a case associated with the UPRN")
   public void the_Case_endpoint_returns_a_case_associated_with_the_UPRN() {
-    assertEquals(
-        "The case id found is not the expected one",
-        "3305e937-6fb1-4ce1-9d4c-077f147789aa",
-        listOfCasesWithUprn.get(0).getId().toString());
+    assertEquals("The case id found is not the expected one",
+        "3305e937-6fb1-4ce1-9d4c-077f147789aa", listOfCasesWithUprn.get(0).getId().toString());
 
     UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber("1347459991");
-    assertEquals(
-        "The uprn found is not the expected one",
-        expectedUprn,
+    assertEquals("The uprn found is not the expected one", expectedUprn,
         listOfCasesWithUprn.get(0).getUprn());
   }
 
-  @Given(
-      "a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
-  public void
-      a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
-          String string, String string2) {
-    // Write code here that turns the phrase above into concrete actions
-    // throw new cucumber.api.PendingException();
+  @Given("a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
+  public void a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
+      String individual, String region) throws CTPException {
+//    try {
+      ResponseEntity<List<Product>> productsResponse = getProducts("HH", region, individual);
+//      listOfCasesWithUprn = caseUprnResponse.getBody();
+//      HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
+//      log.with(contactCentreStatus).info("GET CASE BY UPRN: The response from " + caseForUprnUrl);
+//      assertEquals(
+//          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
+//          HttpStatus.OK, contactCentreStatus);
+//    } catch (ResourceAccessException e) {
+//      log.error("GET CASE BY UPRN HAS FAILED: A ResourceAccessException has occurred.");
+//      log.error(e.getMessage());
+//      fail();
+//      System.exit(0);
+//    } catch (Exception e) {
+//      log.error("GET CASE BY UPRN HAS FAILED: An unexpected error has occurred.");
+//      log.error(e.getMessage());
+//      fail();
+//      System.exit(0);
+//    }
   }
 
   @When("CC Advisor select the product code for HH UAC via Post")
@@ -326,38 +293,45 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     // throw new cucumber.api.PendingException();
   }
 
-  @Then(
-      "an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
-  public void
-      an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() {
+  @Then("an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
+  public void an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() {
     // Write code here that turns the phrase above into concrete actions
     // throw new cucumber.api.PendingException();
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment("uprn")
-            .pathSegment(uprn);
+    final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+        .port(ccBasePort).pathSegment("cases").pathSegment("uprn").pathSegment(uprn);
 
     ResponseEntity<List<CaseDTO>> caseResponse = null;
 
     try {
-      caseResponse =
-          getRestTemplate()
-              .exchange(
-                  builder.build().encode().toUri(),
-                  HttpMethod.GET,
-                  null,
-                  new ParameterizedTypeReference<List<CaseDTO>>() {});
-      caseDTOList = caseResponse.getBody();
+      caseResponse = getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET,
+          null, new ParameterizedTypeReference<List<CaseDTO>>() {});
+//      caseDTOList = caseResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
           "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
               + httpClientErrorException.getMessage());
     }
     return caseResponse;
+  }
+  
+  private ResponseEntity<List<Product>> getProducts(String caseType, String region, String individual) {
+    final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+        .port(ccBasePort).pathSegment("fulfilments").queryParam("caseType", "HH").queryParam("region", region).queryParam("individual", individual);
+
+    ResponseEntity<List<Product>> productsResponse = null;
+
+    try {
+      productsResponse = getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET,
+          null, new ParameterizedTypeReference<List<Product>>() {});
+//      caseDTOList = caseResponse.getBody();
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
+    }
+    return productsResponse;
   }
 }
