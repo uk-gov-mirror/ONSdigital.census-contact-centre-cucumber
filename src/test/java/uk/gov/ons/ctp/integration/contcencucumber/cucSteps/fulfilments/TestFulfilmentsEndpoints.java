@@ -44,11 +44,11 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private CaseDTO caseDTO;
   private String requestChannel = "";
   private URI caseForUprnUrl;
+  private URI productsUrl;
   private List<CaseDTO> listOfCasesWithUprn;
   private List<Product> listOfProducts;
 
   @Autowired private ProductService productService;
-  private URI productsUrl;
 
   @Given("I Search fulfilments")
   public void i_Search_fulfilments() {
@@ -345,8 +345,14 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("CC Advisor select the product code for HH UAC via Post")
   public void cc_Advisor_select_the_product_code_for_HH_UAC_via_Post() {
-    // Write code here that turns the phrase above into concrete actions
-    // throw new cucumber.api.PendingException();
+    String productCodeSelected = null;
+    for (Product p : listOfProducts) {
+      String productDescription = p.getDescription();
+      if (productDescription.equals("Household Unique Access Code for Northern Ireland via paper")) {
+        productCodeSelected = p.getFulfilmentCode();
+      }
+    }
+    assertEquals("An incorrect fulfilment code was selected", "P_UAC_UACHHP4", productCodeSelected);
   }
 
   @Then(
