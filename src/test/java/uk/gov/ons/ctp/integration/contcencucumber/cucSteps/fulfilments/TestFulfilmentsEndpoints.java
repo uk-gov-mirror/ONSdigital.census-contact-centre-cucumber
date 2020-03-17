@@ -348,7 +348,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     String productCodeSelected = null;
     for (Product p : listOfProducts) {
       String productDescription = p.getDescription();
-      if (productDescription.equals("Household Unique Access Code for Northern Ireland via paper")) {
+      if (productDescription.equals(
+          "Household Unique Access Code for Northern Ireland via paper")) {
         productCodeSelected = p.getFulfilmentCode();
       }
     }
