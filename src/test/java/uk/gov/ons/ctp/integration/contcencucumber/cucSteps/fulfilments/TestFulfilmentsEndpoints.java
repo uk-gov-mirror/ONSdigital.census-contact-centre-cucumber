@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,11 +43,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private List<CaseDTO> caseDTOList;
   private CaseDTO caseDTO;
   private String requestChannel = "";
-  private String caseForUprnUrl;
+  private URI caseForUprnUrl;
   private List<CaseDTO> listOfCasesWithUprn;
   private List<Product> listOfProducts;
 
   @Autowired private ProductService productService;
+  private URI productsUrl;
 
   @Given("I Search fulfilments")
   public void i_Search_fulfilments() {
@@ -280,7 +282,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       ResponseEntity<List<CaseDTO>> caseUprnResponse = getCaseForUprn("1347459991");
       listOfCasesWithUprn = caseUprnResponse.getBody();
       HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
-      log.with(contactCentreStatus).info("GET CASE BY UPRN: The response from " + caseForUprnUrl);
+      log.with(contactCentreStatus)
+          .info("GET CASE BY UPRN: The response from " + caseForUprnUrl.toString());
       assertEquals(
           "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
           HttpStatus.OK,
@@ -317,26 +320,27 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void
       a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
           String individual, String region) throws CTPException {
-    //    try {
-    ResponseEntity<List<Product>> productsResponse = getProducts("HH", region, individual);
-    listOfProducts = productsResponse.getBody();
-    HttpStatus contactCentreStatus = productsResponse.getStatusCode();
-    log.with(contactCentreStatus).info("GET PRODUCTS: The response from " + caseForUprnUrl);
-    //      assertEquals(
-    //          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of
-    // 200",
-    //          HttpStatus.OK, contactCentreStatus);
-    //    } catch (ResourceAccessException e) {
-    //      log.error("GET CASE BY UPRN HAS FAILED: A ResourceAccessException has occurred.");
-    //      log.error(e.getMessage());
-    //      fail();
-    //      System.exit(0);
-    //    } catch (Exception e) {
-    //      log.error("GET CASE BY UPRN HAS FAILED: An unexpected error has occurred.");
-    //      log.error(e.getMessage());
-    //      fail();
-    //      System.exit(0);
-    //    }
+    try {
+      ResponseEntity<List<Product>> productsResponse = getProducts("HH", region, individual);
+      listOfProducts = productsResponse.getBody();
+      HttpStatus contactCentreStatus = productsResponse.getStatusCode();
+      log.with(contactCentreStatus)
+          .info("GET PRODUCTS: The response from " + productsUrl.toString());
+      assertEquals(
+          "GET PRODUCTS HAS FAILED -  the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus);
+    } catch (ResourceAccessException e) {
+      log.error("GET PRODUCTS HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("GET PRODUCTS HAS FAILED: An unexpected error has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
   }
 
   @When("CC Advisor select the product code for HH UAC via Post")
@@ -362,12 +366,13 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment(uprn);
 
     ResponseEntity<List<CaseDTO>> caseResponse = null;
+    caseForUprnUrl = builder.build().encode().toUri();
 
     try {
       caseResponse =
           getRestTemplate()
               .exchange(
-                  builder.build().encode().toUri(),
+                  caseForUprnUrl,
                   HttpMethod.GET,
                   null,
                   new ParameterizedTypeReference<List<CaseDTO>>() {});
@@ -390,16 +395,16 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .queryParam("individual", individual);
 
     ResponseEntity<List<Product>> productsResponse = null;
+    productsUrl = builder.build().encode().toUri();
 
     try {
       productsResponse =
           getRestTemplate()
               .exchange(
-                  builder.build().encode().toUri(),
+                  productsUrl,
                   HttpMethod.GET,
                   null,
                   new ParameterizedTypeReference<List<Product>>() {});
-      //      caseDTOList = caseResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
           "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
