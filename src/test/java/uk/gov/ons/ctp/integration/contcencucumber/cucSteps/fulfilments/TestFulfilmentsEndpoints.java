@@ -277,7 +277,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_CC_advisor_has_provided_a_valid_UPRN_with_caseType_HH() {
     try {
       ResponseEntity<List<CaseDTO>> caseUprnResponse = getCaseForUprn("1347459991");
-      //      caseByUprnBody = caseUprnResponse.getBody();
       listOfCasesWithUprn = caseUprnResponse.getBody();
       HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
       log.with(contactCentreStatus).info("GET CASE BY UPRN: The response from " + caseForUprnUrl);
@@ -298,7 +297,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  @When("the Case endpoint returns a case associated with the UPRN")
+  @Then("the Case endpoint returns a case associated with the UPRN")
   public void the_Case_endpoint_returns_a_case_associated_with_the_UPRN() {
     assertEquals(
         "The case id found is not the expected one",
@@ -312,7 +311,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         listOfCasesWithUprn.get(0).getUprn());
   }
 
-  @Then(
+  @Given(
       "a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
   public void
       a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
@@ -321,7 +320,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     // throw new cucumber.api.PendingException();
   }
 
-  @Given("CC Advisor select the product code for HH UAC via Post")
+  @When("CC Advisor select the product code for HH UAC via Post")
   public void cc_Advisor_select_the_product_code_for_HH_UAC_via_Post() {
     // Write code here that turns the phrase above into concrete actions
     // throw new cucumber.api.PendingException();
@@ -342,10 +341,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprn);
-
-    // caseForUprnUrl = builder.build().encode().toUri().toString();
-    // log.info("Using the following endpoint to get case by UPRN: " + caseForUprnUrl);
-    // return getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
 
     ResponseEntity<List<CaseDTO>> caseResponse = null;
 
