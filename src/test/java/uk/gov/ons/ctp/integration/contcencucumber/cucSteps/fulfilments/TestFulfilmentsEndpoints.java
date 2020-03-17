@@ -44,6 +44,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String requestChannel = "";
   private String caseForUprnUrl;
   private List<CaseDTO> listOfCasesWithUprn;
+  private List<Product> listOfProducts;
 
   @Autowired private ProductService productService;
 
@@ -318,10 +319,10 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           String individual, String region) throws CTPException {
     //    try {
     ResponseEntity<List<Product>> productsResponse = getProducts("HH", region, individual);
-    //      listOfCasesWithUprn = caseUprnResponse.getBody();
-    //      HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
-    //      log.with(contactCentreStatus).info("GET CASE BY UPRN: The response from " +
-    // caseForUprnUrl);
+    listOfProducts = productsResponse.getBody();
+          HttpStatus contactCentreStatus = productsResponse.getStatusCode();
+          log.with(contactCentreStatus).info("GET PRODUCTS: The response from " +
+     caseForUprnUrl);
     //      assertEquals(
     //          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of
     // 200",
@@ -371,7 +372,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
                   HttpMethod.GET,
                   null,
                   new ParameterizedTypeReference<List<CaseDTO>>() {});
-      //      caseDTOList = caseResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
           "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
