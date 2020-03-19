@@ -5,10 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +21,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.util.UriComponentsBuilder;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
+import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
@@ -38,8 +39,6 @@ import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ResponseDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
-
-// import uk.gov.ons.ctp.integration.rhcucumber.utils.TimeoutParser;
 
 public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
@@ -54,9 +53,17 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private URI productsUrl;
   private List<CaseDTO> listOfCasesWithUprn;
   private List<Product> listOfProducts;
+  private RabbitHelper rabbit;
 
   @Autowired private ProductService productService;
   private URI fulfilmentByPostUrl;
+  
+  private static final String RABBIT_EXCHANGE = "events";
+
+  @Before("@SetUp")
+  public void setup() throws CTPException {
+    rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
+  }
 
   @Given("I Search fulfilments")
   public void i_Search_fulfilments() {
@@ -390,14 +397,14 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       "an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
   public void
       an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() {
-    // log.info(
-    // "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
-    // + queueName
-    // + ", ready to be picked up by RM");
-    //
-    // String clazzName = "RespondentAuthenticatedEvent.class";
-    // String timeout = "2000ms";
-    //
+//     log.info(
+//     "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
+//     + queueName
+//     + ", ready to be picked up by RM");
+    
+     String clazzName = "FulfilmentRequestedEvent.class";
+     String timeout = "2000ms";
+    
     // log.info(
     // "Getting from queue: '"
     // + queueName

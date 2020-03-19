@@ -15,6 +15,13 @@
 		<version>0.0.13</version>
 	</parent>
 	<dependencies>
+        <dependency>
+			<groupId>uk.gov.ons.ctp.integration.common</groupId>
+			<artifactId>cucumber-common</artifactId>
+			<version>0.0.12</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>framework</artifactId>
