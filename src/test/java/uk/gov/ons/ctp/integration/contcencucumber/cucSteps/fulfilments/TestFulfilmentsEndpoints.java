@@ -26,6 +26,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import uk.gov.ons.ctp.common.error.CTPException;
+import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
@@ -54,6 +55,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private List<CaseDTO> listOfCasesWithUprn;
   private List<Product> listOfProducts;
   private RabbitHelper rabbit;
+  private String queueName;
 
   @Autowired private ProductService productService;
   private URI fulfilmentByPostUrl;
@@ -358,6 +360,17 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
+  @Given("an empty queue exists for sending Fulfilment Requested events")
+  public void an_empty_queue_exists_for_sending_Fulfilment_Requested_events() throws CTPException {
+    String eventTypeAsString = "FULFILMENT_REQUESTED";
+    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
+    EventType eventType = EventType.valueOf(eventTypeAsString);
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+
+    rabbit.flushQueue(queueName);
+  }
+  
   @When("CC Advisor select the product code for HH UAC via Post")
   public void cc_Advisor_select_the_product_code_for_HH_UAC_via_Post() {
     String productCodeSelected = null;

@@ -52,5 +52,6 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given the CC advisor has provided a valid UPRN with caseType HH
     Then the Case endpoint returns a case associated with the UPRN
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
+    And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor select the product code for HH UAC via Post
     Then an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post
