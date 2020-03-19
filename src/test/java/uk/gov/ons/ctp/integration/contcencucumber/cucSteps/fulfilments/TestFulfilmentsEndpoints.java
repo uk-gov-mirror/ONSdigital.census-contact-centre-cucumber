@@ -34,6 +34,7 @@ import uk.gov.ons.ctp.common.event.model.RespondentAuthenticatedPayload;
 import uk.gov.ons.ctp.common.event.model.RespondentAuthenticatedResponse;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
+import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
@@ -419,7 +420,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Then(
       "an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
   public void
-      an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() {
+      an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() throws CTPException {
      log.info(
      "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
      + queueName
@@ -437,18 +438,18 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
      + timeout
      + "'");
     
-//     fulfilmentRequestedEvent =
-//     (FulfilmentRequestedEvent)
-//     rabbit.getMessage(
-//     queueName,
-//     FulfilmentRequestedEvent.class,
-//     TimeoutParser.parseTimeoutString(timeout));
-//    
-//     assertNotNull(fulfilmentRequestedEvent);
-//     fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
-//     assertNotNull(fulfilmentRequestedHeader);
-//     fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
-//     assertNotNull(fulfilmentPayload);
+     fulfilmentRequestedEvent =
+     (FulfilmentRequestedEvent)
+     rabbit.getMessage(
+     queueName,
+     FulfilmentRequestedEvent.class,
+     TimeoutParser.parseTimeoutString(timeout));
+    
+     assertNotNull(fulfilmentRequestedEvent);
+     fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+     assertNotNull(fulfilmentRequestedHeader);
+     fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+     assertNotNull(fulfilmentPayload);
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
