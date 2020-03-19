@@ -27,6 +27,11 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
+import uk.gov.ons.ctp.common.event.model.FulfilmentPayload;
+import uk.gov.ons.ctp.common.event.model.FulfilmentRequestedEvent;
+import uk.gov.ons.ctp.common.event.model.Header;
+import uk.gov.ons.ctp.common.event.model.RespondentAuthenticatedPayload;
+import uk.gov.ons.ctp.common.event.model.RespondentAuthenticatedResponse;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
@@ -40,6 +45,7 @@ import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ResponseDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
+//import uk.gov.ons.ctp.integration.rhcucumber.utils.TimeoutParser;
 
 public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
@@ -56,6 +62,9 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private List<Product> listOfProducts;
   private RabbitHelper rabbit;
   private String queueName;
+  private FulfilmentRequestedEvent fulfilmentRequestedEvent;
+  private Header fulfilmentRequestedHeader;
+  private FulfilmentPayload fulfilmentPayload;
 
   @Autowired private ProductService productService;
   private URI fulfilmentByPostUrl;
@@ -65,6 +74,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Before("@SetUp")
   public void setup() throws CTPException {
     rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
+    fulfilmentRequestedEvent = null;
   }
 
   @Given("I Search fulfilments")
@@ -410,35 +420,35 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       "an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
   public void
       an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post() {
-//     log.info(
-//     "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
-//     + queueName
-//     + ", ready to be picked up by RM");
+     log.info(
+     "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
+     + queueName
+     + ", ready to be picked up by RM");
     
      String clazzName = "FulfilmentRequestedEvent.class";
      String timeout = "2000ms";
     
-    // log.info(
-    // "Getting from queue: '"
-    // + queueName
-    // + "' and converting to an object of type '"
-    // + clazzName
-    // + "', with timeout of '"
-    // + timeout
-    // + "'");
-    //
-    // respondentAuthenticatedEvent =
-    // (RespondentAuthenticatedEvent)
-    // rabbit.getMessage(
-    // queueName,
-    // RespondentAuthenticatedEvent.class,
-    // TimeoutParser.parseTimeoutString(timeout));
-    //
-    // assertNotNull(respondentAuthenticatedEvent);
-    // respondentAuthenticatedHeader = respondentAuthenticatedEvent.getEvent();
-    // assertNotNull(respondentAuthenticatedHeader);
-    // respondentAuthenticatedPayload = respondentAuthenticatedEvent.getPayload();
-    // assertNotNull(respondentAuthenticatedPayload);
+     log.info(
+     "Getting from queue: '"
+     + queueName
+     + "' and converting to an object of type '"
+     + clazzName
+     + "', with timeout of '"
+     + timeout
+     + "'");
+    
+//     fulfilmentRequestedEvent =
+//     (FulfilmentRequestedEvent)
+//     rabbit.getMessage(
+//     queueName,
+//     FulfilmentRequestedEvent.class,
+//     TimeoutParser.parseTimeoutString(timeout));
+//    
+//     assertNotNull(fulfilmentRequestedEvent);
+//     fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+//     assertNotNull(fulfilmentRequestedHeader);
+//     fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+//     assertNotNull(fulfilmentPayload);
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
