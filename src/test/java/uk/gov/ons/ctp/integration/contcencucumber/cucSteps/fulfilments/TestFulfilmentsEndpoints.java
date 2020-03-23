@@ -329,31 +329,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  //  @Given("the CC advisor has provided a valid UPRN with caseType HI")
-  //  public void the_CC_advisor_has_provided_a_valid_UPRN_with_caseType_HI() {
-  //    try {
-  //      ResponseEntity<List<CaseDTO>> caseUprnResponse = getCaseForUprn("1347459992");
-  //      listOfCasesWithUprn = caseUprnResponse.getBody();
-  //      HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
-  //      log.with(contactCentreStatus)
-  //          .info("GET CASE BY UPRN: The response from " + caseForUprnUrl.toString());
-  //      assertEquals(
-  //          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of
-  // 200",
-  //          HttpStatus.OK, contactCentreStatus);
-  //    } catch (ResourceAccessException e) {
-  //      log.error("GET CASE BY UPRN HAS FAILED: A ResourceAccessException has occurred.");
-  //      log.error(e.getMessage());
-  //      fail();
-  //      System.exit(0);
-  //    } catch (Exception e) {
-  //      log.error("GET CASE BY UPRN HAS FAILED: An unexpected error has occurred.");
-  //      log.error(e.getMessage());
-  //      fail();
-  //      System.exit(0);
-  //    }
-  //  }
-
   @Given("the CC advisor has provided a valid UPRN {string}")
   public void the_CC_advisor_has_provided_a_valid_UPRN(String strUprn) {
     try {
@@ -396,42 +371,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         strCaseType,
         listOfCasesWithUprn.get(0).getCaseType());
   }
-
-  //  @Then("the Case endpoint returns a case associated with the UPRN")
-  //  public void the_Case_endpoint_returns_a_case_associated_with_the_UPRN() {
-  //    assertEquals("The case id found is not the expected one",
-  //        "3305e937-6fb1-4ce1-9d4c-077f147789aa", listOfCasesWithUprn.get(0).getId().toString());
-  //
-  //    UniquePropertyReferenceNumber expectedUprn = new
-  // UniquePropertyReferenceNumber("1347459991");
-  //    assertEquals("The uprn found is not the expected one", expectedUprn,
-  //        listOfCasesWithUprn.get(0).getUprn());
-  //  }
-
-  //  @When("the Case endpoint returns a case associated with UPRN {string}, which has caseType
-  // {string}")
-  //  public void the_Case_endpoint_returns_a_case_associated_with_UPRN_which_has_caseType(String
-  // strUprn, String strCaseType) {
-  //    assertEquals("The case id found is not the expected one",
-  //        "3305e937-6fb1-4ce1-9d4c-077f147789aa", listOfCasesWithUprn.get(0).getId().toString());
-  //
-  //    UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
-  //    assertEquals("The uprn found is not the expected one", expectedUprn,
-  //        listOfCasesWithUprn.get(0).getUprn());
-  //    assertEquals("The caseType found is not the expected one", strCaseType,
-  // listOfCasesWithUprn.get(0).getCaseType());
-  //  }
-  //
-  //  @When("the Case endpoint returns a case associated with UPRN {string}")
-  //  public void the_Case_endpoint_returns_a_case_associated_with_UPRN(String uprn) {
-  //    assertEquals("The case id found is not the expected one",
-  //        "3305e937-6fb1-4ce1-9d4c-077f147711aa", listOfCasesWithUprn.get(0).getId().toString());
-  //
-  //    UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(uprn);
-  //    assertEquals("The uprn found is not the expected one", expectedUprn,
-  //        listOfCasesWithUprn.get(0).getUprn());
-  //
-  //  }
 
   @Given(
       "a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")

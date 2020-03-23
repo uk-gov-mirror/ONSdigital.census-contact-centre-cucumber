@@ -47,15 +47,6 @@ Feature: Test Contact centre Fulfilments Endpoints
       | "70, Magdalen Street" | "100040222798" | "3305e937-6fb1-4ce1-9d4c-077f147789de" |
       | "33 Serge Court"      | "100041131297" | "03f58cb5-9af4-4d40-9d60-c124c5bddfff" |
 
-  #@SetUp
-  #Scenario: [CR-T142] I want to request an UAC for a HH Respondent in NI via POST
-  #Given the CC advisor has provided a valid UPRN with caseType HH
-  #Then the Case endpoint returns a case associated with the UPRN
-  #Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
-  #And an empty queue exists for sending Fulfilment Requested events
-  #When CC Advisor select the product code for HH UAC via Post
-  #Then an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post
-  
   @SetUp
   Scenario: [CR-T142] I want to request an UAC for a HH Respondent in NI via POST
     Given the CC advisor has provided a valid UPRN "1347459991"
