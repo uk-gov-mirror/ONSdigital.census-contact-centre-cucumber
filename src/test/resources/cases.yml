@@ -288,9 +288,9 @@ casedata:
                 "createdDateTime": "2019-04-14T13:45:26.564+01:00"
             }
         ],
-        "id": "3305e937-6fb1-4ce1-9d4c-077f147789aa",
-        "caseType": "HI",
-        "addressType": "HI",
+        "id": "3305e937-6fb1-4ce1-9d4c-077f147711aa",
+        "caseType": "HH",
+        "addressType": "HH",
         "region": "N",
         "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
         "surveyType": "CENSUS",
