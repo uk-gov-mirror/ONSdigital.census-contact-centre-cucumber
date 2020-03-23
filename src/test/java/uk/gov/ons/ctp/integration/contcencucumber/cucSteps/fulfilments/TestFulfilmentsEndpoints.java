@@ -400,6 +400,34 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
+  @Given(
+      "a list of available fulfilment product codes is presented for a caseType = {string} where individual flag = {string} and region = {string}")
+  public void
+      a_list_of_available_fulfilment_product_codes_is_presented_for_a_caseType_where_individual_flag_and_region(
+          String caseType, String individual, String region) {
+    try {
+      ResponseEntity<List<Product>> productsResponse = getProducts(caseType, region, individual);
+      listOfProducts = productsResponse.getBody();
+      HttpStatus contactCentreStatus = productsResponse.getStatusCode();
+      log.with(contactCentreStatus)
+          .info("GET PRODUCTS: The response from " + productsUrl.toString());
+      assertEquals(
+          "GET PRODUCTS HAS FAILED -  the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus);
+    } catch (ResourceAccessException e) {
+      log.error("GET PRODUCTS HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("GET PRODUCTS HAS FAILED: An unexpected error has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+  }
+
   @Given("an empty queue exists for sending Fulfilment Requested events")
   public void an_empty_queue_exists_for_sending_Fulfilment_Requested_events() throws CTPException {
     String eventTypeAsString = "FULFILMENT_REQUESTED";
