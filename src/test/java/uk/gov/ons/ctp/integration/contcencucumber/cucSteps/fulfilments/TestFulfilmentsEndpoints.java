@@ -473,6 +473,41 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       System.exit(0);
     }
   }
+  
+  @When("CC Advisor select the product code for Individual Paper Questionnaire in welsh language")
+  public void cc_Advisor_select_the_product_code_for_Individual_Paper_Questionnaire_in_welsh_language() {
+    String productCodeSelected = null;
+    for (Product p : listOfProducts) {
+      String productDescription = p.getDescription();
+      if (productDescription.equals(
+          "Individual Questionnaire for Wales (in Welsh)")) {
+        productCodeSelected = p.getFulfilmentCode();
+      }
+    }
+    assertEquals("An incorrect fulfilment code was selected", "P_OR_I2W", productCodeSelected);
+
+    try {
+      ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
+          requestFulfilmentByPost("3305e937-6fb1-4ce1-9d4c-077f147722aa", productCodeSelected);
+      HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
+      log.with(contactCentreStatus)
+          .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
+      assertEquals(
+          "REQUEST FULFILMENT HAS FAILED - the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus);
+    } catch (ResourceAccessException e) {
+      log.error("REQUEST FULFILMENT HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+  }
 
   @Then(
       "an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
