@@ -50,7 +50,7 @@ Feature: Test Contact centre Fulfilments Endpoints
   @SetUp
   Scenario: [CR-T142] I want to request an UAC for a HH Respondent in NI via POST
     Given the CC advisor has provided a valid UPRN "1347459991"
-    When the Case endpoint returns a case, associated with UPRN "1347459991", which has caseType "HH"
+    Then the Case endpoint returns a case, associated with UPRN "1347459991", which has caseType "HH"
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor select the product code for HH UAC via Post
@@ -69,7 +69,7 @@ Feature: Test Contact centre Fulfilments Endpoints
  @SetUp
   Scenario: [CR-T301] I want to request a Welsh Paper Questionnaire for a CE Individual Respondent in Wales
     Given the CC advisor has provided a valid UPRN "1347459993"
-    When the Case endpoint returns a case, associated with UPRN "1347459993", which has caseType "CE"
+    Then the Case endpoint returns a case, associated with UPRN "1347459993", which has caseType "CE"
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor select the product code for Individual Paper Questionnaire in welsh language
