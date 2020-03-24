@@ -473,14 +473,14 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       System.exit(0);
     }
   }
-  
+
   @When("CC Advisor select the product code for Individual Paper Questionnaire in welsh language")
-  public void cc_Advisor_select_the_product_code_for_Individual_Paper_Questionnaire_in_welsh_language() {
+  public void
+      cc_Advisor_select_the_product_code_for_Individual_Paper_Questionnaire_in_welsh_language() {
     String productCodeSelected = null;
     for (Product p : listOfProducts) {
       String productDescription = p.getDescription();
-      if (productDescription.equals(
-          "Individual Questionnaire for Wales (in Welsh)")) {
+      if (productDescription.equals("Individual Questionnaire for Wales (in Welsh)")) {
         productCodeSelected = p.getFulfilmentCode();
       }
     }
