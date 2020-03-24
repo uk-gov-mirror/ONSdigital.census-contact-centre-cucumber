@@ -92,3 +92,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     #And an empty queue exists for sending Fulfilment Requested events
     #When CC Advisor select the product code for CE 1 form in welsh language
     #Then an event with the "CE CaseID" is emitted to RM with a fulfilment request for a CE1 form in welsh 
+    
+    #Scenario CR-T313 is blocked because the product code P_UAC_UACIP4 does not have caseType CE in its list
+    
+    #Scenario CR-T316 is blocked because the product code P_UAC_UACHHP4 does not have caseType CE in its list
