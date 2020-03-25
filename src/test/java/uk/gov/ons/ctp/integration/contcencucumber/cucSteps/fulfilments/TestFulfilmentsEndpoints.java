@@ -372,6 +372,31 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         listOfCasesWithUprn.get(0).getCaseType());
   }
 
+  @Then(
+      "the Case endpoint returns a case, associated with UPRN {string}, which has caseType {string} and addressLevel {string} and handDelivery {string}")
+  public void
+      the_Case_endpoint_returns_a_case_associated_with_UPRN_which_has_caseType_and_addressLevel_and_handDelivery(
+          String strUprn, String strCaseType, String strAddressLevel, String strHandDelivery) {
+    log.with(listOfCasesWithUprn.get(0).getId().toString())
+        .debug("The case id returned by getCasesWithUprn endpoint");
+
+    UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
+    assertEquals(
+        "The uprn found is not the expected one",
+        expectedUprn,
+        listOfCasesWithUprn.get(0).getUprn());
+    assertEquals(
+        "The caseType found is not the expected one",
+        strCaseType,
+        listOfCasesWithUprn.get(0).getCaseType());
+    log.with(strAddressLevel)
+        .info(
+            "We cannot assert that the case has this addressLevel - because the addressLevel field is not shown in the CaseDTO representation to Serco.");
+    log.with(strHandDelivery)
+        .info(
+            "We cannot assert the the case has this value of handDelivery - because the isHandDelivery result is deliberately hidden in the CaseDTO representation to Serco.");
+  }
+
   @Given(
       "a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
   public void
