@@ -640,6 +640,42 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(fulfilmentPayload);
   }
 
+  @Then(
+      "an event is emitted with the {string} to RM with a fulfilment request for an Individual Paper Questionnaire \\(english)")
+  public void
+      an_event_is_emitted_with_the_to_RM_with_a_fulfilment_request_for_an_Individual_Paper_Questionnaire_english(
+          String string) throws CTPException {
+    log.info(
+        "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
+            + queueName
+            + ", ready to be picked up by RM");
+
+    String clazzName = "FulfilmentRequestedEvent.class";
+    String timeout = "2000ms";
+
+    log.info(
+        "Getting from queue: '"
+            + queueName
+            + "' and converting to an object of type '"
+            + clazzName
+            + "', with timeout of '"
+            + timeout
+            + "'");
+
+    fulfilmentRequestedEvent =
+        (FulfilmentRequestedEvent)
+            rabbit.getMessage(
+                queueName,
+                FulfilmentRequestedEvent.class,
+                TimeoutParser.parseTimeoutString(timeout));
+
+    assertNotNull(fulfilmentRequestedEvent);
+    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+    assertNotNull(fulfilmentRequestedHeader);
+    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+    assertNotNull(fulfilmentPayload);
+  }
+
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)

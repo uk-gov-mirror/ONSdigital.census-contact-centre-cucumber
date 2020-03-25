@@ -96,10 +96,11 @@ Feature: Test Contact centre Fulfilments Endpoints
     #Scenario CR-T313 is blocked because the product code P_UAC_UACIP4 does not have caseType CE in its list
     
     #Scenario CR-T316 is blocked because the product code P_UAC_UACHHP4 does not have caseType CE in its list
-    
+    @SetUp
     Scenario: [CR-T323] I want to request a Paper Questionnaire for a SPG Individual Respondent in NI
     Given the CC advisor has provided a valid UPRN "1347459994"
     Then the Case endpoint returns a case, associated with UPRN "1347459994", which has caseType "SPG" and addressLevel "U" and handDelivery "false"
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "true" and region = "N"
+    And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor select the product code for SPG Paper Questionnaire (english)
     Then an event is emitted with the "SPG CaseID" to RM with a fulfilment request for an Individual Paper Questionnaire (english)
