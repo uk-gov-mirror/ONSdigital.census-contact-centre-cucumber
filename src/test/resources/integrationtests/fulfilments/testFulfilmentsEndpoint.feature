@@ -104,3 +104,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor select the product code for SPG Paper Questionnaire (english)
     Then an event is emitted with the "SPG CaseID" to RM with a fulfilment request for an Individual Paper Questionnaire (english)
+
+    #Scenario CR-T334 is on hold because the product reference library does not currently contain the required product - Ella Cook, 25/03/20
+    
+    
