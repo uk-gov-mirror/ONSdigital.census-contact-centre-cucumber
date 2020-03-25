@@ -6,6 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,14 +32,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
@@ -51,7 +52,7 @@ import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
 public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
-  
+
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
 
@@ -74,7 +75,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Value("${keystore}")
   private String keyStore;
-  
+
   @Before
   public void setup() throws Exception {
     rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
@@ -140,7 +141,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void i_have_a_valid_case_ID(String caseId) {
     this.caseId = caseId;
   }
-  
+
   @When("I Search cases By case ID {string}")
   public void i_Search_cases_By_case_ID(String showCaseEvents) {
     final UriComponentsBuilder builder =
@@ -449,7 +450,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotEquals("Must have different jti values", result1.get("jti"), result2.get("jti"));
     assertEquals("Must have the correct region code", "GB-ENG", result1.get("region_code"));
   }
-  
+
   @And("an empty queue exists for sending Refusal events")
   public void an_empty_queue_exists_for_sending_Refusal_events() throws CTPException {
     EventType eventType = EventType.valueOf("REFUSAL_RECEIVED");
@@ -458,22 +459,19 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("Flushing queue: '" + queueName + "'");
     rabbit.flushQueue(queueName);
   }
-  
+
   @And("a Refusal event is sent with type {string}")
   public void a_Refusal_event_is_sent(String type) throws CTPException {
     log.info("Check that a Refusal event has been sent");
-    RespondentRefusalEvent event = 
-        (RespondentRefusalEvent)
-            rabbit.getMessage(
-                queueName,
-                RespondentRefusalEvent.class, 2_000L);
+    RespondentRefusalEvent event =
+        (RespondentRefusalEvent) rabbit.getMessage(queueName, RespondentRefusalEvent.class, 2_000L);
 
     assertNotNull(event);
     Header header = event.getEvent();
     assertEquals(EventType.REFUSAL_RECEIVED, header.getType());
     assertEquals(Source.CONTACT_CENTRE_API, header.getSource());
     assertEquals(Channel.CC, header.getChannel());
-    
+
     RespondentRefusalPayload payload = event.getPayload();
     assertNotNull(payload);
     RespondentRefusalDetails details = payload.getRefusal();
@@ -485,7 +483,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(agentId, details.getAgentId());
     assertEquals(UUID.fromString(caseId), details.getCollectionCase().getId());
   }
-  
+
   @When("I Refuse a case")
   public void i_Refuse_a_case() {
     final UriComponentsBuilder builder =
@@ -495,30 +493,31 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment(caseId)
             .pathSegment("refusal");
     try {
-      responseDTO = getRestTemplate().postForObject(builder.build().encode().toUri(), refusalDTO,
-          ResponseDTO.class);
+      responseDTO =
+          getRestTemplate()
+              .postForObject(builder.build().encode().toUri(), refusalDTO, ResponseDTO.class);
     } catch (HttpClientErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
     } catch (HttpServerErrorException httpServerErrorException) {
       this.exception = httpServerErrorException;
     }
   }
-  
+
   @And("I supply a {string} reason for Refusal")
   public void i_supply_a_reason_for_Refusal(String reason) {
     this.reason = StringUtils.isBlank(reason) ? null : Reason.valueOf(reason);
   }
-  
+
   @And("I supply an {string} agentId for Refusal")
   public void i_supply_an_agentId_for_Refusal(String agentId) {
     this.agentId = agentId;
   }
-  
+
   @And("I supply the Refusal information")
   public void i_supply_the_Refusal_information() {
     this.refusalDTO = createRefusalRequest();
   }
-  
+
   @Then("the call succeeded and responded with the supplied case ID")
   public void the_call_succeeded_and_responded_with_the_supplied_case_ID() {
     assertNotNull("Response must not be null", responseDTO);
@@ -584,7 +583,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("Using the following endpoint to launch EQ: " + telephoneEndpointUrl);
     return getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
   }
-  
+
   private RefusalRequestDTO createRefusalRequest() {
     return RefusalFixture.createRequest(caseId, agentId, reason);
   }

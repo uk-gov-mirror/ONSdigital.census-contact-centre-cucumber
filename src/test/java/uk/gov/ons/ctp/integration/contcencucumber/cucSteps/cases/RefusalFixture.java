@@ -12,7 +12,7 @@ import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RefusalFixture {
-  
+
   public static final Reason A_REASON = Reason.HARD;
   public static final String AN_AGENT_ID = "123";
   public static final String SOME_NOTES = "Description of refusal";
@@ -32,28 +32,29 @@ public final class RefusalFixture {
 
   public static RefusalRequestDTO createRequest(String caseId, String agentId, Reason reason) {
     Date dateTime = new Date();
-    
-    RefusalRequestDTO refusal = RefusalRequestDTO.builder()
-                                  .caseId(caseId)
-                                  .agentId(agentId)
-                                  .notes(SOME_NOTES)
-                                  .title(A_TITLE)
-                                  .forename(A_FORENAME)
-                                  .surname(A_SURNAME)
-                                  .telNo(A_TEL_NO)
-                                  .addressLine1(AN_ADDR_LINE_1)
-                                  .addressLine2(AN_ADDR_LINE_2)
-                                  .addressLine3(AN_ADDR_LINE_3)
-                                  .townName(A_TOWN)
-                                  .postcode(A_POSTCODE)
-                                  .uprn(A_UPRN)
-                                  .region(A_REGION)
-                                  .reason(reason)
-                                  .dateTime(dateTime)
-                                  .build();
+
+    RefusalRequestDTO refusal =
+        RefusalRequestDTO.builder()
+            .caseId(caseId)
+            .agentId(agentId)
+            .notes(SOME_NOTES)
+            .title(A_TITLE)
+            .forename(A_FORENAME)
+            .surname(A_SURNAME)
+            .telNo(A_TEL_NO)
+            .addressLine1(AN_ADDR_LINE_1)
+            .addressLine2(AN_ADDR_LINE_2)
+            .addressLine3(AN_ADDR_LINE_3)
+            .townName(A_TOWN)
+            .postcode(A_POSTCODE)
+            .uprn(A_UPRN)
+            .region(A_REGION)
+            .reason(reason)
+            .dateTime(dateTime)
+            .build();
     return refusal;
   }
-  
+
   // to match details in the request DTO
   public static AddressCompact compactAddress() {
     AddressCompact addr = new AddressCompact();
@@ -66,8 +67,8 @@ public final class RefusalFixture {
     addr.setUprn(A_UPRN_STR);
     return addr;
   }
-  
-  //to match details in the request DTO
+
+  // to match details in the request DTO
   public static Contact contact() {
     Contact contact = new Contact();
     contact.setTitle(A_TITLE);
