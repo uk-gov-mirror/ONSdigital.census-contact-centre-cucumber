@@ -56,15 +56,16 @@ Feature: Test Contact centre Fulfilments Endpoints
     When CC Advisor select the product code for HH UAC via Post
     Then an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post
 
-  ##Scenario CR-T292 is on hold because the product reference library does not currently contain the required product - Ella Cook, 23/03/20
-  #@SetUp
-  #Scenario: [CR-T292] I want to request an UAC for a HI Respondent in Wales in welsh via Post
-  #Given the CC advisor has provided a valid UPRN "1347459992"
-  #When the Case endpoint returns a case, associated with UPRN "1347459992", which has caseType "HH"
-  #Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "true" and region = "W"
-  #And an empty queue exists for sending Fulfilment Requested events
-  #When CC Advisor select the product code for UAC in welsh langiage via Post
-  #Then an event with a "new Individual CaseID" is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post
+  #Scenario CR-T292 is on hold because the product reference library does not currently contain the required product - Ella Cook, 23/03/20
+  @SetUp
+  Scenario: [CR-T292] I want to request an UAC for a HI Respondent in Wales in welsh via Post
+  Given the CC advisor has provided a valid UPRN "1347459992"
+  When the Case endpoint returns a case, associated with UPRN "1347459992", which has caseType "HH"
+  Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "true" and region = "W"
+  And an empty queue exists for sending Fulfilment Requested events
+  When CC Advisor select the product code for UAC in welsh langiage via Post
+  Then an event with a "new Individual CaseID" is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post
+  
   @SetUp
   Scenario: [CR-T301] I want to request a Welsh Paper Questionnaire for a CE Individual Respondent in Wales
     Given the CC advisor has provided a valid UPRN "1347459993"
