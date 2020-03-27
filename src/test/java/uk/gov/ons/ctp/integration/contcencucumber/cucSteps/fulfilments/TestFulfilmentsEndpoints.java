@@ -434,44 +434,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-//  @When("CC Advisor select the product code for UAC in welsh langiage via Post")
-//  public void cc_Advisor_select_the_product_code_for_UAC_in_welsh_langiage_via_Post() {
-//String descriptionToFind = ""; //TODO update the descriptionToFind, with the product description, when the product reference library contains the required product. 
-//    String productCodeSelected = null;
-//    for (Product p : listOfProducts) {
-//      String productDescription = p.getDescription();
-//      if (descriptionToFind.equals("")) {
-//        throw new cucumber.api.PendingException(
-//            "Not able to test until Product Reference Service is updated");
-//      } else {
-//        if (productDescription
-//            .equals(descriptionToFind)) {
-//          productCodeSelected = p.getFulfilmentCode();
-//        }
-//        try {
-//          ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
-//              requestFulfilmentByPost("3305e937-6fb1-4ce1-9d4c-077f147789aa", productCodeSelected);
-//          HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
-//          log.with(contactCentreStatus)
-//              .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
-//          assertEquals(
-//              "REQUEST FULFILMENT HAS FAILED - the contact centre does not give a response code of 200",
-//              HttpStatus.OK, contactCentreStatus);
-//        } catch (ResourceAccessException e) {
-//          log.error("REQUEST FULFILMENT HAS FAILED: A ResourceAccessException has occurred.");
-//          log.error(e.getMessage());
-//          fail();
-//          System.exit(0);
-//        } catch (Exception e) {
-//          log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
-//          log.error(e.getMessage());
-//          fail();
-//          System.exit(0);
-//        }
-//      }
-//    }
-//  }
-
   @When("CC Advisor select the product code for UAC in welsh language via Post")
   public void cc_Advisor_select_the_product_code_for_UAC_in_welsh_language_via_Post() {
     String descriptionToFind = ""; //TODO update the descriptionToFind, with the product description, when the product reference library contains the required product. 
