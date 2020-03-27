@@ -436,7 +436,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("CC Advisor select the product code for UAC in welsh langiage via Post")
   public void cc_Advisor_select_the_product_code_for_UAC_in_welsh_langiage_via_Post() {
-    String descriptionToFind = "";
+    String descriptionToFind = ""; //TODO update the descriptionToFind, with the product description, when the product reference library contains the required product. 
     String productCodeSelected = null;
     for (Product p : listOfProducts) {
       String productDescription = p.getDescription();
@@ -559,6 +559,27 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(fulfilmentRequestedHeader);
     fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
     assertNotNull(fulfilmentPayload);
+  }
+  
+  @Then("an event with a {string} is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post")
+  public void an_event_with_a_is_emitted_to_RM_with_a_fulfilment_request_for_an_individual_UAC_in_welsh_where_delivery_channel_Post(String string) throws CTPException {
+    log.info("Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
+        + queueName + ", ready to be picked up by RM");
+
+    String clazzName = "FulfilmentRequestedEvent.class";
+    String timeout = "2000ms";
+
+    log.info("Getting from queue: '" + queueName + "' and converting to an object of type '"
+        + clazzName + "', with timeout of '" + timeout + "'");
+
+    fulfilmentRequestedEvent = (FulfilmentRequestedEvent) rabbit.getMessage(queueName,
+        FulfilmentRequestedEvent.class, TimeoutParser.parseTimeoutString(timeout));
+
+    assertNotNull(fulfilmentRequestedEvent);
+    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+    assertNotNull(fulfilmentRequestedHeader);
+    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+    assertNotNull(fulfilmentPayload); 
   }
 
   @Then("an event with the {string} is emitted to RM with a fulfilment request for an individual Paper Questionnaire in welsh")
