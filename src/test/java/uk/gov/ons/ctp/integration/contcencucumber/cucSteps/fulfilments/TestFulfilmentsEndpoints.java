@@ -543,11 +543,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  @Then(
-      "an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
-  public void
-      an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post()
-          throws CTPException {
+  @Then("a fulfilment request event is emitted to RM")
+  public void a_fulfilment_request_event_is_emitted_to_RM() throws CTPException {
     log.info(
         "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
             + queueName
@@ -578,114 +575,150 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
     assertNotNull(fulfilmentPayload);
   }
+  
+//  @Then(
+//      "an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post")
+//  public void
+//      an_event_is_emitted_to_RM_with_a_fulfilment_request_for_a_HH_UAC_where_delivery_channel_Post()
+//          throws CTPException {
+//    log.info(
+//        "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
+//            + queueName
+//            + ", ready to be picked up by RM");
+//
+//    String clazzName = "FulfilmentRequestedEvent.class";
+//    String timeout = "2000ms";
+//
+//    log.info(
+//        "Getting from queue: '"
+//            + queueName
+//            + "' and converting to an object of type '"
+//            + clazzName
+//            + "', with timeout of '"
+//            + timeout
+//            + "'");
+//
+//    fulfilmentRequestedEvent =
+//        (FulfilmentRequestedEvent)
+//            rabbit.getMessage(
+//                queueName,
+//                FulfilmentRequestedEvent.class,
+//                TimeoutParser.parseTimeoutString(timeout));
+//
+//    assertNotNull(fulfilmentRequestedEvent);
+//    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+//    assertNotNull(fulfilmentRequestedHeader);
+//    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+//    assertNotNull(fulfilmentPayload);
+//  }
 
-  @Then(
-      "an event with a {string} is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post")
-  public void
-      an_event_with_a_is_emitted_to_RM_with_a_fulfilment_request_for_an_individual_UAC_in_welsh_where_delivery_channel_Post(
-          String string) throws CTPException {
-    log.info(
-        "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
-            + queueName
-            + ", ready to be picked up by RM");
+//  @Then(
+//      "an event with a {string} is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post")
+//  public void
+//      an_event_with_a_is_emitted_to_RM_with_a_fulfilment_request_for_an_individual_UAC_in_welsh_where_delivery_channel_Post(
+//          String string) throws CTPException {
+//    log.info(
+//        "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
+//            + queueName
+//            + ", ready to be picked up by RM");
+//
+//    String clazzName = "FulfilmentRequestedEvent.class";
+//    String timeout = "2000ms";
+//
+//    log.info(
+//        "Getting from queue: '"
+//            + queueName
+//            + "' and converting to an object of type '"
+//            + clazzName
+//            + "', with timeout of '"
+//            + timeout
+//            + "'");
+//
+//    fulfilmentRequestedEvent =
+//        (FulfilmentRequestedEvent)
+//            rabbit.getMessage(
+//                queueName,
+//                FulfilmentRequestedEvent.class,
+//                TimeoutParser.parseTimeoutString(timeout));
+//
+//    assertNotNull(fulfilmentRequestedEvent);
+//    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+//    assertNotNull(fulfilmentRequestedHeader);
+//    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+//    assertNotNull(fulfilmentPayload);
+//  }
 
-    String clazzName = "FulfilmentRequestedEvent.class";
-    String timeout = "2000ms";
+//  @Then(
+//      "an event with the {string} is emitted to RM with a fulfilment request for an individual Paper Questionnaire in welsh")
+//  public void
+//      an_event_with_the_is_emitted_to_RM_with_a_fulfilment_request_for_an_individual_Paper_Questionnaire_in_welsh(
+//          String string) throws CTPException {
+//    log.info(
+//        "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
+//            + queueName
+//            + ", ready to be picked up by RM");
+//
+//    String clazzName = "FulfilmentRequestedEvent.class";
+//    String timeout = "2000ms";
+//
+//    log.info(
+//        "Getting from queue: '"
+//            + queueName
+//            + "' and converting to an object of type '"
+//            + clazzName
+//            + "', with timeout of '"
+//            + timeout
+//            + "'");
+//
+//    fulfilmentRequestedEvent =
+//        (FulfilmentRequestedEvent)
+//            rabbit.getMessage(
+//                queueName,
+//                FulfilmentRequestedEvent.class,
+//                TimeoutParser.parseTimeoutString(timeout));
+//
+//    assertNotNull(fulfilmentRequestedEvent);
+//    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+//    assertNotNull(fulfilmentRequestedHeader);
+//    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+//    assertNotNull(fulfilmentPayload);
+//  }
 
-    log.info(
-        "Getting from queue: '"
-            + queueName
-            + "' and converting to an object of type '"
-            + clazzName
-            + "', with timeout of '"
-            + timeout
-            + "'");
-
-    fulfilmentRequestedEvent =
-        (FulfilmentRequestedEvent)
-            rabbit.getMessage(
-                queueName,
-                FulfilmentRequestedEvent.class,
-                TimeoutParser.parseTimeoutString(timeout));
-
-    assertNotNull(fulfilmentRequestedEvent);
-    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
-    assertNotNull(fulfilmentRequestedHeader);
-    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
-    assertNotNull(fulfilmentPayload);
-  }
-
-  @Then(
-      "an event with the {string} is emitted to RM with a fulfilment request for an individual Paper Questionnaire in welsh")
-  public void
-      an_event_with_the_is_emitted_to_RM_with_a_fulfilment_request_for_an_individual_Paper_Questionnaire_in_welsh(
-          String string) throws CTPException {
-    log.info(
-        "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
-            + queueName
-            + ", ready to be picked up by RM");
-
-    String clazzName = "FulfilmentRequestedEvent.class";
-    String timeout = "2000ms";
-
-    log.info(
-        "Getting from queue: '"
-            + queueName
-            + "' and converting to an object of type '"
-            + clazzName
-            + "', with timeout of '"
-            + timeout
-            + "'");
-
-    fulfilmentRequestedEvent =
-        (FulfilmentRequestedEvent)
-            rabbit.getMessage(
-                queueName,
-                FulfilmentRequestedEvent.class,
-                TimeoutParser.parseTimeoutString(timeout));
-
-    assertNotNull(fulfilmentRequestedEvent);
-    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
-    assertNotNull(fulfilmentRequestedHeader);
-    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
-    assertNotNull(fulfilmentPayload);
-  }
-
-  @Then(
-      "an event is emitted with the {string} to RM with a fulfilment request for an Individual Paper Questionnaire \\(english)")
-  public void
-      an_event_is_emitted_with_the_to_RM_with_a_fulfilment_request_for_an_Individual_Paper_Questionnaire_english(
-          String string) throws CTPException {
-    log.info(
-        "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
-            + queueName
-            + ", ready to be picked up by RM");
-
-    String clazzName = "FulfilmentRequestedEvent.class";
-    String timeout = "2000ms";
-
-    log.info(
-        "Getting from queue: '"
-            + queueName
-            + "' and converting to an object of type '"
-            + clazzName
-            + "', with timeout of '"
-            + timeout
-            + "'");
-
-    fulfilmentRequestedEvent =
-        (FulfilmentRequestedEvent)
-            rabbit.getMessage(
-                queueName,
-                FulfilmentRequestedEvent.class,
-                TimeoutParser.parseTimeoutString(timeout));
-
-    assertNotNull(fulfilmentRequestedEvent);
-    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
-    assertNotNull(fulfilmentRequestedHeader);
-    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
-    assertNotNull(fulfilmentPayload);
-  }
+//  @Then(
+//      "an event is emitted with the {string} to RM with a fulfilment request for an Individual Paper Questionnaire \\(english)")
+//  public void
+//      an_event_is_emitted_with_the_to_RM_with_a_fulfilment_request_for_an_Individual_Paper_Questionnaire_english(
+//          String string) throws CTPException {
+//    log.info(
+//        "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
+//            + queueName
+//            + ", ready to be picked up by RM");
+//
+//    String clazzName = "FulfilmentRequestedEvent.class";
+//    String timeout = "2000ms";
+//
+//    log.info(
+//        "Getting from queue: '"
+//            + queueName
+//            + "' and converting to an object of type '"
+//            + clazzName
+//            + "', with timeout of '"
+//            + timeout
+//            + "'");
+//
+//    fulfilmentRequestedEvent =
+//        (FulfilmentRequestedEvent)
+//            rabbit.getMessage(
+//                queueName,
+//                FulfilmentRequestedEvent.class,
+//                TimeoutParser.parseTimeoutString(timeout));
+//
+//    assertNotNull(fulfilmentRequestedEvent);
+//    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+//    assertNotNull(fulfilmentRequestedHeader);
+//    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+//    assertNotNull(fulfilmentPayload);
+//  }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
     final UriComponentsBuilder builder =
@@ -720,7 +753,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
             .pathSegment("fulfilments")
-            .queryParam("caseType", "HH")
+            .queryParam("caseType", caseType)
             .queryParam("region", region)
             .queryParam("individual", individual);
 

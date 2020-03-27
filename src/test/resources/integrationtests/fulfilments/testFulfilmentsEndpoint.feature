@@ -54,7 +54,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC",  language "eng", deliveryChannel "POST"
-    Then an event is emitted to RM with a fulfilment request for a HH UAC where delivery channel = Post
+    Then a fulfilment request event is emitted to RM
 
   #Scenario CR-T292 throws a pending exception in the step 'When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"'
   #because the product reference library does not currently contain the required product - Ella Cook, 27/03/20
@@ -64,8 +64,9 @@ Feature: Test Contact centre Fulfilments Endpoints
     When the Case endpoint returns a case, associated with UPRN "1347459992", which has caseType "HH"
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
-When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"
-    Then an event with a "new Individual CaseID" is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post
+    When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"
+    Then a fulfilment request event is emitted to RM
+    #Then an event with a "new Individual CaseID" is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post
 
   @SetUp
   Scenario: [CR-T301] I want to request a Welsh Paper Questionnaire for a CE Individual Respondent in Wales
@@ -74,8 +75,9 @@ When CC Advisor selects the product code for productGroup "UAC",  language "wel"
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE",  language "wel", deliveryChannel "POST"
-    Then an event with the "CE CaseID" is emitted to RM with a fulfilment request for an individual Paper Questionnaire in welsh
-    
+    Then a fulfilment request event is emitted to RM
+    #Then an event with the "CE CaseID" is emitted to RM with a fulfilment request for an individual Paper Questionnaire in welsh
+
   ##Scenario CR-T302 throws a pending exception in the step 'When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"'
   #because the product reference library does not currently contain the required product - Ella Cook, 27/03/20
   @SetUp
@@ -85,17 +87,21 @@ When CC Advisor selects the product code for productGroup "UAC",  language "wel"
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"
-    Then an event with a "CE CaseID" is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post
+    Then a fulfilment request event is emitted to RM
+    #Then an event with a "CE CaseID" is emitted to RM with a fulfilment request for an individual UAC in welsh where delivery channel = Post
 
   #Scenario CR-T304 is on hold because the product reference library does not currently contain the required product - Ella Cook, 23/03/20
-  #@SetUp
-  #Scenario: [CR-T304] I want to request a welsh Paper Questionnaire for a CE Manager in Wales
-  #Given the CC advisor has provided a valid UPRN "1347459993"
-  #Then the Case endpoint returns a case, associated with UPRN "1347459993", which has caseType "CE"
-  #Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "W"
-  #And an empty queue exists for sending Fulfilment Requested events
+  @SetUp
+  Scenario: [CR-T304] PENDING I want to request a welsh Paper Questionnaire for a CE Manager in Wales
+    Given the CC advisor has provided a valid UPRN "1347459993"
+    Then the Case endpoint returns a case, associated with UPRN "1347459993", which has caseType "CE"
+    Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "false" and region = "W"
+    And an empty queue exists for sending Fulfilment Requested events
+    When CC Advisor selects the product code for productGroup "QUESTIONNAIRE",  language "wel", deliveryChannel "POST"
+    Then a fulfilment request event is emitted to RM
+    #Then an event with the "CE CaseID" is emitted to RM with a fulfilment request for a CE1 form in welsh
+
   #When CC Advisor select the product code for CE 1 form in welsh language
-  #Then an event with the "CE CaseID" is emitted to RM with a fulfilment request for a CE1 form in welsh
   #Scenario CR-T313 is blocked because the product code P_UAC_UACIP4 does not have caseType CE in its list
   #Scenario CR-T316 is blocked because the product code P_UAC_UACHHP4 does not have caseType CE in its list
   @SetUp
