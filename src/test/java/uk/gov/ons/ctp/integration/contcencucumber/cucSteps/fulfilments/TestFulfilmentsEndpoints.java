@@ -487,7 +487,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
 
     try {
-      ResponseEntity<ResponseDTO> fulfilmentRequestResponse = requestFulfilmentByPost(caseId, productCodeSelected);
+      ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
+          requestFulfilmentByPost(caseId, productCodeSelected);
       HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
       log.with(contactCentreStatus)
           .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
