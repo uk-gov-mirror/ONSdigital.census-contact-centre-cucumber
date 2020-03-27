@@ -66,6 +66,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private FulfilmentRequestedEvent fulfilmentRequestedEvent;
   private Header fulfilmentRequestedHeader;
   private FulfilmentPayload fulfilmentPayload;
+  private String caseId;
 
   @Autowired private ProductService productService;
   private URI fulfilmentByPostUrl;
@@ -358,8 +359,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       "the Case endpoint returns a case, associated with UPRN {string}, which has caseType {string}")
   public void the_Case_endpoint_returns_a_case_associated_with_UPRN_which_has_caseType(
       String strUprn, String strCaseType) {
-    log.with(listOfCasesWithUprn.get(0).getId().toString())
-        .debug("The case id returned by getCasesWithUprn endpoint");
+    caseId = listOfCasesWithUprn.get(0).getId().toString();
+    log.with(caseId).debug("The case id returned by getCasesWithUprn endpoint");
 
     UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
     assertEquals(
@@ -464,41 +465,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     rabbit.flushQueue(queueName);
   }
 
-  //  @When("CC Advisor select the product code for HH UAC via Post")
-  //  public void cc_Advisor_select_the_product_code_for_HH_UAC_via_Post() {
-  //    String productCodeSelected = null;
-  //    for (Product p : listOfProducts) {
-  //      Product.ProductGroup productGroup = p.getProductGroup();
-  //      if (productGroup == Product.ProductGroup.UAC) {
-  //        productCodeSelected = p.getFulfilmentCode();
-  //      }
-  //    }
-  //    log.info("The product code selected is: " + productCodeSelected);
-  //
-  //    try {
-  //      ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
-  //          requestFulfilmentByPost("3305e937-6fb1-4ce1-9d4c-077f147789aa", productCodeSelected);
-  //      HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
-  //      log.with(contactCentreStatus)
-  //          .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
-  //      assertEquals(
-  //          "REQUEST FULFILMENT HAS FAILED - the contact centre does not give a response code of
-  // 200",
-  //          HttpStatus.OK,
-  //          contactCentreStatus);
-  //    } catch (ResourceAccessException e) {
-  //      log.error("REQUEST FULFILMENT HAS FAILED: A ResourceAccessException has occurred.");
-  //      log.error(e.getMessage());
-  //      fail();
-  //      System.exit(0);
-  //    } catch (Exception e) {
-  //      log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
-  //      log.error(e.getMessage());
-  //      fail();
-  //      System.exit(0);
-  //    }
-  //  }
-
   @When(
       "CC Advisor selects the product code for productGroup {string},  language {string}, deliveryChannel {string}")
   public void cc_Advisor_selects_the_product_code_for_productGroup_language_deliveryChannel(
@@ -521,85 +487,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
 
     try {
-      ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
-          requestFulfilmentByPost("3305e937-6fb1-4ce1-9d4c-077f147789aa", productCodeSelected);
-      HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
-      log.with(contactCentreStatus)
-          .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
-      assertEquals(
-          "REQUEST FULFILMENT HAS FAILED - the contact centre does not give a response code of 200",
-          HttpStatus.OK,
-          contactCentreStatus);
-    } catch (ResourceAccessException e) {
-      log.error("REQUEST FULFILMENT HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    } catch (Exception e) {
-      log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    }
-  }
-
-  //  @When("CC Advisor select the product code for UAC in welsh language via Post")
-  //  public void cc_Advisor_select_the_product_code_for_UAC_in_welsh_language_via_Post() {
-  //    String descriptionToFind =
-  //        ""; // TODO update the descriptionToFind, with the product description, when the product
-  //    // reference library contains the required product.
-  //    String productCodeSelected = null;
-  //    for (Product p : listOfProducts) {
-  //      String productDescription = p.getDescription();
-  //      if (descriptionToFind.equals("")) {
-  //        throw new cucumber.api.PendingException(
-  //            "Not able to test until Product Reference Service is updated");
-  //      } else {
-  //        if (productDescription.equals(descriptionToFind)) {
-  //          productCodeSelected = p.getFulfilmentCode();
-  //        }
-  //        try {
-  //          ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
-  //              requestFulfilmentByPost("3305e937-6fb1-4ce1-9d4c-077f147789aa",
-  // productCodeSelected);
-  //          HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
-  //          log.with(contactCentreStatus)
-  //              .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
-  //          assertEquals(
-  //              "REQUEST FULFILMENT HAS FAILED - the contact centre does not give a response code
-  // of 200",
-  //              HttpStatus.OK,
-  //              contactCentreStatus);
-  //        } catch (ResourceAccessException e) {
-  //          log.error("REQUEST FULFILMENT HAS FAILED: A ResourceAccessException has occurred.");
-  //          log.error(e.getMessage());
-  //          fail();
-  //          System.exit(0);
-  //        } catch (Exception e) {
-  //          log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
-  //          log.error(e.getMessage());
-  //          fail();
-  //          System.exit(0);
-  //        }
-  //      }
-  //    }
-  //  }
-
-  @When("CC Advisor select the product code for Individual Paper Questionnaire in welsh language")
-  public void
-      cc_Advisor_select_the_product_code_for_Individual_Paper_Questionnaire_in_welsh_language() {
-    String productCodeSelected = null;
-    for (Product p : listOfProducts) {
-      String productDescription = p.getDescription();
-      if (productDescription.equals("Individual Questionnaire for Wales (in Welsh)")) {
-        productCodeSelected = p.getFulfilmentCode();
-      }
-    }
-    assertEquals("An incorrect fulfilment code was selected", "P_OR_I2W", productCodeSelected);
-
-    try {
-      ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
-          requestFulfilmentByPost("3305e937-6fb1-4ce1-9d4c-077f147722aa", productCodeSelected);
+      ResponseEntity<ResponseDTO> fulfilmentRequestResponse = requestFulfilmentByPost(caseId, productCodeSelected);
       HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
       log.with(contactCentreStatus)
           .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
