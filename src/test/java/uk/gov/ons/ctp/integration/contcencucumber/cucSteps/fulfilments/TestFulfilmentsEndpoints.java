@@ -468,13 +468,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void cc_Advisor_select_the_product_code_for_HH_UAC_via_Post() {
     String productCodeSelected = null;
     for (Product p : listOfProducts) {
-      String productDescription = p.getDescription();
-      if (productDescription.equals(
-          "Household Unique Access Code for Northern Ireland via paper")) {
+      Product.ProductGroup productGroup = p.getProductGroup();
+      if (productGroup == Product.ProductGroup.UAC) {
         productCodeSelected = p.getFulfilmentCode();
       }
     }
-    assertEquals("An incorrect fulfilment code was selected", "P_UAC_UACHHP4", productCodeSelected);
+    log.info("The product code selected is: " + productCodeSelected);
 
     try {
       ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
@@ -498,6 +497,41 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       System.exit(0);
     }
   }
+
+//  @When("CC Advisor select the product code for HH UAC via Post")
+//  public void cc_Advisor_select_the_product_code_for_HH_UAC_via_Post() {
+//    String productCodeSelected = null;
+//    for (Product p : listOfProducts) {
+//      String productDescription = p.getDescription();
+//      if (productDescription.equals(
+//          "Household Unique Access Code for Northern Ireland via paper")) {
+//        productCodeSelected = p.getFulfilmentCode();
+//      }
+//    }
+//    assertEquals("An incorrect fulfilment code was selected", "P_UAC_UACHHP4", productCodeSelected);
+//
+//    try {
+//      ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
+//          requestFulfilmentByPost("3305e937-6fb1-4ce1-9d4c-077f147789aa", productCodeSelected);
+//      HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
+//      log.with(contactCentreStatus)
+//          .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
+//      assertEquals(
+//          "REQUEST FULFILMENT HAS FAILED - the contact centre does not give a response code of 200",
+//          HttpStatus.OK,
+//          contactCentreStatus);
+//    } catch (ResourceAccessException e) {
+//      log.error("REQUEST FULFILMENT HAS FAILED: A ResourceAccessException has occurred.");
+//      log.error(e.getMessage());
+//      fail();
+//      System.exit(0);
+//    } catch (Exception e) {
+//      log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
+//      log.error(e.getMessage());
+//      fail();
+//      System.exit(0);
+//    }
+//  }
 
   @When("CC Advisor select the product code for UAC in welsh language via Post")
   public void cc_Advisor_select_the_product_code_for_UAC_in_welsh_language_via_Post() {
