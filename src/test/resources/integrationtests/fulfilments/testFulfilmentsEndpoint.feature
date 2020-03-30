@@ -98,8 +98,17 @@ Feature: Test Contact centre Fulfilments Endpoints
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE",  language "wel", deliveryChannel "POST"
     Then a fulfilment request event is emitted to RM
 
-  #When CC Advisor select the product code for CE 1 form in welsh language
-  #Scenario CR-T313 is blocked because the product code P_UAC_UACIP4 does not have caseType CE in its list
+  #Scenario CR-T313 throws a pending exception in the step 'When CC Advisor selects the product code for productGroup "UAC",  language "eng", deliveryChannel "POST"'
+  #because the product reference library does not currently contain the required product - Ella Cook, 30/03/20
+  @SetUp
+  Scenario: [CR-T313] I want to request an UAC for a CE Individual Respondent in NI via Post
+    Given the CC advisor has provided a valid UPRN "1347459993"
+    Then the Case endpoint returns a case, associated with UPRN "1347459993", which has caseType "CE"
+    Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "N"
+    And an empty queue exists for sending Fulfilment Requested events
+    When CC Advisor selects the product code for productGroup "UAC",  language "eng", deliveryChannel "POST"
+    Then a fulfilment request event is emitted to RM
+
   #Scenario CR-T316 is blocked because the product code P_UAC_UACHHP4 does not have caseType CE in its list
   @SetUp
   Scenario: [CR-T323] I want to request a Paper Questionnaire for a SPG Individual Respondent in NI
