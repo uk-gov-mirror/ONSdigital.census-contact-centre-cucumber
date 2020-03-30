@@ -126,5 +126,5 @@ Feature: Test Contact centre Fulfilments Endpoints
     Then the Case endpoint returns a case, associated with UPRN "1347459994", which has caseType "SPG" and addressLevel "U" and handDelivery "false"
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
-    When CC Advisor select the product code for SPG Paper Questionnaire (english)
-    Then an event is emitted with the "SPG CaseID" to RM with a fulfilment request for an Individual Paper Questionnaire (english)
+    When CC Advisor selects the product code for productGroup "QUESTIONNAIRE",  language "eng", deliveryChannel "POST"
+    Then a fulfilment request event is emitted to RM
