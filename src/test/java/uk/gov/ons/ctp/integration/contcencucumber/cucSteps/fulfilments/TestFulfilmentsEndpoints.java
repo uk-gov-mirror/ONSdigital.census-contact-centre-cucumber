@@ -28,6 +28,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
+import uk.gov.ons.ctp.common.event.model.Address;
 import uk.gov.ons.ctp.common.event.model.FulfilmentPayload;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequest;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequestedEvent;
@@ -622,6 +623,11 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "The FulfilmentRequested event contains an incorrect value of 'caseId'",
         expectedCaseId,
         fulfilmentRequest.getCaseId());
+    Address address = fulfilmentRequest.getAddress();
+    assertEquals(
+        "The FulfilmentRequested event contains an incorrect value of 'uprn'",
+        expectedUprn, address.getUprn());
+    
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {

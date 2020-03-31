@@ -65,8 +65,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"
-    Then a fulfilment request event is emitted to RM
-
+    Then a fulfilment request event is emitted to RM for UPRN = "1347459992" addressType = "HH" individual = "true" and region = "W"
+    
   @SetUp
   Scenario: [CR-T301] I want to request a Welsh Paper Questionnaire for a CE Individual Respondent in Wales
     Given the CC advisor has provided a valid UPRN "1347459993"
@@ -96,7 +96,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "false" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE",  language "wel", deliveryChannel "POST"
-    Then a fulfilment request event is emitted to RM
+    Then a fulfilment request event is emitted to RM for UPRN = "1347459993" addressType = "CE" individual = "false" and region = "W"
 
   #Scenario CR-T313 throws a pending exception in the step 'When CC Advisor selects the product code for productGroup "UAC",  language "eng", deliveryChannel "POST"'
   #because the product reference library does not currently contain the required product - Ella Cook, 30/03/20
@@ -107,7 +107,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC",  language "eng", deliveryChannel "POST"
-    Then a fulfilment request event is emitted to RM
+    Then a fulfilment request event is emitted to RM for UPRN = "1347459993" addressType = "CE" individual = "true" and region = "N"
 
   #Scenario CR-T316 throws a pending exception in the step 'When CC Advisor selects the product code for productGroup "UAC",  language "eng", deliveryChannel "POST"'
   #because the product reference library does not currently contain the required product - Ella Cook, 30/03/20
@@ -118,7 +118,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "false" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC",  language "eng", deliveryChannel "POST"
-    Then a fulfilment request event is emitted to RM
+    Then a fulfilment request event is emitted to RM for UPRN = "1347459993" addressType = "CE" individual = "false" and region = "N"
 
   @SetUp
   Scenario: [CR-T323] I want to request a Paper Questionnaire for a SPG Individual Respondent in NI
@@ -127,7 +127,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE",  language "eng", deliveryChannel "POST"
-    Then a fulfilment request event is emitted to RM
+    Then a fulfilment request event is emitted to RM for UPRN = "1347459994" addressType = "SPG" individual = "true" and region = "N"
 
   #Scenario CR-T334 throws a pending exception in the step 'When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"'
   #because the product reference library does not currently contain the required product - Ella Cook, 30/03/2
@@ -138,4 +138,4 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "false" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"
-    Then a fulfilment request event is emitted to RM
+    Then a fulfilment request event is emitted to RM for UPRN = "1347459994" addressType = "SPG" individual = "false" and region = "W"
