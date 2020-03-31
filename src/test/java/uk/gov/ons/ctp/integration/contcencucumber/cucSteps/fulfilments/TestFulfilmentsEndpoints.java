@@ -29,6 +29,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 import uk.gov.ons.ctp.common.event.model.FulfilmentPayload;
+import uk.gov.ons.ctp.common.event.model.FulfilmentRequest;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequestedEvent;
 import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
@@ -468,7 +469,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       "CC Advisor selects the product code for productGroup {string},  language {string}, deliveryChannel {string}")
   public void cc_Advisor_selects_the_product_code_for_productGroup_language_deliveryChannel(
       String strProductGroup, String strLanguage, String strDeliveryChannel) {
-    String productCodeSelected = null;
+    productCodeSelected = null;
     for (Product p : listOfProducts) {
       String productGroup = p.getProductGroup().toString().toUpperCase();
       String language = p.getLanguage();
@@ -488,40 +489,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     try {
       ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
           requestFulfilmentByPost(caseId, productCodeSelected);
-      HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
-      log.with(contactCentreStatus)
-          .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
-      assertEquals(
-          "REQUEST FULFILMENT HAS FAILED - the contact centre does not give a response code of 200",
-          HttpStatus.OK,
-          contactCentreStatus);
-    } catch (ResourceAccessException e) {
-      log.error("REQUEST FULFILMENT HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    } catch (Exception e) {
-      log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    }
-  }
-
-  @When("CC Advisor select the product code for SPG Paper Questionnaire \\(english)")
-  public void cc_Advisor_select_the_product_code_for_SPG_Paper_Questionnaire_english() {
-    productCodeSelected = null;
-    for (Product p : listOfProducts) {
-      String productDescription = p.getDescription();
-      if (productDescription.equals("Individual Questionnaire for Northern Ireland (in English)")) {
-        productCodeSelected = p.getFulfilmentCode();
-      }
-    }
-    assertEquals("An incorrect fulfilment code was selected", "P_OR_I4", productCodeSelected);
-
-    try {
-      ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
-          requestFulfilmentByPost("3305e937-6fb1-4ce1-9d4c-077f147733aa", productCodeSelected);
       HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
       log.with(contactCentreStatus)
           .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
@@ -584,19 +551,29 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     String expectedAddressType;
 
     assertEquals(
-        "The FulfilmentRequested event contains a incorrect value of 'type'",
+        "The FulfilmentRequested event contains an incorrect value of 'type'",
         expectedType,
         fulfilmentRequestedHeader.getType().name());
     assertEquals(
-        "The FulfilmentRequested event contains a incorrect value of 'source'",
+        "The FulfilmentRequested event contains an incorrect value of 'source'",
         expectedSource,
         fulfilmentRequestedHeader.getSource().name());
     assertEquals(
-        "The FulfilmentRequested event contains a incorrect value of 'channel'",
+        "The FulfilmentRequested event contains an incorrect value of 'channel'",
         expectedChannel,
         fulfilmentRequestedHeader.getChannel().name());
     assertNotNull(fulfilmentRequestedHeader.getDateTime());
     assertNotNull(fulfilmentRequestedHeader.getTransactionId());
+
+    FulfilmentRequest fulfilmentRequest = fulfilmentPayload.getFulfilmentRequest();
+    assertEquals(
+        "The FulfilmentRequested event contains an incorrect value of 'fulfilmentCode'",
+        expectedFulfilmentCode,
+        fulfilmentRequest.getFulfilmentCode());
+    assertEquals(
+        "The FulfilmentRequested event contains an incorrect value of 'caseId'",
+        expectedCaseId,
+        fulfilmentRequest.getCaseId());
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
