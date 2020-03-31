@@ -65,6 +65,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private Header fulfilmentRequestedHeader;
   private FulfilmentPayload fulfilmentPayload;
   private String caseId;
+  private String productCodeSelected;
 
   @Autowired private ProductService productService;
   private URI fulfilmentByPostUrl;
@@ -509,7 +510,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("CC Advisor select the product code for SPG Paper Questionnaire \\(english)")
   public void cc_Advisor_select_the_product_code_for_SPG_Paper_Questionnaire_english() {
-    String productCodeSelected = null;
+    productCodeSelected = null;
     for (Product p : listOfProducts) {
       String productDescription = p.getDescription();
       if (productDescription.equals("Individual Questionnaire for Northern Ireland (in English)")) {
@@ -572,6 +573,30 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(fulfilmentRequestedHeader);
     fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
     assertNotNull(fulfilmentPayload);
+
+    String expectedType = "FULFILMENT_REQUESTED";
+    String expectedSource = "CONTACT_CENTRE_API";
+    String expectedChannel = "CC";
+    String expectedFulfilmentCode = productCodeSelected;
+    String expectedCaseId = caseId;
+    String expectedUprn;
+    String expectedRegion;
+    String expectedAddressType;
+
+    assertEquals(
+        "The FulfilmentRequested event contains a incorrect value of 'type'",
+        expectedType,
+        fulfilmentRequestedHeader.getType().name());
+    assertEquals(
+        "The FulfilmentRequested event contains a incorrect value of 'source'",
+        expectedSource,
+        fulfilmentRequestedHeader.getSource().name());
+    assertEquals(
+        "The FulfilmentRequested event contains a incorrect value of 'channel'",
+        expectedChannel,
+        fulfilmentRequestedHeader.getChannel().name());
+    assertNotNull(fulfilmentRequestedHeader.getDateTime());
+    assertNotNull(fulfilmentRequestedHeader.getTransactionId());
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
