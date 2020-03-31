@@ -510,58 +510,58 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  //  @Then("a fulfilment request event is emitted to RM")
-  //  public void a_fulfilment_request_event_is_emitted_to_RM() throws CTPException {
-  //    log.info("Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named
+  // @Then("a fulfilment request event is emitted to RM")
+  // public void a_fulfilment_request_event_is_emitted_to_RM() throws CTPException {
+  // log.info("Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named
   // "
-  //        + queueName + ", ready to be picked up by RM");
+  // + queueName + ", ready to be picked up by RM");
   //
-  //    String clazzName = "FulfilmentRequestedEvent.class";
-  //    String timeout = "2000ms";
+  // String clazzName = "FulfilmentRequestedEvent.class";
+  // String timeout = "2000ms";
   //
-  //    log.info("Getting from queue: '" + queueName + "' and converting to an object of type '"
-  //        + clazzName + "', with timeout of '" + timeout + "'");
+  // log.info("Getting from queue: '" + queueName + "' and converting to an object of type '"
+  // + clazzName + "', with timeout of '" + timeout + "'");
   //
-  //    fulfilmentRequestedEvent = (FulfilmentRequestedEvent) rabbit.getMessage(queueName,
-  //        FulfilmentRequestedEvent.class, TimeoutParser.parseTimeoutString(timeout));
+  // fulfilmentRequestedEvent = (FulfilmentRequestedEvent) rabbit.getMessage(queueName,
+  // FulfilmentRequestedEvent.class, TimeoutParser.parseTimeoutString(timeout));
   //
-  //    assertNotNull(fulfilmentRequestedEvent);
-  //    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
-  //    assertNotNull(fulfilmentRequestedHeader);
-  //    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
-  //    assertNotNull(fulfilmentPayload);
+  // assertNotNull(fulfilmentRequestedEvent);
+  // fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+  // assertNotNull(fulfilmentRequestedHeader);
+  // fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+  // assertNotNull(fulfilmentPayload);
   //
-  //    String expectedType = "FULFILMENT_REQUESTED";
-  //    String expectedSource = "CONTACT_CENTRE_API";
-  //    String expectedChannel = "CC";
-  //    String expectedFulfilmentCode = productCodeSelected;
-  //    String expectedCaseId = caseId;
-  //    String expectedUprn;
-  //    String expectedRegion;
-  //    String expectedAddressType;
+  // String expectedType = "FULFILMENT_REQUESTED";
+  // String expectedSource = "CONTACT_CENTRE_API";
+  // String expectedChannel = "CC";
+  // String expectedFulfilmentCode = productCodeSelected;
+  // String expectedCaseId = caseId;
+  // String expectedUprn;
+  // String expectedRegion;
+  // String expectedAddressType;
   //
-  //    assertEquals("The FulfilmentRequested event contains an incorrect value of 'type'",
-  //        expectedType, fulfilmentRequestedHeader.getType().name());
-  //    assertEquals("The FulfilmentRequested event contains an incorrect value of 'source'",
-  //        expectedSource, fulfilmentRequestedHeader.getSource().name());
-  //    assertEquals("The FulfilmentRequested event contains an incorrect value of 'channel'",
-  //        expectedChannel, fulfilmentRequestedHeader.getChannel().name());
-  //    assertNotNull(fulfilmentRequestedHeader.getDateTime());
-  //    assertNotNull(fulfilmentRequestedHeader.getTransactionId());
+  // assertEquals("The FulfilmentRequested event contains an incorrect value of 'type'",
+  // expectedType, fulfilmentRequestedHeader.getType().name());
+  // assertEquals("The FulfilmentRequested event contains an incorrect value of 'source'",
+  // expectedSource, fulfilmentRequestedHeader.getSource().name());
+  // assertEquals("The FulfilmentRequested event contains an incorrect value of 'channel'",
+  // expectedChannel, fulfilmentRequestedHeader.getChannel().name());
+  // assertNotNull(fulfilmentRequestedHeader.getDateTime());
+  // assertNotNull(fulfilmentRequestedHeader.getTransactionId());
   //
-  //    FulfilmentRequest fulfilmentRequest = fulfilmentPayload.getFulfilmentRequest();
-  //    assertEquals("The FulfilmentRequested event contains an incorrect value of
+  // FulfilmentRequest fulfilmentRequest = fulfilmentPayload.getFulfilmentRequest();
+  // assertEquals("The FulfilmentRequested event contains an incorrect value of
   // 'fulfilmentCode'",
-  //        expectedFulfilmentCode, fulfilmentRequest.getFulfilmentCode());
-  //    assertEquals("The FulfilmentRequested event contains an incorrect value of 'caseId'",
-  //        expectedCaseId, fulfilmentRequest.getCaseId());
-  //  }
+  // expectedFulfilmentCode, fulfilmentRequest.getFulfilmentCode());
+  // assertEquals("The FulfilmentRequested event contains an incorrect value of 'caseId'",
+  // expectedCaseId, fulfilmentRequest.getCaseId());
+  // }
 
   @Then(
       "a fulfilment request event is emitted to RM for UPRN = {string} addressType = {string} individual = {string} and region = {string}")
   public void
       a_fulfilment_request_event_is_emitted_to_RM_for_UPRN_addressType_individual_and_region(
-          String expectedUprn, String expectedAddressType, String indivdual, String expectedRegion)
+          String expectedUprn, String expectedAddressType, String individual, String expectedRegion)
           throws CTPException {
     log.info(
         "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
@@ -623,11 +623,23 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "The FulfilmentRequested event contains an incorrect value of 'caseId'",
         expectedCaseId,
         fulfilmentRequest.getCaseId());
+    //    if (individual.equals("true")) {
+    //      assertNotNull(fulfilmentRequest.getIndividualCaseId());
+    //    } else {
+    //      assertNull(fulfilmentRequest.getIndividualCaseId());
+    //    } - commenting out while I try to check this works manually
     Address address = fulfilmentRequest.getAddress();
     assertEquals(
         "The FulfilmentRequested event contains an incorrect value of 'uprn'",
-        expectedUprn, address.getUprn());
-    
+        expectedUprn,
+        address.getUprn());
+    //    assertEquals("The FulfilmentRequested event contains an incorrect value of 'addressType'",
+    //        expectedAddressType, address.getAddressType()); - commenting out while I try to check
+    // this works manually
+    assertEquals(
+        "The FulfilmentRequested event contains an incorrect value of 'region'",
+        expectedRegion,
+        address.getRegion());
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
