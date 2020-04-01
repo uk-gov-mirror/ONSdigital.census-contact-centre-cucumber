@@ -49,12 +49,12 @@ Feature: Test Contact centre Fulfilments Endpoints
 
   @SetUp
   Scenario: [CR-T142] I want to request an UAC for a HH Respondent in NI via POST
-    Given the CC advisor has provided a valid UPRN "1347459991"
-    Then the Case endpoint returns a case, associated with UPRN "1347459991", which has caseType "HH"
+    Given the CC advisor has provided a valid UPRN "1347459995"
+    Then the Case endpoint returns a case, associated with UPRN "1347459995", which has caseType "HH"
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC",  language "eng", deliveryChannel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459991" addressType = "HH" individual = "false" and region = "N"
+    Then a fulfilment request event is emitted to RM for UPRN = "1347459995" addressType = "HH" individual = "false" and region = "N"
 
   #Scenario CR-T292 throws a pending exception in the step 'When CC Advisor selects the product code for productGroup "UAC",  language "wel", deliveryChannel "POST"'
   #because the product reference library does not currently contain the required product - Ella Cook, 27/03/20

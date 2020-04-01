@@ -623,19 +623,20 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "The FulfilmentRequested event contains an incorrect value of 'caseId'",
         expectedCaseId,
         fulfilmentRequest.getCaseId());
-    //    if (individual.equals("true")) {
-    //      assertNotNull(fulfilmentRequest.getIndividualCaseId());
-    //    } else {
-    //      assertNull(fulfilmentRequest.getIndividualCaseId());
-    //    } - commenting out while I try to check this works manually
+    // if (individual.equals("true")) {
+    // assertNotNull(fulfilmentRequest.getIndividualCaseId());
+    // } else {
+    // assertNull(fulfilmentRequest.getIndividualCaseId());
+    // } - commenting out while I try to check this works manually
     Address address = fulfilmentRequest.getAddress();
     assertEquals(
         "The FulfilmentRequested event contains an incorrect value of 'uprn'",
         expectedUprn,
         address.getUprn());
-    //    assertEquals("The FulfilmentRequested event contains an incorrect value of 'addressType'",
-    //        expectedAddressType, address.getAddressType()); - commenting out while I try to check
-    // this works manually
+    assertEquals(
+        "The FulfilmentRequested event contains an incorrect value of 'addressType'",
+        expectedAddressType,
+        address.getAddressType());
     assertEquals(
         "The FulfilmentRequested event contains an incorrect value of 'region'",
         expectedRegion,
