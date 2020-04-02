@@ -488,6 +488,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
 
     try {
+      log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
       ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
           requestFulfilmentByPost(caseId, productCodeSelected);
       HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
@@ -710,6 +711,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     ResponseEntity<ResponseDTO> requestFulfilmentByPostResponse = null;
     fulfilmentByPostUrl = builder.build().encode().toUri();
+
+    log.with(fulfilmentByPostUrl).info("The url for requesting the postal fulfilment");
 
     PostalFulfilmentRequestDTO postalFulfilmentRequest = new PostalFulfilmentRequestDTO();
     postalFulfilmentRequest.setCaseId(UUID.fromString(caseId));
