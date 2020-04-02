@@ -16,10 +16,8 @@ import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestBase;
 public class TestAddressEndpoints extends TestBase {
 
   private AddressQueryResponseDTO addressQueryResponseDTO;
-  //  private AddressUpdateRequestDTO addressUpdateRequestDTO;
   private String postcode = "";
   private String addressSearchString = "";
-  private String uprn;
 
   @Given("I have a valid Postcode {string}")
   public void i_have_a_valid_Postcode(final String postcode) {
@@ -130,44 +128,4 @@ public class TestAddressEndpoints extends TestBase {
           "Address list size must be zero", 0, addressQueryResponseDTO.getAddresses().size());
     }
   }
-
-  //  @Given("I have a new uprn and address {string} {string}")
-  //  public void i_have_a_new_uprn_and_address(String uprn, String address) {
-  //    this.uprn = uprn;
-  //    addressUpdateRequestDTO = populateAddress(address);
-  //  }
-
-  //  @When("I post the new address")
-  //  public void i_post_the_new_address() {
-  //    UriComponentsBuilder builder =
-  //        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-  //            .port(ccBasePort)
-  //            .pathSegment("addresses")
-  //            .pathSegment(uprn);
-  //    getRestTemplate()
-  //        .postForObject(builder.build().encode().toUri(), addressUpdateRequestDTO, String.class);
-  //  }
-
-  @Then("The new address is posted successfully")
-  public void the_new_address_is_posted_successfully() {
-    // Write code here that turns the phrase above into concrete actions
-    throw new cucumber.api.PendingException();
-  }
-
-  //  private AddressUpdateRequestDTO populateAddress(final String address) {
-  //    final String[] addressParamater = address.split(",");
-  //    return new AddressUpdateRequestDTO(
-  //        addressParamater[0], // address line 1
-  //        addressParamater[1], // address line 2
-  //        addressParamater[2], // address line 3
-  //        addressParamater[3], // town name
-  //        addressParamater[4], // region
-  //        addressParamater[5], // postcode
-  //        AddressUpdateRequestDTO.Category.valueOf(addressParamater[6]), // category
-  //        AddressUpdateRequestDTO.Type.valueOf(addressParamater[7]), // type
-  //        addressParamater[8], // title
-  //        addressParamater[9], // forename
-  //        addressParamater[10], // surname
-  //        new Date()); // date time
-  //  }
 }
