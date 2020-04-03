@@ -322,11 +322,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
           HttpStatus.OK,
           contactCentreStatus);
-    } catch (ResourceAccessException e) {
-      log.error("GET CASE BY UPRN HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
     } catch (Exception e) {
       log.error("GET CASE BY UPRN HAS FAILED: An unexpected error has occurred.");
       log.error(e.getMessage());
@@ -347,11 +342,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
           HttpStatus.OK,
           contactCentreStatus);
-    } catch (ResourceAccessException e) {
-      log.error("GET CASE BY UPRN HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
     } catch (Exception e) {
       log.error("GET CASE BY UPRN HAS FAILED: An unexpected error has occurred.");
       log.error(e.getMessage());
@@ -418,11 +408,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "GET PRODUCTS HAS FAILED -  the contact centre does not give a response code of 200",
           HttpStatus.OK,
           contactCentreStatus);
-    } catch (ResourceAccessException e) {
-      log.error("GET PRODUCTS HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
     } catch (Exception e) {
       log.error("GET PRODUCTS HAS FAILED: An unexpected error has occurred.");
       log.error(e.getMessage());
@@ -446,11 +431,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "GET PRODUCTS HAS FAILED -  the contact centre does not give a response code of 200",
           HttpStatus.OK,
           contactCentreStatus);
-    } catch (ResourceAccessException e) {
-      log.error("GET PRODUCTS HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
     } catch (Exception e) {
       log.error("GET PRODUCTS HAS FAILED: An unexpected error has occurred.");
       log.error(e.getMessage());
@@ -508,11 +488,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "REQUEST FULFILMENT HAS FAILED - the contact centre does not give a response code of 200",
           HttpStatus.OK,
           contactCentreStatus);
-    } catch (ResourceAccessException e) {
-      log.error("REQUEST FULFILMENT HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
     } catch (Exception e) {
       log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
       log.error(e.getMessage());
