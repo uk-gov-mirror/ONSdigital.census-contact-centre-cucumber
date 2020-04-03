@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -73,6 +75,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private URI fulfilmentByPostUrl;
 
   private static final String RABBIT_EXCHANGE = "events";
+
+  private static final Logger log = LoggerFactory.getLogger(TestFulfilmentsEndpoints.class);
 
   @Before("@SetUp")
   public void setup() throws CTPException {

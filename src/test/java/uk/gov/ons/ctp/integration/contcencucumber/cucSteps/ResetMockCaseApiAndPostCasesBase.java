@@ -45,8 +45,7 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  protected static final Logger log =
-      LoggerFactory.getLogger(ResetMockCaseApiAndPostCasesBase.class);
+  private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiAndPostCasesBase.class);
 
   public void setCases(final String cases) throws IOException {
     log.info("Resetting Mock Case API Data");
