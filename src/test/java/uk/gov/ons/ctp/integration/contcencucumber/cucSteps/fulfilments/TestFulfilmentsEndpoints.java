@@ -488,7 +488,13 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("The product code selected is: " + productCodeSelected);
     if (productCodeSelected == null) {
       throw new cucumber.api.PendingException(
-          "Not able to test until Product Reference Service is updated");
+          "The Product Reference Service contains no products that match this combination of productGroup ("
+              + strProductGroup
+              + ") language ("
+              + strLanguage
+              + ") and deliveryChannel ("
+              + strDeliveryChannel
+              + ")");
     }
 
     try {
