@@ -14,9 +14,9 @@
 		<artifactId>census-int-common-config</artifactId>
 		<version>0.0.13</version>
 	</parent>
-  
+
 	<dependencies>
-    
+
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>cucumber-common</artifactId>
@@ -28,12 +28,6 @@
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>framework</artifactId>
 			<version>0.0.51</version>
-		</dependency>
-
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>event-publisher</artifactId>
-			<version>0.0.22</version>
 		</dependency>
 
 		<dependency>
@@ -144,11 +138,11 @@
 
 		<!-- ONS libraries -->
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>framework</artifactId>
 			<version>0.0.51</version>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
@@ -161,7 +155,7 @@
 			<artifactId>contactcentreserviceapi</artifactId>
 			<version>0.0.76</version>
 		</dependency>
-  
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -178,13 +172,6 @@
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>product-reference</artifactId>
 			<version>1.0.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>cucumber-common</artifactId>
-			<version>0.0.12</version>
-			<scope>test</scope>
 		</dependency>
 
 		<!-- ONS END -->
