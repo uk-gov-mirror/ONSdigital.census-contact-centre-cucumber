@@ -300,7 +300,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       fail();
       System.exit(0);
     } catch (Exception e) {
-      log.error("LAUNCHING EQ FOR HH HAS FAILED: An unexpected has occurred.");
+      log.error("LAUNCHING EQ FOR HH HAS FAILED: An unexpected error has occurred.");
       log.error(e.getMessage());
       fail();
       System.exit(0);
