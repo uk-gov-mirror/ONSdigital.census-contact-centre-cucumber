@@ -40,6 +40,7 @@ import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalDetails;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
+import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
@@ -171,6 +172,28 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
           Long.valueOf(expectedCaseEvents),
           Long.valueOf(caseDTO.getCaseEvents().size()));
     }
+  }
+
+  @And("the establishment UPRN is {string}")
+  public void the_establishment_UPRN_is(String expectedEstabUprn) {
+    UniquePropertyReferenceNumber estabUprn = caseDTO.getEstabUprn();
+    if (StringUtils.isBlank(expectedEstabUprn)) {
+      assertNull("There should be no establishment UPRN", estabUprn);
+    } else {
+      assertNotNull("Establishment UPRN should exist", estabUprn);
+      assertEquals(
+          "Mismatching establishment UPRNs",
+          expectedEstabUprn,
+          Long.toString(estabUprn.getValue()));
+    }
+  }
+
+  @And("the secure establishment is set to {string}")
+  public void the_secure_establishment_is_set_to(String secure) {
+    boolean secureEstablishment = caseDTO.isSecureEstablishment();
+    boolean expectedSecure = Boolean.parseBoolean(secure);
+    assertEquals(
+        "Mismatching expectation of secure establishment", expectedSecure, secureEstablishment);
   }
 
   @Given("I have an invalid case ID {string}")

@@ -218,7 +218,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       assertNull(caseDTOList);
       caseDTOList = new ArrayList<>();
     } else {
-      List caseIdList =
+      List<String> caseIdList =
           Arrays.stream(caseIds.split(","))
               .filter(item -> !item.isEmpty())
               .collect(Collectors.toList());
