@@ -181,7 +181,10 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       assertNull("There should be no establishment UPRN", estabUprn);
     } else {
       assertNotNull("Establishment UPRN should exist", estabUprn);
-      assertEquals("Mismatching establishment UPRNs", expectedEstabUprn, Long.toString(estabUprn.getValue()));
+      assertEquals(
+          "Mismatching establishment UPRNs",
+          expectedEstabUprn,
+          Long.toString(estabUprn.getValue()));
     }
   }
 
@@ -189,7 +192,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_secure_establishment_is_set_to(String secure) {
     boolean secureEstablishment = caseDTO.isSecureEstablishment();
     boolean expectedSecure = Boolean.parseBoolean(secure);
-    assertEquals("Mismatching expectation of secure establishment", expectedSecure, secureEstablishment);
+    assertEquals(
+        "Mismatching expectation of secure establishment", expectedSecure, secureEstablishment);
   }
 
   @Given("I have an invalid case ID {string}")
