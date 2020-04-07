@@ -11,39 +11,64 @@ Feature: Test Contact centre Address Endpoints
     When I Search Addresses By Postcode
     Then A list of addresses for my postcode is returned
 
-    Examples:
-    | postcode  |
-    | "EX4 1EH" |
-    | "EX41EH"  |
+    Examples: 
+      | postcode  |
+      | "EX4 1EH" |
+      | "EX41EH"  |
 
   Scenario Outline: [CR-T130] I want to verify that address search by invalid postcode works
     Given I have an invalid Postcode <postcode>
     When I Search Addresses By Invalid Postcode
     Then An empty list of addresses for my postcode is returned
 
-    Examples:
-      | postcode  |
+    Examples: 
+      | postcode   |
       | "ZZ99 9ZZ" |
-      | "XXX SSS" |
+      | "XXX SSS"  |
 
   Scenario Outline: [CR-T131] I want to verify that address search by address works
     Given I have a valid address <address>
     When I Search Addresses By Address Search
     Then A list of addresses for my search is returned
 
-    Examples:
-      | address         |
-      | "Chelmsford"    |
-      | "Bristol Street"|
-      | "Plymouth"      |
+    Examples: 
+      | address          |
+      | "Chelmsford"     |
+      | "Bristol Street" |
+      | "Plymouth"       |
 
   Scenario Outline: [CR-T132] I want to verify that invalid address search by address works
     Given I have an invalid address <address>
     When I Search invalid Addresses By Address Search
     Then An empty list of addresses for my search is returned
 
-    Examples:
-      | address                 |
-      | "Chimpanzee"            |
-      | "Boaty McBoat Face "|
-      | "Strawberry Laces"     |
+    Examples: 
+      | address              |
+      | "Chimpanzee"         |
+      | "Boaty McBoat Face " |
+      | "Strawberry Laces"   |
+
+#Scenario: AIMS endpoint to provide region code, address type and establishment type
+    #Given the respondent calls the CC with a fulfilment request
+    #And the respondent address exists in AIMS
+    #When the CC agent searches for the address
+    #Then the CC SVC returns address attributes with region code, address type and establishment type
+
+  Scenario: Publish a new address event to RM
+    Given the CC agent has confirmed the respondent address
+    And the case service does not have any case created for the address in question
+    When Get/Case API returns a 404 error because there is no case found
+    And CC SVC creates a fake Case with the address details from AIMS
+    Then the CC SVC must publish a new address event to RM with the fake CaseID
+    
+  #Scenario: Publish a fulfilment request event to RM when case does not exist in RM but in firestore cache
+    #Given the CC agent has confirmed the respondent address
+    #And the case service does not have any case created for the address in question
+    #When Get/Case API returns a 404 error because the case was not found
+    #And CC SVC creates a fake case with the address details from AIMS
+    #Then the CC SVC must publish a new address event to RM with the fake CaseID
+    #Given the new case details are stored in firestore
+    #And CC SVC fetches the case details from firestore
+    #When a fulfilment request, for a product code, is made for the case
+    #Then a fulfilment request event is sent to RM
+    #
