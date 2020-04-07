@@ -135,7 +135,7 @@
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>framework</artifactId>
-			<version>0.0.52-SNAPSHOT</version>
+			<version>0.0.52</version>
 		</dependency>
 
 		<dependency>
@@ -147,7 +147,7 @@
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration</groupId>
 			<artifactId>contactcentreserviceapi</artifactId>
-			<version>0.0.78-SNAPSHOT</version>
+			<version>0.0.78</version>
 		</dependency>
 
 		<dependency>
@@ -159,7 +159,7 @@
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>census-int-case-api-client</artifactId>
-			<version>0.0.12-SNAPSHOT</version>
+			<version>0.0.12</version>
 		</dependency>
 
 		<dependency>
