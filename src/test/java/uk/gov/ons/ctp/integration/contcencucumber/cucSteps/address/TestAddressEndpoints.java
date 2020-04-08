@@ -4,18 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import java.util.List;
+
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestBase;
@@ -138,7 +139,7 @@ public class TestAddressEndpoints extends TestBase {
           "Address list size must be zero", 0, addressQueryResponseDTO.getAddresses().size());
     }
   }
-  
+
   @Given("the respondent calls the CC with a fulfilment request")
   public void the_respondent_calls_the_CC_with_a_fulfilment_request() {
     log.info("Nothing to do here: the respondent calls the CC with a fulfilment request");
@@ -153,7 +154,7 @@ public class TestAddressEndpoints extends TestBase {
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
     addressEndpointUrl = builder.build().encode().toUri().toString();
 
- log.info("Using the following endpoint to check address exists in AIMS: " + addressEndpointUrl);
+    log.info("Using the following endpoint to check address exists in AIMS: " + addressEndpointUrl);
 
     ResponseEntity<String> aimsEndpointResponse =
         getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
@@ -190,9 +191,11 @@ public class TestAddressEndpoints extends TestBase {
                 new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
 
     addressEndpointUrl = builder.build().encode().toUri().toString();
-    
-    log.info("Using the following endpoint to check CCSVC returns expected values: " + addressEndpointUrl);
-    
+
+    log.info(
+        "Using the following endpoint to check CCSVC returns expected values: "
+            + addressEndpointUrl);
+
     log.with(addressQueryResponse).info("The address query response here");
 
     AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
@@ -237,5 +240,4 @@ public class TestAddressEndpoints extends TestBase {
     log.with(estabType).info("This is the establishment type that was found in AIMS");
     // assertNotNull(estabType); COMMENT THIS OUT UNTIL REQUIRED CHANGES HAVE BEEN MADE TO AI
   }
-
 }
