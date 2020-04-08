@@ -48,11 +48,11 @@ Feature: Test Contact centre Address Endpoints
       | "Boaty McBoat Face " |
       | "Strawberry Laces"   |
 
-#Scenario: AIMS endpoint to provide region code, address type and establishment type
-    #Given the respondent calls the CC with a fulfilment request
-    #And the respondent address exists in AIMS
-    #When the CC agent searches for the address
-    #Then the CC SVC returns address attributes with region code, address type and establishment type
+Scenario: AIMS endpoint to provide region code, address type and establishment type
+    Given the respondent calls the CC with a fulfilment request
+    And the respondent address exists in AIMS
+    When the CC agent searches for the address
+    Then the CC SVC returns address attributes with region code, address type and establishment type
 
   Scenario: Publish a new address event to RM
     Given the CC agent has confirmed the respondent address

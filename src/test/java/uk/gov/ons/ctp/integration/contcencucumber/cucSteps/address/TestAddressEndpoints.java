@@ -153,7 +153,7 @@ public class TestAddressEndpoints extends TestBase {
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
     addressEndpointUrl = builder.build().encode().toUri().toString();
 
-    log.info("Using the following endpoint to check address exists in AIMS: " + addressEndpointUrl);
+ log.info("Using the following endpoint to check address exists in AIMS: " + addressEndpointUrl);
 
     ResponseEntity<String> aimsEndpointResponse =
         getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
@@ -189,6 +189,10 @@ public class TestAddressEndpoints extends TestBase {
                 null,
                 new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
 
+    addressEndpointUrl = builder.build().encode().toUri().toString();
+    
+    log.info("Using the following endpoint to check CCSVC returns expected values: " + addressEndpointUrl);
+    
     log.with(addressQueryResponse).info("The address query response here");
 
     AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
@@ -197,14 +201,14 @@ public class TestAddressEndpoints extends TestBase {
 
     int i = 0;
     boolean addressExists = false;
-    String addressToFind = "1, West Grove Road, Exeter, EX2 4LU";
+    String addressToFind = "1 West Grove Road, Exeter, EX2 4LU";
     String addressFound = "";
     int indexFound = 500;
     log.info(
         "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
     while ((i < addressesFound.size()) && (addressExists == false)) {
       addressFound = addressesFound.get(i).getFormattedAddress();
-
+      log.with(addressFound).info("This is the address that was found in AIMS where i is: " + i);
       if (addressFound.equals(addressToFind)) {
         log.with(addressFound).info("This is the address that was found in AIMS");
         addressExists = true;
@@ -212,6 +216,7 @@ public class TestAddressEndpoints extends TestBase {
       }
       i++;
     }
+    log.info("The value of i: " + i);
     assertEquals(
         "The address query response does not contain the correct address",
         addressToFind,
