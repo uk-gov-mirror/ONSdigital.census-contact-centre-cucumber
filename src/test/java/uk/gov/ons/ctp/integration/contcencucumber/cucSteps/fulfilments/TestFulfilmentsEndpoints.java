@@ -450,16 +450,14 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @When(
-      "CC Advisor selects the product code for productGroup {string},  language {string}, deliveryChannel {string}")
-  public void cc_Advisor_selects_the_product_code_for_productGroup_language_deliveryChannel(
-      String strProductGroup, String strLanguage, String strDeliveryChannel) {
+      "CC Advisor selects the product code for productGroup {string}, deliveryChannel {string}")
+  public void cc_Advisor_selects_the_product_code_for_productGroup_deliveryChannel(
+      String strProductGroup, String strDeliveryChannel) {
     productCodeSelected = null;
     for (Product p : listOfProducts) {
       String productGroup = p.getProductGroup().toString().toUpperCase();
-      String language = p.getLanguage();
       String deliveryChannel = p.getDeliveryChannel().toString().toUpperCase();
       if (productGroup.equals(strProductGroup)
-          && language.equals(strLanguage)
           && deliveryChannel.equals(strDeliveryChannel)) {
         productCodeSelected = p.getFulfilmentCode();
       }
@@ -469,8 +467,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       throw new cucumber.api.PendingException(
           "The Product Reference Service contains no products that match this combination of productGroup ("
               + strProductGroup
-              + ") language ("
-              + strLanguage
               + ") and deliveryChannel ("
               + strDeliveryChannel
               + ")");
