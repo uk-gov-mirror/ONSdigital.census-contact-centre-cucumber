@@ -449,16 +449,14 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     rabbit.flushQueue(queueName);
   }
 
-  @When(
-      "CC Advisor selects the product code for productGroup {string}, deliveryChannel {string}")
+  @When("CC Advisor selects the product code for productGroup {string}, deliveryChannel {string}")
   public void cc_Advisor_selects_the_product_code_for_productGroup_deliveryChannel(
       String strProductGroup, String strDeliveryChannel) {
     productCodeSelected = null;
     for (Product p : listOfProducts) {
       String productGroup = p.getProductGroup().toString().toUpperCase();
       String deliveryChannel = p.getDeliveryChannel().toString().toUpperCase();
-      if (productGroup.equals(strProductGroup)
-          && deliveryChannel.equals(strDeliveryChannel)) {
+      if (productGroup.equals(strProductGroup) && deliveryChannel.equals(strDeliveryChannel)) {
         productCodeSelected = p.getFulfilmentCode();
       }
     }
