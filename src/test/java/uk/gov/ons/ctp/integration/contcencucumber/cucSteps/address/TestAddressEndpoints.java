@@ -228,16 +228,16 @@ public class TestAddressEndpoints extends TestBase {
     String regionCode = null;
     regionCode = addressesFound.get(indexFound).getRegion();
     log.with(regionCode).info("This is the region code that was found in AIMS");
-    // assertNotNull(regionCode); COMMENT THIS OUT UNTIL REQUIRED CHANGES HAVE BEEN MADE TO AI
+    assertNotNull(regionCode);
 
     String addressType = null;
     addressType = addressesFound.get(indexFound).getAddressType();
     log.with(addressType).info("This is the address type that was found in AIMS");
-    // assertNotNull(addressType); COMMENT THIS OUT UNTIL REQUIRED CHANGES HAVE BEEN MADE TO AI
+    assertNotNull(addressType);
 
     String estabType = null;
     estabType = addressesFound.get(indexFound).getEstabType();
     log.with(estabType).info("This is the establishment type that was found in AIMS");
-    // assertNotNull(estabType); COMMENT THIS OUT UNTIL REQUIRED CHANGES HAVE BEEN MADE TO AI
+    assertNotNull(estabType);
   }
 }
