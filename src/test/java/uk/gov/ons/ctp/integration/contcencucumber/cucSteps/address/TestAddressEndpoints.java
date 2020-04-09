@@ -244,7 +244,7 @@ public class TestAddressEndpoints extends TestBase {
     log.with(estabType).info("This is the establishment type that was found in AIMS");
     assertNotNull(estabType);
   }
-  
+
   @Given("the CC agent has confirmed the respondent address")
   public void the_CC_agent_has_confirmed_the_respondent_address() {
     UriComponentsBuilder builder =
@@ -291,7 +291,7 @@ public class TestAddressEndpoints extends TestBase {
 
     uprnToSearchOn = addressesFound.get(indexFound).getUprn();
   }
-  
+
   @Given("the case service does not have any case created for the address in question")
   public void the_case_service_does_not_have_any_case_created_for_the_address_in_question() {
     UriComponentsBuilder builder =
@@ -316,7 +316,7 @@ public class TestAddressEndpoints extends TestBase {
 
     log.info("The response status: " + status);
   }
-  
+
   @When("Get\\/Case API returns a {int} error because there is no case found")
   public void get_Case_API_returns_a_error_because_there_is_no_case_found(Integer int1) {
     assertEquals(
