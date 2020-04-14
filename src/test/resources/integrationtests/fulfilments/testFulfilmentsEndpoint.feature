@@ -152,21 +152,21 @@ Feature: Test Contact centre Fulfilments Endpoints
 
   @SetUp
   Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] PENDING(CR-T273) I want to request a Paper Questionnaire for SMS delivery channel
-    Given the CC advisor has provided a valid UPRN <uprn>
-    Then the Case endpoint returns a case, associated with UPRN <uprn>, which has caseType <case_type> and addressLevel "U" and handDelivery "false"
-    Given a list of available fulfilment product codes is presented for a caseType = <case_type> where individual flag = <individual> and region = <region>
+    Given the CC advisor has provided a valid UPRN "<uprn>"
+    Then the Case endpoint returns a case, associated with UPRN "<uprn>", which has caseType "<case_type>" and addressLevel "U" and handDelivery "false"
+    Given a list of available fulfilment product codes is presented for a caseType = "<case_type>" where individual flag = "<individual>" and region = "<region>"
     And an empty queue exists for sending Fulfilment Requested events
-    When CC Advisor selects the product code for productGroup "QUESTIONNAIRE",  language <language>, deliveryChannel <delivery_channel>
-    Then a fulfilment request event is emitted to RM for UPRN = <uprn> addressType = case_type individual = <individual> and region = <region>
+    When CC Advisor selects the product code for productGroup "QUESTIONNAIRE", deliveryChannel "<delivery_channel>"
+    Then a fulfilment request event is emitted to RM for UPRN = "<uprn>" addressType = "<case_type>" individual = "<individual>" and region = "<region>"
 
 
     Examples:
-      | uprn           | case_id                                  | case_type | region | delivery_channel | individual | language |
-      |"100140222798"  | "3305e937-6fb2-4ce1-9d4c-077f147789de"   | "HH"      | "E"    | "SMS"            | "false"    | "eng"    |
-      |"100240222798"  | "3305e937-6fb3-4ce1-9d4c-077f147789de"   | "CE"      | "E"    | "SMS"            | "true"     | "eng"    |
-      |"100340222798"  | "3305e937-6fb4-4ce1-9d4c-077f147789de"   | "HH"      | "W"    | "SMS"            | "true"     | "eng"    |
-      |"100440222798"  | "3305e937-6fb5-4ce1-9d4c-077f147789de"   | "CE"      | "W"    | "SMS"            | "false"    | "eng"    |
-      |"100540222798"  | "3305e937-6fb6-4ce1-9d4c-077f147789de"   | "SPG"     | "N"    | "SMS"            | "false"    | "eng"    |
-      |"100640222798"  | "3305e937-6fb7-4ce1-9d4c-077f147789de"   | "SPG"     | "N"    | "SMS"            | "true"     | "eng"    |
-      |"100340222798"  | "3305e937-6fb4-4ce1-9d4c-077f147789de"   | "HH"      | "W"    | "SMS"            | "true"     | "wel"    |
-      |"100440222798"  | "3305e937-6fb5-4ce1-9d4c-077f147789de"   | "CE"      | "W"    | "SMS"            | "false"    | "wel"    |
+      | uprn         | case_type | region | delivery_channel | individual |
+      |100140222798  | HH        | E      | SMS              | false      |
+      |100240222798  | CE        | E      | SMS              | true       |
+      |100340222798  | HH        | W      | SMS              | true       |
+      |100440222798  | CE        | W      | SMS              | false      |
+      |100540222798  | SPG       | N      | SMS              | false      |
+      |100640222798  | SPG       | N      | SMS              | true       |
+      |100340222798  | HH        | W      | SMS              | true       |
+      |100440222798  | CE        | W      | SMS              | false      |
