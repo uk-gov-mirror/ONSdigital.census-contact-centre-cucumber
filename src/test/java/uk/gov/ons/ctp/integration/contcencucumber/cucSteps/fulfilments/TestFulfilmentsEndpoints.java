@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+import cucumber.api.PendingException;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -450,6 +451,21 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @When(
+      "CC Advisor selects the product code for productGroup {string},  language {string}, deliveryChannel {string} {string} {string}")
+  public void cc_Advisor_selects_the_product_code_for_productGroup_language_deliveryChannel(
+      String strProductGroup, String strLanguage, String strDeliveryChannel, String pending, String prn) {
+    StringBuilder stb = new StringBuilder("This test is pending for uprn: ")
+        .append(uprn)
+        .append(" Product Group: ")
+        .append(strProductGroup)
+        .append(" Language: ")
+        .append(strLanguage)
+        .append(" Delivery Channel: ")
+        .append(strDeliveryChannel);
+    throw new PendingException(stb.toString());
+  }
+
+  @When(
       "CC Advisor selects the product code for productGroup {string},  language {string}, deliveryChannel {string}")
   public void cc_Advisor_selects_the_product_code_for_productGroup_language_deliveryChannel(
       String strProductGroup, String strLanguage, String strDeliveryChannel) {
@@ -493,6 +509,23 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       fail();
       System.exit(0);
     }
+  }
+
+  @Then(
+      "a fulfilment request event is emitted to RM for UPRN = {string} addressType = {string} individual = {string} and region = {string} {string}")
+  public void
+  a_fulfilment_request_event_is_emitted_to_RM_for_UPRN_addressType_individual_and_region(
+      String uprn, String expectedAddressType, String individual, String expectedRegion, String pending)
+      throws CTPException {
+    StringBuilder stb = new StringBuilder("This test is pending for uprn: ")
+        .append(uprn)
+        .append(" Address Type: ")
+        .append(expectedAddressType)
+        .append(" Individual: ")
+        .append(individual)
+        .append(" Expected Region: ")
+        .append(expectedRegion);
+    throw new PendingException(stb.toString());
   }
 
   @Then(
