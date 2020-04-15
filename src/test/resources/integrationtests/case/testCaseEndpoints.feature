@@ -123,8 +123,8 @@ Feature: Test Contact centre Case Endpoints
     Then an AddressNotValid event is emitted to RM, which contains the correct <type>, <source>, <channel>, <reason>, and <collectionCaseId>
     
     Examples: 
-      | uprn         | status               | type                | source               | channel | reason               | collectionCaseId
-      | "1347459995" | "DERELICT"           | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DERELICT"           | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
-      | "1347459995" | "DEMOLISHED"         | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DEMOLISHED"         | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
-      | "1347459995" | "NON_RESIDENTIAL"    | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "NON_RESIDENTIAL"    | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
-      | "1347459995" | "UNDER_CONSTRUCTION" | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "UNDER_CONSTRUCTION" | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
+      | uprn         | status               | type                | source               | channel | reason               | collectionCaseId                       |
+      | "1347459995" | "DERELICT"           | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DERELICT"           | "bbd55984-0dbf-4499-bfa7-0aa4228700e9" |
+      | "1347459995" | "DEMOLISHED"         | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DEMOLISHED"         | "bbd55984-0dbf-4499-bfa7-0aa4228700e9" |
+      | "1347459995" | "NON_RESIDENTIAL"    | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "NON_RESIDENTIAL"    | "bbd55984-0dbf-4499-bfa7-0aa4228700e9" |
+      | "1347459995" | "UNDER_CONSTRUCTION" | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "UNDER_CONSTRUCTION" | "bbd55984-0dbf-4499-bfa7-0aa4228700e9" |
