@@ -116,7 +116,7 @@ Feature: Test Contact centre Case Endpoints
       | "XX474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "400"     |
 
   Scenario Outline: [CR-T357] Invalid Address
-    Given the CC advisor has provided a valid UPRN
+    Given the CC advisor has provided a valid UPRN "1347459995"
     Then the Case endpoint returns a case associated with the UPRN
     Given an empty queue exists for sending AddressNotValid events
     When CC Advisor selects the <status>

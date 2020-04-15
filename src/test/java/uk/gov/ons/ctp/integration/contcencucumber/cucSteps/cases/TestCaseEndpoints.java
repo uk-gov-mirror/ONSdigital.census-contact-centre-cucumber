@@ -15,6 +15,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -73,6 +74,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String telephoneEndpointBody2;
   private RabbitHelper rabbit;
   private String queueName;
+  private List<CaseDTO> listOfCasesWithUprn;
+  private URI caseForUprnUrl;
 
   @Value("${keystore}")
   private String keyStore;
@@ -609,5 +612,52 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private RefusalRequestDTO createRefusalRequest() {
     return RefusalFixture.createRequest(caseId, agentId, reason);
+  }
+  
+  @Given("the CC advisor has provided a valid UPRN {string}")
+  public void the_CC_advisor_has_provided_a_valid_UPRN(String strUprn) {
+    try {
+      ResponseEntity<List<CaseDTO>> caseUprnResponse = getCaseForUprn(strUprn);
+      listOfCasesWithUprn = caseUprnResponse.getBody();
+      HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
+      log.with(contactCentreStatus)
+          .info("GET CASE BY UPRN: The response from " + caseForUprnUrl.toString());
+      assertEquals(
+          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus);
+    } catch (Exception e) {
+      log.error("GET CASE BY UPRN HAS FAILED: An unexpected error has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+  }
+  
+  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprn);
+
+    ResponseEntity<List<CaseDTO>> caseResponse = null;
+    caseForUprnUrl = builder.build().encode().toUri();
+
+    try {
+      caseResponse =
+          getRestTemplate()
+              .exchange(
+                  caseForUprnUrl,
+                  HttpMethod.GET,
+                  null,
+                  new ParameterizedTypeReference<List<CaseDTO>>() {});
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
+    }
+    return caseResponse;
   }
 }
