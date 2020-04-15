@@ -613,7 +613,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private RefusalRequestDTO createRefusalRequest() {
     return RefusalFixture.createRequest(caseId, agentId, reason);
   }
-  
+
   @Given("the CC advisor has provided a valid UPRN {string}")
   public void the_CC_advisor_has_provided_a_valid_UPRN(String strUprn) {
     try {
@@ -633,7 +633,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       System.exit(0);
     }
   }
-  
+
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
