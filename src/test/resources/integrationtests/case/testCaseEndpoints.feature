@@ -116,16 +116,15 @@ Feature: Test Contact centre Case Endpoints
       | "XX474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "400"     |
 
   Scenario Outline: [CR-T357] Invalid Address
-    Given the CC advisor has provided a valid UPRN "1347459995"
-    Then the Case endpoint returns a case associated with the UPRN
+    Given the CC advisor has provided a valid UPRN <uprn> 
+    Then the Case endpoint returns a case associated with UPRN <uprn> 
     Given an empty queue exists for sending AddressNotValid events
     When CC Advisor selects the <status>
     Then an AddressNotValid event is emitted to RM, which contains the correct <type>, <source>, <channel>, <reason>, and <collectionCaseId>
     
     Examples: 
-      | status               | type                | source               | channel | reason               | collectionCaseId
-      | "UNCHANGED"          | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "UNCHANGED"          | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
-      | "DERELICT"           | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DERELICT"           | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
-      | "DEMOLISHED"         | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DEMOLISHED"         | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
-      | "NON_RESIDENTIAL"    | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "NON_RESIDENTIAL"    | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
-      | "UNDER_CONSTRUCTION" | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "UNDER_CONSTRUCTION" | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
+      | uprn         | status               | type                | source               | channel | reason               | collectionCaseId
+      | "1347459995" | "DERELICT"           | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DERELICT"           | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
+      | "1347459995" | "DEMOLISHED"         | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DEMOLISHED"         | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
+      | "1347459995" | "NON_RESIDENTIAL"    | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "NON_RESIDENTIAL"    | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
+      | "1347459995" | "UNDER_CONSTRUCTION" | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "UNDER_CONSTRUCTION" | "bbd55984-0dbf-4499-bfa7-0aa4228700e9"
