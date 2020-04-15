@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+import cucumber.api.PendingException;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -449,18 +450,14 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     rabbit.flushQueue(queueName);
   }
 
-  @When(
-      "CC Advisor selects the product code for productGroup {string},  language {string}, deliveryChannel {string}")
-  public void cc_Advisor_selects_the_product_code_for_productGroup_language_deliveryChannel(
-      String strProductGroup, String strLanguage, String strDeliveryChannel) {
+  @When("CC Advisor selects the product code for productGroup {string}, deliveryChannel {string}")
+  public void cc_Advisor_selects_the_product_code_for_productGroup_deliveryChannel(
+      String strProductGroup, String strDeliveryChannel) {
     productCodeSelected = null;
     for (Product p : listOfProducts) {
       String productGroup = p.getProductGroup().toString().toUpperCase();
-      String language = p.getLanguage();
       String deliveryChannel = p.getDeliveryChannel().toString().toUpperCase();
-      if (productGroup.equals(strProductGroup)
-          && language.equals(strLanguage)
-          && deliveryChannel.equals(strDeliveryChannel)) {
+      if (productGroup.equals(strProductGroup) && deliveryChannel.equals(strDeliveryChannel)) {
         productCodeSelected = p.getFulfilmentCode();
       }
     }
@@ -469,8 +466,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       throw new cucumber.api.PendingException(
           "The Product Reference Service contains no products that match this combination of productGroup ("
               + strProductGroup
-              + ") language ("
-              + strLanguage
               + ") and deliveryChannel ("
               + strDeliveryChannel
               + ")");
@@ -493,6 +488,20 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       fail();
       System.exit(0);
     }
+  }
+
+  @When(
+      "CC Advisor selects the product code for productGroup {string},  deliveryChannel {string} {string} {string}")
+  public void cc_Advisor_selects_the_product_code_for_productGroup_language_deliveryChannel(
+      String strProductGroup, String strDeliveryChannel, String pending, String uprn) {
+    StringBuilder stb =
+        new StringBuilder("This test is PENDING for uprn: ")
+            .append(uprn)
+            .append(" Product Group: ")
+            .append(strProductGroup)
+            .append(" Delivery Channel: ")
+            .append(strDeliveryChannel);
+    throw new PendingException(stb.toString());
   }
 
   @Then(
@@ -581,6 +590,28 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "The FulfilmentRequested event contains an incorrect value of 'region'",
         expectedRegion,
         address.getRegion());
+  }
+
+  @Then(
+      "a fulfilment request event is emitted to RM for UPRN = {string} addressType = {string} individual = {string} and region = {string} {string}")
+  public void
+      a_fulfilment_request_event_is_emitted_to_RM_for_UPRN_addressType_individual_and_region(
+          String uprn,
+          String expectedAddressType,
+          String individual,
+          String expectedRegion,
+          String pending)
+          throws CTPException {
+    StringBuilder stb =
+        new StringBuilder("This test is PENDING for uprn: ")
+            .append(uprn)
+            .append(" Address Type: ")
+            .append(expectedAddressType)
+            .append(" Individual: ")
+            .append(individual)
+            .append(" Expected Region: ")
+            .append(expectedRegion);
+    throw new PendingException(stb.toString());
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
