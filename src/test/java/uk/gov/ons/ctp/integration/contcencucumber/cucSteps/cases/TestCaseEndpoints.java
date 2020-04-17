@@ -39,12 +39,15 @@ import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 import uk.gov.ons.ctp.common.event.EventPublisher.Source;
+import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
+import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
 import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalDetails;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
+import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseStatus;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.EstabType;
@@ -83,6 +86,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private List<CaseDTO> listOfCasesWithUprn;
   private URI caseForUprnUrl;
   private URI modifyCaseUrl;
+  private AddressNotValidEvent addressNotValidEvent;
+  private Header addressNotValidHeader;
+  private AddressNotValidPayload addressNotValidPayload;
 
   @Value("${keystore}")
   private String keyStore;
@@ -90,6 +96,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Before
   public void setup() throws Exception {
     rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
+    addressNotValidEvent = null;
   }
 
   @Given("I am about to do a smoke test by going to a contact centre endpoint")
@@ -715,9 +722,51 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Then(
       "an AddressNotValid event is emitted to RM, which contains the correct {string}, {string}, {string}, {string}, and {string}")
   public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_correct_and(
-      String string, String string2, String string3, String string4, String string5) {
-    // Write code here that turns the phrase above into concrete actions
-    throw new cucumber.api.PendingException();
+      String string, String string2, String string3, String string4, String string5)
+      throws CTPException {
+    log.info(
+        "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named "
+            + queueName
+            + ", ready to be picked up by RM");
+
+    String clazzName = "AddressNotValid.class";
+    String timeout = "2000ms";
+
+    log.info(
+        "Getting from queue: '"
+            + queueName
+            + "' and converting to an object of type '"
+            + clazzName
+            + "', with timeout of '"
+            + timeout
+            + "'");
+
+    addressNotValidEvent =
+        (AddressNotValidEvent)
+            rabbit.getMessage(
+                queueName, AddressNotValidEvent.class, TimeoutParser.parseTimeoutString(timeout));
+
+    assertNotNull(addressNotValidEvent);
+    addressNotValidHeader = addressNotValidEvent.getEvent();
+    assertNotNull(addressNotValidHeader);
+    addressNotValidPayload = addressNotValidEvent.getPayload();
+    assertNotNull(addressNotValidPayload);
+
+    //
+    // String expectedType = "FULFILMENT_REQUESTED";
+    // String expectedSource = "CONTACT_CENTRE_API";
+    // String expectedChannel = "CC";
+    // String expectedFulfilmentCode = productCodeSelected;
+    // String expectedCaseId = caseId;
+    //
+    // assertEquals(
+    // "The FulfilmentRequested event contains an incorrect value of 'type'",
+    // expectedType,
+    // fulfilmentRequestedHeader.getType().name());
+    // assertEquals(
+    // "The FulfilmentRequested event contains an incorrect value of 'source'",
+    // expectedSource,
+    // fulfilmentRequestedHeader.getSource().name());
   }
 
   private ResponseEntity<ResponseDTO> requestModifyCase(String caseId, String statusSelected) {
