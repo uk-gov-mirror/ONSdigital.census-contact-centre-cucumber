@@ -672,4 +672,15 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
     assertEquals(expectedUprn, listOfCasesWithUprn.get(0).getUprn());
   }
+
+  @Given("an empty queue exists for sending AddressNotValid events")
+  public void an_empty_queue_exists_for_sending_AddressNotValid_events() throws CTPException {
+    String eventTypeAsString = "ADDRESS_NOT_VALID";
+    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
+    EventType eventType = EventType.valueOf(eventTypeAsString);
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+
+    rabbit.flushQueue(queueName);
+  }
 }
