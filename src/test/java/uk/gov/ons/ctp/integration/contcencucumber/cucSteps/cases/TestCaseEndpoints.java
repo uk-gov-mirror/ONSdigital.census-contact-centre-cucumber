@@ -18,6 +18,7 @@ import cucumber.api.java.en.When;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,9 +46,13 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseStatus;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.EstabType;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.ModifyCaseRequestDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.Reason;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.RefusalRequestDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ResponseDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
@@ -76,6 +82,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String queueName;
   private List<CaseDTO> listOfCasesWithUprn;
   private URI caseForUprnUrl;
+  private URI modifyCaseUrl;
 
   @Value("${keystore}")
   private String keyStore;
@@ -682,5 +689,74 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("Flushing queue: '" + queueName + "'");
 
     rabbit.flushQueue(queueName);
+  }
+
+  @When("CC Advisor selects the {string}")
+  public void cc_Advisor_selects_the(String statusSelected) {
+    try {
+      log.with(caseId)
+          .info("Now putting a ModifyCaseRequestDTO on the modifyCase endpoint for this case id..");
+      ResponseEntity<ResponseDTO> modifyCaseResponse = requestModifyCase(caseId, statusSelected);
+      HttpStatus contactCentreStatus = modifyCaseResponse.getStatusCode();
+      log.with(contactCentreStatus)
+          .info("REQUEST MODIFY CASE: The response from " + modifyCaseUrl.toString());
+      assertEquals(
+          "REQUEST MODIFY CASE HAS FAILED - the contact centre does not give a response code of 200",
+          HttpStatus.OK,
+          contactCentreStatus);
+    } catch (Exception e) {
+      log.error("REQUEST MODIFY CASE HAS FAILED: An unexpected error has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+  }
+
+  @Then(
+      "an AddressNotValid event is emitted to RM, which contains the correct {string}, {string}, {string}, {string}, and {string}")
+  public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_correct_and(
+      String string, String string2, String string3, String string4, String string5) {
+    // Write code here that turns the phrase above into concrete actions
+    throw new cucumber.api.PendingException();
+  }
+
+  private ResponseEntity<ResponseDTO> requestModifyCase(String caseId, String statusSelected) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId);
+
+    ResponseEntity<ResponseDTO> requestModifyCaseResponse = null;
+    modifyCaseUrl = builder.build().encode().toUri();
+
+    log.with(modifyCaseUrl).info("The url for requesting the postal fulfilment");
+
+    ModifyCaseRequestDTO modifyCaseRequestDTO = new ModifyCaseRequestDTO();
+    modifyCaseRequestDTO.setCaseId(UUID.fromString(caseId));
+    modifyCaseRequestDTO.setEstabType(EstabType.HOUSEHOLD);
+    modifyCaseRequestDTO.setStatus(CaseStatus.valueOf(statusSelected));
+    modifyCaseRequestDTO.setNotes("Two houses have been knocked into one.");
+    modifyCaseRequestDTO.setAddressLine1("Brathay");
+    modifyCaseRequestDTO.setAddressLine2("2A Priors Way");
+    modifyCaseRequestDTO.setAddressLine3("Olivers");
+    modifyCaseRequestDTO.setTownName("Winchester");
+    modifyCaseRequestDTO.setRegion(Region.E);
+    modifyCaseRequestDTO.setPostcode("SO22 4HJ");
+    modifyCaseRequestDTO.setDateTime(new Date());
+
+    HttpEntity<ModifyCaseRequestDTO> requestEntity = new HttpEntity<>(modifyCaseRequestDTO);
+
+    try {
+      requestModifyCaseResponse =
+          getRestTemplate()
+              .exchange(modifyCaseUrl, HttpMethod.PUT, requestEntity, ResponseDTO.class);
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "A HttpClientErrorException has occurred when trying to put on modifyCase endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
+    }
+
+    return requestModifyCaseResponse;
   }
 }
