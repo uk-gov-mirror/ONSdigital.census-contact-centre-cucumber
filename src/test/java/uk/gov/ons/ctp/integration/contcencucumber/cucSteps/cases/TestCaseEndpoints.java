@@ -39,6 +39,7 @@ import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 import uk.gov.ons.ctp.common.event.EventPublisher.Source;
+import uk.gov.ons.ctp.common.event.model.AddressNotValid;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
 import uk.gov.ons.ctp.common.event.model.Header;
@@ -722,7 +723,11 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Then(
       "an AddressNotValid event is emitted to RM, which contains the correct {string}, {string}, {string}, {string}, and {string}")
   public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_correct_and(
-      String string, String string2, String string3, String string4, String string5)
+      String expectedType,
+      String expectedSource,
+      String expectedChannel,
+      String expectedReason,
+      String expectedCollectionCaseId)
       throws CTPException {
     log.info(
         "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named "
@@ -752,21 +757,15 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     addressNotValidPayload = addressNotValidEvent.getPayload();
     assertNotNull(addressNotValidPayload);
 
-    //
-    // String expectedType = "FULFILMENT_REQUESTED";
-    // String expectedSource = "CONTACT_CENTRE_API";
-    // String expectedChannel = "CC";
-    // String expectedFulfilmentCode = productCodeSelected;
-    // String expectedCaseId = caseId;
-    //
-    // assertEquals(
-    // "The FulfilmentRequested event contains an incorrect value of 'type'",
-    // expectedType,
-    // fulfilmentRequestedHeader.getType().name());
-    // assertEquals(
-    // "The FulfilmentRequested event contains an incorrect value of 'source'",
-    // expectedSource,
-    // fulfilmentRequestedHeader.getSource().name());
+    assertEquals(expectedType, addressNotValidHeader.getType().name());
+    assertEquals(expectedSource, addressNotValidHeader.getSource().name());
+    assertEquals(expectedChannel, addressNotValidHeader.getChannel().name());
+    assertNotNull(addressNotValidHeader.getDateTime());
+    assertNotNull(addressNotValidHeader.getTransactionId());
+
+    AddressNotValid addressNotValid = addressNotValidPayload.getInvalidAddress();
+    assertEquals(expectedReason, addressNotValid.getReason());
+    assertEquals(expectedCollectionCaseId, addressNotValid.getCollectionCase().getId().toString());
   }
 
   private ResponseEntity<ResponseDTO> requestModifyCase(String caseId, String statusSelected) {
