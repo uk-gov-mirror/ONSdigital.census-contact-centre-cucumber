@@ -717,22 +717,30 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void
       an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_or_no_event_is_sent_if_the_status_is_UNCHANGED(
           String expectedReason) throws CTPException {
+    //    log.info(
+    //        "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named "
+    //            + queueName
+    //            + ", ready to be picked up by RM");
     log.info(
-        "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named "
-            + queueName
-            + ", ready to be picked up by RM");
+        "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
 
     String clazzName = "AddressNotValid.class";
     String timeout = "2000ms";
 
+    //    log.info(
+    //        "Getting from queue: '"
+    //            + queueName
+    //            + "' and converting to an object of type '"
+    //            + clazzName
+    //            + "', with timeout of '"
+    //            + timeout
+    //            + "'");
     log.info(
-        "Getting from queue: '"
-            + queueName
-            + "' and converting to an object of type '"
-            + clazzName
-            + "', with timeout of '"
-            + timeout
-            + "'");
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        clazzName,
+        timeout);
 
     addressNotValidEvent =
         (AddressNotValidEvent)
