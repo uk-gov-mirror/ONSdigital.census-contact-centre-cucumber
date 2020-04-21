@@ -640,14 +640,10 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
       log.with(contactCentreStatus)
           .info("GET CASE BY UPRN: The response from " + caseForUprnUrl.toString());
-      assertEquals(
-          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200",
-          HttpStatus.OK,
-          contactCentreStatus);
+      assertEquals(HttpStatus.OK, contactCentreStatus);
     } catch (Exception e) {
-      log.error("GET CASE BY UPRN HAS FAILED: An unexpected error has occurred.");
-      log.error(e.getMessage());
-      fail();
+      fail(
+          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200");
       throw e;
     }
   }
@@ -708,14 +704,10 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       HttpStatus contactCentreStatus = modifyCaseResponse.getStatusCode();
       log.with(contactCentreStatus)
           .info("REQUEST MODIFY CASE: The response from " + modifyCaseUrl.toString());
-      assertEquals(
-          "REQUEST MODIFY CASE HAS FAILED - the contact centre does not give a response code of 200",
-          HttpStatus.OK,
-          contactCentreStatus);
+      assertEquals(HttpStatus.OK, contactCentreStatus);
     } catch (Exception e) {
-      log.error("REQUEST MODIFY CASE HAS FAILED: An unexpected error has occurred.");
-      log.error(e.getMessage());
-      fail();
+      fail(
+          "REQUEST MODIFY CASE HAS FAILED - the contact centre does not give a response code of 200");
       throw e;
     }
   }
