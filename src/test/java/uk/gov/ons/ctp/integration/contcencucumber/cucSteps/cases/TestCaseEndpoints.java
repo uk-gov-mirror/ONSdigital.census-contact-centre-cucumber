@@ -720,56 +720,62 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-//  @Then(
-//      "an AddressNotValid event is emitted to RM, which contains the correct {string}, {string}, {string}, {string}, and {string}")
-//  public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_correct_and(
-//      String expectedType,
-//      String expectedSource,
-//      String expectedChannel,
-//      String expectedReason,
-//      String expectedCollectionCaseId)
-//      throws CTPException {
-//    log.info(
-//        "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named "
-//            + queueName
-//            + ", ready to be picked up by RM");
-//
-//    String clazzName = "AddressNotValid.class";
-//    String timeout = "2000ms";
-//
-//    log.info(
-//        "Getting from queue: '"
-//            + queueName
-//            + "' and converting to an object of type '"
-//            + clazzName
-//            + "', with timeout of '"
-//            + timeout
-//            + "'");
-//
-//    addressNotValidEvent =
-//        (AddressNotValidEvent)
-//            rabbit.getMessage(
-//                queueName, AddressNotValidEvent.class, TimeoutParser.parseTimeoutString(timeout));
-//
-//    assertNotNull(addressNotValidEvent);
-//    addressNotValidHeader = addressNotValidEvent.getEvent();
-//    assertNotNull(addressNotValidHeader);
-//    addressNotValidPayload = addressNotValidEvent.getPayload();
-//    assertNotNull(addressNotValidPayload);
-//
-//    assertEquals(expectedType, addressNotValidHeader.getType().name());
-//    assertEquals(expectedSource, addressNotValidHeader.getSource().name());
-//    assertEquals(expectedChannel, addressNotValidHeader.getChannel().name());
-//    assertNotNull(addressNotValidHeader.getDateTime());
-//    assertNotNull(addressNotValidHeader.getTransactionId());
-//
-//    AddressNotValid addressNotValid = addressNotValidPayload.getInvalidAddress();
-//    assertEquals(expectedReason, addressNotValid.getReason());
-//    assertEquals(expectedCollectionCaseId, addressNotValid.getCollectionCase().getId().toString());
-//  }
+  //  @Then(
+  //      "an AddressNotValid event is emitted to RM, which contains the correct {string}, {string},
+  // {string}, {string}, and {string}")
+  //  public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_correct_and(
+  //      String expectedType,
+  //      String expectedSource,
+  //      String expectedChannel,
+  //      String expectedReason,
+  //      String expectedCollectionCaseId)
+  //      throws CTPException {
+  //    log.info(
+  //        "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named "
+  //            + queueName
+  //            + ", ready to be picked up by RM");
+  //
+  //    String clazzName = "AddressNotValid.class";
+  //    String timeout = "2000ms";
+  //
+  //    log.info(
+  //        "Getting from queue: '"
+  //            + queueName
+  //            + "' and converting to an object of type '"
+  //            + clazzName
+  //            + "', with timeout of '"
+  //            + timeout
+  //            + "'");
+  //
+  //    addressNotValidEvent =
+  //        (AddressNotValidEvent)
+  //            rabbit.getMessage(
+  //                queueName, AddressNotValidEvent.class,
+  // TimeoutParser.parseTimeoutString(timeout));
+  //
+  //    assertNotNull(addressNotValidEvent);
+  //    addressNotValidHeader = addressNotValidEvent.getEvent();
+  //    assertNotNull(addressNotValidHeader);
+  //    addressNotValidPayload = addressNotValidEvent.getPayload();
+  //    assertNotNull(addressNotValidPayload);
+  //
+  //    assertEquals(expectedType, addressNotValidHeader.getType().name());
+  //    assertEquals(expectedSource, addressNotValidHeader.getSource().name());
+  //    assertEquals(expectedChannel, addressNotValidHeader.getChannel().name());
+  //    assertNotNull(addressNotValidHeader.getDateTime());
+  //    assertNotNull(addressNotValidHeader.getTransactionId());
+  //
+  //    AddressNotValid addressNotValid = addressNotValidPayload.getInvalidAddress();
+  //    assertEquals(expectedReason, addressNotValid.getReason());
+  //    assertEquals(expectedCollectionCaseId,
+  // addressNotValid.getCollectionCase().getId().toString());
+  //  }
 
-  @Then("an AddressNotValid event is emitted to RM, which contains the {string}, or no event is sent if the status is UNCHANGED")
-  public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_or_no_event_is_sent_if_the_status_is_UNCHANGED(String expectedReason) throws CTPException {
+  @Then(
+      "an AddressNotValid event is emitted to RM, which contains the {string}, or no event is sent if the status is UNCHANGED")
+  public void
+      an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_or_no_event_is_sent_if_the_status_is_UNCHANGED(
+          String expectedReason) throws CTPException {
     log.info(
         "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named "
             + queueName
@@ -802,7 +808,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     String expectedSource = "CONTACT_CENTRE_API";
     String expectedChannel = "CC";
     String expectedCollectionCaseId = "3305e937-6fb1-4ce1-9d4c-077f147789aa";
-    
+
     assertEquals(expectedType, addressNotValidHeader.getType().name());
     assertEquals(expectedSource, addressNotValidHeader.getSource().name());
     assertEquals(expectedChannel, addressNotValidHeader.getChannel().name());
@@ -813,7 +819,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(expectedReason, addressNotValid.getReason());
     assertEquals(expectedCollectionCaseId, addressNotValid.getCollectionCase().getId().toString());
   }
-  
+
   private ResponseEntity<ResponseDTO> requestModifyCase(String caseId, String statusSelected) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
