@@ -117,15 +117,15 @@ Feature: Test Contact centre Case Endpoints
 
   @SetUp
   Scenario Outline: [CR-T357] Invalid Address
-    Given the CC advisor has provided a valid UPRN <uprn> 
-    Then the Case endpoint returns a case associated with UPRN <uprn> 
+    Given the CC advisor has provided a valid UPRN <uprn>
+    Then the Case endpoint returns a case associated with UPRN <uprn>
     Given an empty queue exists for sending AddressNotValid events
     When CC Advisor selects the <status>
-    Then an AddressNotValid event is emitted to RM, which contains the correct <type>, <source>, <channel>, <reason>, and <collectionCaseId>
-    
+    Then an AddressNotValid event is emitted to RM, which contains the <status>, or no event is sent if the status is UNCHANGED
+
     Examples: 
-      | uprn         | status               | type                | source               | channel | reason               | collectionCaseId                       |
-      | "1347459995" | "DERELICT"           | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DERELICT"           | "3305e937-6fb1-4ce1-9d4c-077f147789aa" |
-      | "1347459995" | "DEMOLISHED"         | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "DEMOLISHED"         | "3305e937-6fb1-4ce1-9d4c-077f147789aa" |
-      | "1347459995" | "NON_RESIDENTIAL"    | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "NON_RESIDENTIAL"    | "3305e937-6fb1-4ce1-9d4c-077f147789aa" |
-      | "1347459995" | "UNDER_CONSTRUCTION" | "ADDRESS_NOT_VALID" | "CONTACT_CENTRE_API" | "CC"    | "UNDER_CONSTRUCTION" | "3305e937-6fb1-4ce1-9d4c-077f147789aa" |
+      | uprn         | status               | 
+      | "1347459995" | "DERELICT"           | 
+      | "1347459995" | "DEMOLISHED"         | 
+      | "1347459995" | "NON_RESIDENTIAL"    | 
+      | "1347459995" | "UNDER_CONSTRUCTION" | 
