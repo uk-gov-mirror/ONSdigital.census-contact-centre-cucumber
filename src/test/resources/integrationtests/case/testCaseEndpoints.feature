@@ -129,4 +129,6 @@ Feature: Test Contact centre Case Endpoints
       | "1347459995" | "DEMOLISHED"         | 
       | "1347459995" | "NON_RESIDENTIAL"    | 
       | "1347459995" | "UNDER_CONSTRUCTION" | 
+      | "1347459995" | "SPLIT_ADDRESS"      | 
+      | "1347459995" | "MERGED"             | 
       | "1347459995" | "UNCHANGED"          | 
