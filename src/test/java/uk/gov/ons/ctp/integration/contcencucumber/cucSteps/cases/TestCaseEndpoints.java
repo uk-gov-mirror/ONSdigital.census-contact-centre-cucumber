@@ -742,14 +742,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       addressNotValidPayload = addressNotValidEvent.getPayload();
       assertNotNull(addressNotValidPayload);
 
-      String expectedType = "ADDRESS_NOT_VALID";
-      String expectedSource = "CONTACT_CENTRE_API";
-      String expectedChannel = "CC";
+      EventType expectedType = EventType.ADDRESS_NOT_VALID;
+      Source expectedSource = Source.CONTACT_CENTRE_API;
+      Channel expectedChannel = Channel.CC;
       String expectedCollectionCaseId = "3305e937-6fb1-4ce1-9d4c-077f147789aa";
 
-      assertEquals(expectedType, addressNotValidHeader.getType().name());
-      assertEquals(expectedSource, addressNotValidHeader.getSource().name());
-      assertEquals(expectedChannel, addressNotValidHeader.getChannel().name());
+      assertEquals(expectedType, addressNotValidHeader.getType());
+      assertEquals(expectedSource, addressNotValidHeader.getSource());
+      assertEquals(expectedChannel, addressNotValidHeader.getChannel());
       assertNotNull(addressNotValidHeader.getDateTime());
       assertNotNull(addressNotValidHeader.getTransactionId());
 
