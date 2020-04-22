@@ -324,4 +324,11 @@ public class TestAddressEndpoints extends TestBase {
         "404 Not Found",
         status);
   }
+  
+  @When("CC SVC creates a fake Case with the address details from AIMS")
+  public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() {
+      // Write code here that turns the phrase above into concrete actions
+      throw new cucumber.api.PendingException();
+  }
+
 }
