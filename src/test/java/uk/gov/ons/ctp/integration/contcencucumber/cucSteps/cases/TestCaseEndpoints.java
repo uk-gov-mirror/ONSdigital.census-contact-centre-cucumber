@@ -644,7 +644,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     } catch (Exception e) {
       fail(
           "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200");
-      throw e;
     }
   }
 
@@ -708,7 +707,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     } catch (Exception e) {
       fail(
           "REQUEST MODIFY CASE HAS FAILED - the contact centre does not give a response code of 200");
-      throw e;
     }
   }
 
