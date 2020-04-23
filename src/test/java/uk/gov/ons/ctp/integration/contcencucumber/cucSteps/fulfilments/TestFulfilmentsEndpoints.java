@@ -491,8 +491,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @When(
-      "CC Advisor selects the product code for productGroup {string},  deliveryChannel {string} {string} {string}")
-  public void cc_Advisor_selects_the_product_code_for_productGroup_language_deliveryChannel(
+      "CC Advisor selects the product code for productGroup {string}, deliveryChannel {string} {string} {string}")
+  public void cc_Advisor_selects_the_product_code_for_productGroup_deliveryChannel(
       String strProductGroup, String strDeliveryChannel, String pending, String uprn) {
     StringBuilder stb =
         new StringBuilder("This test is PENDING for uprn: ")
