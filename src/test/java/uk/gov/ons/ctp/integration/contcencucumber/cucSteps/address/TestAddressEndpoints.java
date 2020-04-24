@@ -30,8 +30,9 @@ public class TestAddressEndpoints extends TestBase {
   private String addressSearchString = "";
   private String addressEndpointUrl;
   private String aimsEndpointBody;
-  private String uprnToSearchOn;
-  private String uprnEndpointUrl;
+  private String uprnStr;
+  private String mcsUprnEndpointUrl;
+  private String ccUprnEndpointUrl;
   private String status = "";
 
   @Given("I have a valid Postcode {string}")
@@ -289,7 +290,7 @@ public class TestAddressEndpoints extends TestBase {
         addressToFind,
         addressFound);
 
-    uprnToSearchOn = addressesFound.get(indexFound).getUprn();
+    uprnStr = addressesFound.get(indexFound).getUprn();
   }
 
   @Given("the case service does not have any case created for the address in question")
@@ -299,12 +300,12 @@ public class TestAddressEndpoints extends TestBase {
             .port(mcsBasePort)
             .pathSegment("cases")
             .pathSegment("uprn")
-            .pathSegment(uprnToSearchOn);
-    uprnEndpointUrl = builder.build().encode().toUri().toString();
+            .pathSegment(uprnStr);
+    mcsUprnEndpointUrl = builder.build().encode().toUri().toString();
 
     log.info(
         "Using the following mock case service endpoint to check case does not exist for uprn in question: "
-            + uprnEndpointUrl);
+            + mcsUprnEndpointUrl);
 
     try {
       getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
@@ -327,8 +328,17 @@ public class TestAddressEndpoints extends TestBase {
   
   @When("CC SVC creates a fake Case with the address details from AIMS")
   public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() {
-      // Write code here that turns the phrase above into concrete actions
-      throw new cucumber.api.PendingException();
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprnStr); 
+    ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+    
+    log.info("As the case does not exist in the case service the endpoint {} should cause a new fake case to be created", ccUprnEndpointUrl);
+    
+//    getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
   }
 
 }
