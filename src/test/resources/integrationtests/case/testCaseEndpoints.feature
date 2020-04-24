@@ -132,3 +132,5 @@ Feature: Test Contact centre Case Endpoints
       | "1347459995" | "SPLIT_ADDRESS"      | 
       | "1347459995" | "MERGED"             | 
       | "1347459995" | "UNCHANGED"          | 
+      | "1347459995" | "PROPERTY_IS_A_HOUSEHOLD"          | 
+      | "1347459995" | "PROPERTY_IS_A_CE"          | 
