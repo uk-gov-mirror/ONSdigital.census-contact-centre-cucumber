@@ -49,9 +49,9 @@ Feature: Test Contact centre Case Endpoints
 
     Examples: 
       | uprn         | httpError |
-      | "1347459998" | "404"     | 
       | "abcdefghik" | "400"     | 
-      | "1111111111" | "404"     | 
+#| "1111111111" | "404"     | 
+      #| "1347459998" | "404"     | 
 
   Scenario Outline: I want to verify that a valid Refusal is accepted
     Given I have a valid case ID <caseId>
