@@ -325,7 +325,7 @@ public class TestAddressEndpoints extends TestBase {
         "404 Not Found",
         status);
   }
-  
+
   @When("CC SVC creates a fake Case with the address details from AIMS")
   public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() {
     UriComponentsBuilder builder =
@@ -333,12 +333,13 @@ public class TestAddressEndpoints extends TestBase {
             .port(ccBasePort)
             .pathSegment("cases")
             .pathSegment("uprn")
-            .pathSegment(uprnStr); 
+            .pathSegment(uprnStr);
     ccUprnEndpointUrl = builder.build().encode().toUri().toString();
-    
-    log.info("As the case does not exist in the case service the endpoint {} should cause a new fake case to be created", ccUprnEndpointUrl);
-    
-//    getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
-  }
 
+    log.info(
+        "As the case does not exist in the case service the endpoint {} should cause a new fake case to be created",
+        ccUprnEndpointUrl);
+
+    //    getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+  }
 }
