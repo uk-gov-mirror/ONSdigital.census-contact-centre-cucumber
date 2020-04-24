@@ -15,8 +15,10 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,16 +39,24 @@ import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 import uk.gov.ons.ctp.common.event.EventPublisher.Source;
+import uk.gov.ons.ctp.common.event.model.AddressNotValid;
+import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
+import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
 import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalDetails;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
+import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseStatus;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.EstabType;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.ModifyCaseRequestDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.Reason;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.RefusalRequestDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ResponseDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
@@ -73,6 +84,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String telephoneEndpointBody2;
   private RabbitHelper rabbit;
   private String queueName;
+  private List<CaseDTO> listOfCasesWithUprn;
+  private URI caseForUprnUrl;
+  private URI modifyCaseUrl;
+  private AddressNotValidEvent addressNotValidEvent;
+  private Header addressNotValidHeader;
+  private AddressNotValidPayload addressNotValidPayload;
 
   @Value("${keystore}")
   private String keyStore;
@@ -80,6 +97,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Before
   public void setup() throws Exception {
     rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
+    addressNotValidEvent = null;
   }
 
   @Given("I am about to do a smoke test by going to a contact centre endpoint")
@@ -438,12 +456,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("Must have the correct case type", caseType, result1.get("case_type"));
 
     /*
-     * The following assert will need to be changed if the eq_id value, which is hard-coded in the CCSVC, is updated
+     * The following assert will need to be changed if the eq_id value, which is hard-coded in the
+     * CCSVC, is updated
      */
     assertEquals("Must have the correct eq id", "census", result1.get("eq_id"));
 
     /*
-     * The following assert will need to be changed if the form_type value, which is hard-coded in the CCSVC, is updated
+     * The following assert will need to be changed if the form_type value, which is hard-coded in
+     * the CCSVC, is updated
      */
     assertEquals("Must have the correct form type", "H", result1.get("form_type"));
 
@@ -465,7 +485,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotEquals("Must have different exp values", result1.get("exp"), result2.get("exp"));
 
     /*
-     * The following assert will need to be changed if the period_id value, which is hard-coded in the CCSVC, is updated
+     * The following assert will need to be changed if the period_id value, which is hard-coded in
+     * the CCSVC, is updated
      */
     assertEquals("Must have the correct period id", "2019", result1.get("period_id"));
 
@@ -609,5 +630,171 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private RefusalRequestDTO createRefusalRequest() {
     return RefusalFixture.createRequest(caseId, agentId, reason);
+  }
+
+  @Given("the CC advisor has provided a valid UPRN {string}")
+  public void the_CC_advisor_has_provided_a_valid_UPRN(String strUprn) {
+    try {
+      ResponseEntity<List<CaseDTO>> caseUprnResponse = getCaseForUprn(strUprn);
+      listOfCasesWithUprn = caseUprnResponse.getBody();
+      HttpStatus contactCentreStatus = caseUprnResponse.getStatusCode();
+      log.with(contactCentreStatus)
+          .info("GET CASE BY UPRN: The response from " + caseForUprnUrl.toString());
+      assertEquals(HttpStatus.OK, contactCentreStatus);
+    } catch (Exception e) {
+      fail(
+          "GET CASE BY UPRN HAS FAILED -  the contact centre does not give a response code of 200");
+    }
+  }
+
+  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprn);
+
+    ResponseEntity<List<CaseDTO>> caseResponse = null;
+    caseForUprnUrl = builder.build().encode().toUri();
+
+    try {
+      caseResponse =
+          getRestTemplate()
+              .exchange(
+                  caseForUprnUrl,
+                  HttpMethod.GET,
+                  null,
+                  new ParameterizedTypeReference<List<CaseDTO>>() {});
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
+    }
+    return caseResponse;
+  }
+
+  @Then("the Case endpoint returns a case associated with UPRN {string}")
+  public void the_Case_endpoint_returns_a_case_associated_with_UPRN(String strUprn) {
+    caseId = listOfCasesWithUprn.get(0).getId().toString();
+    log.with(caseId).debug("The case id returned by getCasesWithUprn endpoint");
+
+    UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
+    assertEquals(expectedUprn, listOfCasesWithUprn.get(0).getUprn());
+  }
+
+  @Given("an empty queue exists for sending AddressNotValid events")
+  public void an_empty_queue_exists_for_sending_AddressNotValid_events() throws CTPException {
+    String eventTypeAsString = "ADDRESS_NOT_VALID";
+    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
+    EventType eventType = EventType.valueOf(eventTypeAsString);
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+
+    rabbit.flushQueue(queueName);
+  }
+
+  @When("CC Advisor selects the {string}")
+  public void cc_Advisor_selects_the(String statusSelected) {
+    try {
+      log.with(caseId)
+          .info("Now putting a ModifyCaseRequestDTO on the modifyCase endpoint for this case id..");
+      ResponseEntity<ResponseDTO> modifyCaseResponse = requestModifyCase(caseId, statusSelected);
+      HttpStatus contactCentreStatus = modifyCaseResponse.getStatusCode();
+      log.with(contactCentreStatus)
+          .info("REQUEST MODIFY CASE: The response from " + modifyCaseUrl.toString());
+      assertEquals(HttpStatus.OK, contactCentreStatus);
+    } catch (Exception e) {
+      fail(
+          "REQUEST MODIFY CASE HAS FAILED - the contact centre does not give a response code of 200");
+    }
+  }
+
+  @Then(
+      "an AddressNotValid event is emitted to RM, which contains the {string}, or no event is sent if the status is UNCHANGED")
+  public void
+      an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_or_no_event_is_sent_if_the_status_is_UNCHANGED(
+          String expectedReason) throws CTPException {
+    log.info(
+        "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
+
+    String clazzName = "AddressNotValid.class";
+    String timeout = "2000ms";
+
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        clazzName,
+        timeout);
+
+    addressNotValidEvent =
+        (AddressNotValidEvent)
+            rabbit.getMessage(
+                queueName, AddressNotValidEvent.class, TimeoutParser.parseTimeoutString(timeout));
+
+    if (expectedReason.equals("UNCHANGED")) {
+      assertNull(addressNotValidEvent);
+    } else {
+      assertNotNull(addressNotValidEvent);
+      addressNotValidHeader = addressNotValidEvent.getEvent();
+      assertNotNull(addressNotValidHeader);
+      addressNotValidPayload = addressNotValidEvent.getPayload();
+      assertNotNull(addressNotValidPayload);
+
+      EventType expectedType = EventType.ADDRESS_NOT_VALID;
+      Source expectedSource = Source.CONTACT_CENTRE_API;
+      Channel expectedChannel = Channel.CC;
+      String expectedCollectionCaseId = "3305e937-6fb1-4ce1-9d4c-077f147789aa";
+
+      assertEquals(expectedType, addressNotValidHeader.getType());
+      assertEquals(expectedSource, addressNotValidHeader.getSource());
+      assertEquals(expectedChannel, addressNotValidHeader.getChannel());
+      assertNotNull(addressNotValidHeader.getDateTime());
+      assertNotNull(addressNotValidHeader.getTransactionId());
+
+      AddressNotValid addressNotValid = addressNotValidPayload.getInvalidAddress();
+      assertEquals(expectedReason, addressNotValid.getReason());
+      assertEquals(
+          expectedCollectionCaseId, addressNotValid.getCollectionCase().getId().toString());
+    }
+  }
+
+  private ResponseEntity<ResponseDTO> requestModifyCase(String caseId, String statusSelected) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId);
+
+    ResponseEntity<ResponseDTO> requestModifyCaseResponse = null;
+    modifyCaseUrl = builder.build().encode().toUri();
+
+    log.with(modifyCaseUrl).info("The url for requesting the postal fulfilment");
+
+    ModifyCaseRequestDTO modifyCaseRequestDTO = new ModifyCaseRequestDTO();
+
+    modifyCaseRequestDTO =
+        ModifyCaseRequestDTO.builder()
+            .caseId(UUID.fromString(caseId))
+            .estabType(EstabType.HOUSEHOLD)
+            .status(CaseStatus.valueOf(statusSelected))
+            .notes("Two houses have been knocked into one.")
+            .build();
+
+    modifyCaseRequestDTO.setAddressLine1("Brathay");
+    modifyCaseRequestDTO.setAddressLine2("2A Priors Way");
+    modifyCaseRequestDTO.setAddressLine3("Olivers");
+    modifyCaseRequestDTO.setTownName("Winchester");
+    modifyCaseRequestDTO.setRegion(Region.E);
+    modifyCaseRequestDTO.setPostcode("SO22 4HJ");
+    modifyCaseRequestDTO.setDateTime(new Date());
+
+    HttpEntity<ModifyCaseRequestDTO> requestEntity = new HttpEntity<>(modifyCaseRequestDTO);
+
+    requestModifyCaseResponse =
+        getRestTemplate().exchange(modifyCaseUrl, HttpMethod.PUT, requestEntity, ResponseDTO.class);
+
+    return requestModifyCaseResponse;
   }
 }

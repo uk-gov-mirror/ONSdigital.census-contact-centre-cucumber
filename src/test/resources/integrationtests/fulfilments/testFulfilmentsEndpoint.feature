@@ -138,3 +138,35 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "false" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     Then a fulfilment request event is emitted to RM for UPRN = "1347459994" addressType = "SPG" individual = "false" and region = "W" "PENDING"
+
+##  @SetUp
+##  Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] PENDING I want to verify that Fulfilments
+##  are provided from a CC addvisor UPRN
+##    Given I have a valid UPRN provided by a CC advisor <uprn>
+##    And an empty queue exists for sending Fulfilment Requested events
+##    When I Search cases By UPRN
+##    Then I have a valid case from my search UPRN <case_id>
+##    When I search products <delivery_channel> <individual>
+##    Then a fulfilment request event is emitted to RM for UPRN = <uprn> addressType = <address_type> individual = <individual> and region = <region>
+##    And the correct products are returned for my case <address_type> <region> <delivery_channel> <individual>
+
+  @SetUp
+  Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] PENDING(CR-T273) I want to request a Paper Questionnaire for SMS delivery channel
+    Given the CC advisor has provided a valid UPRN "<uprn>"
+    Then the Case endpoint returns a case, associated with UPRN "<uprn>", which has caseType "<case_type>" and addressLevel "U" and handDelivery "false"
+    Given a list of available fulfilment product codes is presented for a caseType = "<case_type>" where individual flag = "<individual>" and region = "<region>"
+    And an empty queue exists for sending Fulfilment Requested events
+    When CC Advisor selects the product code for productGroup "QUESTIONNAIRE", deliveryChannel "<delivery_channel>"
+    Then a fulfilment request event is emitted to RM for UPRN = "<uprn>" addressType = "<case_type>" individual = "<individual>" and region = "<region>"
+
+
+    Examples:
+      | uprn         | case_type | region | delivery_channel | individual |
+      |100140222798  | HH        | E      | SMS              | false      |
+      |100240222798  | CE        | E      | SMS              | true       |
+      |100340222798  | HH        | W      | SMS              | true       |
+      |100440222798  | CE        | W      | SMS              | false      |
+      |100540222798  | SPG       | N      | SMS              | false      |
+      |100640222798  | SPG       | N      | SMS              | true       |
+      |100340222798  | HH        | W      | SMS              | true       |
+      |100440222798  | CE        | W      | SMS              | false      |
