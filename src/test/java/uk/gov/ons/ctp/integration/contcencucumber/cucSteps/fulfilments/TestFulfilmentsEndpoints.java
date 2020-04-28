@@ -457,7 +457,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     for (Product p : listOfProducts) {
       String productGroup = p.getProductGroup().toString().toUpperCase();
       String deliveryChannel = p.getDeliveryChannel().toString().toUpperCase();
-      if (productGroup.equals(strProductGroup) && deliveryChannel.equals(strDeliveryChannel)) {
+      if (productGroup.equals(strProductGroup) && deliveryChannel.equals(strDeliveryChannel) && p.getFulfilmentCode() !=null) {
         productCodeSelected = p.getFulfilmentCode();
       }
     }
