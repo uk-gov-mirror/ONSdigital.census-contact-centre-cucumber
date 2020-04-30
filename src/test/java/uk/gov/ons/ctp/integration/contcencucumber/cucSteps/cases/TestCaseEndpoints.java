@@ -899,6 +899,15 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "As the case does not exist in the case service the endpoint {} should cause a new fake case to be created",
         ccUprnEndpointUrl);
 
-    getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+    // getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+
+    ResponseEntity<List<CaseDTO>> caseResponse =
+        getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CaseDTO>>() {});
+    caseDTOList = caseResponse.getBody();
   }
 }
