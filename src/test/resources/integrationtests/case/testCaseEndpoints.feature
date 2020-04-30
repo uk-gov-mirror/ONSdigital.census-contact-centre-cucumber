@@ -49,10 +49,9 @@ Feature: Test Contact centre Case Endpoints
 
     Examples: 
       | uprn         | httpError |
-      | "1347459998" | "404"     | 
-      | "abcdefghik" | "400"     | 
-      | "1111111111" | "404"     | 
-     
+      | "1347459998" | "404"     |
+      | "abcdefghik" | "400"     |
+      | "1111111111" | "404"     |
 
   Scenario Outline: I want to verify that a valid Refusal is accepted
     Given I have a valid case ID <caseId>
@@ -125,13 +124,32 @@ Feature: Test Contact centre Case Endpoints
     Then an AddressNotValid event is emitted to RM, which contains the <status>, or no event is sent if the status is UNCHANGED
 
     Examples: 
-      | uprn         | status               | 
-      | "1347459995" | "DERELICT"           | 
-      | "1347459995" | "DEMOLISHED"         | 
-      | "1347459995" | "NON_RESIDENTIAL"    | 
-      | "1347459995" | "UNDER_CONSTRUCTION" | 
-      | "1347459995" | "SPLIT_ADDRESS"      | 
-      | "1347459995" | "MERGED"             | 
-      | "1347459995" | "UNCHANGED"          | 
-      | "1347459995" | "PROPERTY_IS_A_HOUSEHOLD"          | 
-      | "1347459995" | "PROPERTY_IS_A_CE"          | 
+      | uprn         | status                    |
+      | "1347459995" | "DERELICT"                |
+      | "1347459995" | "DEMOLISHED"              |
+      | "1347459995" | "NON_RESIDENTIAL"         |
+      | "1347459995" | "UNDER_CONSTRUCTION"      |
+      | "1347459995" | "SPLIT_ADDRESS"           |
+      | "1347459995" | "MERGED"                  |
+      | "1347459995" | "UNCHANGED"               |
+      | "1347459995" | "PROPERTY_IS_A_HOUSEHOLD" |
+      | "1347459995" | "PROPERTY_IS_A_CE"        |
+
+  Scenario: [CR-T148] Publish a new address event to RM
+    Given the CC agent has confirmed the respondent address
+    And the case service does not have any case created for the address in question
+    When Get/Case API returns a 404 error because there is no case found
+    And CC SVC creates a fake Case with the address details from AIMS
+    Then the CC SVC must publish a new address event to RM with the fake CaseID
+    
+  #Scenario: [CR-T149] Publish a fulfilment request event to RM when case does not exist in RM but in firestore cache
+    #Given the CC agent has confirmed the respondent address
+    #And the case service does not have any case created for the address in question
+    #When Get/Case API returns a 404 error because the case was not found
+    #And CC SVC creates a fake case with the address details from AIMS
+    #Then the CC SVC must publish a new address event to RM with the fake CaseID
+    #Given the new case details are stored in firestore
+    #And CC SVC fetches the case details from firestore
+    #When a fulfilment request, for a product code, is made for the case
+    #Then a fulfilment request event is sent to RM
+    #

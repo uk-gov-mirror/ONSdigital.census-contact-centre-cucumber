@@ -16,7 +16,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
@@ -246,100 +245,104 @@ public class TestAddressEndpoints extends TestBase {
     assertNotNull(estabType);
   }
 
-  @Given("the CC agent has confirmed the respondent address")
-  public void the_CC_agent_has_confirmed_the_respondent_address() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("addresses")
-            .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
+  //  @Given("the CC agent has confirmed the respondent address")
+  //  public void the_CC_agent_has_confirmed_the_respondent_address() {
+  //    UriComponentsBuilder builder =
+  //        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+  //            .port(ccBasePort)
+  //            .pathSegment("addresses")
+  //            .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
+  //
+  //    ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
+  //        getRestTemplate()
+  //            .exchange(
+  //                builder.build().encode().toUri(),
+  //                HttpMethod.GET,
+  //                null,
+  //                new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
+  //
+  //    log.with(addressQueryResponse).info("The address query response here");
+  //
+  //    AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
+  //
+  //    List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
+  //
+  //    int i = 0;
+  //    boolean addressExists = false;
+  //    String addressToFind = "1 West Grove Road, Exeter, EX2 4LU";
+  //    String addressFound = "";
+  //    int indexFound = 500;
+  //    log.info(
+  //        "The indexFound value defaults to 500 as that will cause an exception if it does not get
+  // reset in the while loop");
+  //    while ((i < addressesFound.size()) && (addressExists == false)) {
+  //      addressFound = addressesFound.get(i).getFormattedAddress();
+  //
+  //      if (addressFound.equals(addressToFind)) {
+  //        log.with(addressFound).info("This is the address that was found in AIMS");
+  //        addressExists = true;
+  //        indexFound = i;
+  //      }
+  //      i++;
+  //    }
+  //    assertEquals(
+  //        "The address query response does not contain the correct address",
+  //        addressToFind,
+  //        addressFound);
+  //
+  //    uprnStr = addressesFound.get(indexFound).getUprn();
+  //  }
 
-    ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        getRestTemplate()
-            .exchange(
-                builder.build().encode().toUri(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
+  //  @Given("the case service does not have any case created for the address in question")
+  //  public void the_case_service_does_not_have_any_case_created_for_the_address_in_question() {
+  //    UriComponentsBuilder builder =
+  //        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+  //            .port(mcsBasePort)
+  //            .pathSegment("cases")
+  //            .pathSegment("uprn")
+  //            .pathSegment(uprnStr);
+  //    mcsUprnEndpointUrl = builder.build().encode().toUri().toString();
+  //
+  //    log.info(
+  //        "Using the following mock case service endpoint to check case does not exist for uprn in
+  // question: "
+  //            + mcsUprnEndpointUrl);
+  //
+  //    try {
+  //      getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+  //    } catch (RestClientException e) {
+  //      log.with(e.getMessage())
+  //          .info("catching the error returned by the mock case service endpoint");
+  //      status = e.getMessage();
+  //    }
+  //
+  //    log.info("The response status: " + status);
+  //  }
 
-    log.with(addressQueryResponse).info("The address query response here");
-
-    AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
-
-    List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
-
-    int i = 0;
-    boolean addressExists = false;
-    String addressToFind = "1 West Grove Road, Exeter, EX2 4LU";
-    String addressFound = "";
-    int indexFound = 500;
-    log.info(
-        "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
-    while ((i < addressesFound.size()) && (addressExists == false)) {
-      addressFound = addressesFound.get(i).getFormattedAddress();
-
-      if (addressFound.equals(addressToFind)) {
-        log.with(addressFound).info("This is the address that was found in AIMS");
-        addressExists = true;
-        indexFound = i;
-      }
-      i++;
-    }
-    assertEquals(
-        "The address query response does not contain the correct address",
-        addressToFind,
-        addressFound);
-
-    uprnStr = addressesFound.get(indexFound).getUprn();
-  }
-
-  @Given("the case service does not have any case created for the address in question")
-  public void the_case_service_does_not_have_any_case_created_for_the_address_in_question() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
-            .port(mcsBasePort)
-            .pathSegment("cases")
-            .pathSegment("uprn")
-            .pathSegment(uprnStr);
-    mcsUprnEndpointUrl = builder.build().encode().toUri().toString();
-
-    log.info(
-        "Using the following mock case service endpoint to check case does not exist for uprn in question: "
-            + mcsUprnEndpointUrl);
-
-    try {
-      getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
-    } catch (RestClientException e) {
-      log.with(e.getMessage())
-          .info("catching the error returned by the mock case service endpoint");
-      status = e.getMessage();
-    }
-
-    log.info("The response status: " + status);
-  }
-
-  @When("Get\\/Case API returns a {int} error because there is no case found")
-  public void get_Case_API_returns_a_error_because_there_is_no_case_found(Integer int1) {
-    assertEquals(
-        "THE CASE SHOULD NOT EXIST - the mock case service endpoint should give a response code of 404",
-        "404 Not Found",
-        status);
-  }
-
-  @When("CC SVC creates a fake Case with the address details from AIMS")
-  public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment("uprn")
-            .pathSegment(uprnStr);
-    ccUprnEndpointUrl = builder.build().encode().toUri().toString();
-
-    log.info(
-        "As the case does not exist in the case service the endpoint {} should cause a new fake case to be created",
-        ccUprnEndpointUrl);
-
-    getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
-  }
+  //  @When("Get\\/Case API returns a {int} error because there is no case found")
+  //  public void get_Case_API_returns_a_error_because_there_is_no_case_found(Integer int1) {
+  //    assertEquals(
+  //        "THE CASE SHOULD NOT EXIST - the mock case service endpoint should give a response code
+  // of 404",
+  //        "404 Not Found",
+  //        status);
+  //  }
+  //
+  //  @When("CC SVC creates a fake Case with the address details from AIMS")
+  //  public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() {
+  //    UriComponentsBuilder builder =
+  //        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+  //            .port(ccBasePort)
+  //            .pathSegment("cases")
+  //            .pathSegment("uprn")
+  //            .pathSegment(uprnStr);
+  //    ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+  //
+  //    log.info(
+  //        "As the case does not exist in the case service the endpoint {} should cause a new fake
+  // case to be created",
+  //        ccUprnEndpointUrl);
+  //
+  //    getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+  //  }
 }
