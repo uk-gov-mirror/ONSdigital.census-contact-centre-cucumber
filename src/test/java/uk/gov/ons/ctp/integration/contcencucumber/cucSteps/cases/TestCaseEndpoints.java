@@ -911,9 +911,27 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     assertEquals("1 West Grove Road", fakeCase.getAddressLine1());
     assertEquals("HH", fakeCase.getAddressType());
-    assertEquals("2b00a274-9cb8-44f3-93c8-259a547ce2f0", fakeCase.getId().toString());
+    assertNotNull(fakeCase.getId());
     assertEquals("E", fakeCase.getRegion());
     assertEquals("Exeter", fakeCase.getTownName());
     assertEquals(100040239948L, fakeCase.getUprn().getValue());
   }
+  
+  @Given("an empty queue exists for sending NewAddressReported events")
+  public void an_empty_queue_exists_for_sending_NewAddressReported_events() throws CTPException {
+    String eventTypeAsString = "NEW_ADDRESS_REPORTED";
+    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
+    EventType eventType = EventType.valueOf(eventTypeAsString);
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+
+    rabbit.flushQueue(queueName);
+  }
+  
+  @Then("the CC SVC must publish a new address event to RM with the fake CaseID")
+  public void the_CC_SVC_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID() {
+      // Write code here that turns the phrase above into concrete actions
+      throw new cucumber.api.PendingException();
+  }
+
 }

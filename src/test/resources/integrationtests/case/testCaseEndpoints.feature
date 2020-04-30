@@ -138,18 +138,17 @@ Feature: Test Contact centre Case Endpoints
   Scenario: [CR-T148] Publish a new address event to RM
     Given the CC agent has confirmed the respondent address
     And the case service does not have any case created for the address in question
-    When Get/Case API returns a 404 error because there is no case found
-    And CC SVC creates a fake Case with the address details from AIMS
+    And Get/Case API returns a 404 error because there is no case found
+    And an empty queue exists for sending NewAddressReported events
+    Given CC SVC creates a fake Case with the address details from AIMS
     Then the CC SVC must publish a new address event to RM with the fake CaseID
-    
+
   #Scenario: [CR-T149] Publish a fulfilment request event to RM when case does not exist in RM but in firestore cache
     #Given the CC agent has confirmed the respondent address
-    #And the case service does not have any case created for the address in question
-    #When Get/Case API returns a 404 error because the case was not found
-    #And CC SVC creates a fake case with the address details from AIMS
-    #Then the CC SVC must publish a new address event to RM with the fake CaseID
-    #Given the new case details are stored in firestore
-    #And CC SVC fetches the case details from firestore
-    #When a fulfilment request, for a product code, is made for the case
-    #Then a fulfilment request event is sent to RM
-    #
+    #And the call to RM CaseAPI to get the Case returns a 404 error
+    #And CC SVC creates a fake Case with the address details from AIMS
+    #And CC SVC must publish a new address event to RM with a fake CaseID
+    #When the New case detail is stored in firestore cache
+    #And CC SVC has fetched the case details from firestore cache
+    #And selected a product code for the case
+    #Then publish a fulfilment request event to RM
