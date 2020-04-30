@@ -899,8 +899,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "As the case does not exist in the case service the endpoint {} should cause a new fake case to be created",
         ccUprnEndpointUrl);
 
-    // getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
-
     ResponseEntity<List<CaseDTO>> caseResponse =
         getRestTemplate()
             .exchange(
@@ -909,5 +907,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
                 null,
                 new ParameterizedTypeReference<List<CaseDTO>>() {});
     caseDTOList = caseResponse.getBody();
+    CaseDTO fakeCase = caseDTOList.get(0);
+
+    assertEquals("1 West Grove Road", fakeCase.getAddressLine1());
+    assertEquals("HH", fakeCase.getAddressType());
+    assertEquals("2b00a274-9cb8-44f3-93c8-259a547ce2f0", fakeCase.getId().toString());
+    assertEquals("E", fakeCase.getRegion());
+    assertEquals("Exeter", fakeCase.getTownName());
+    assertEquals(100040239948L, fakeCase.getUprn().getValue());
   }
 }
