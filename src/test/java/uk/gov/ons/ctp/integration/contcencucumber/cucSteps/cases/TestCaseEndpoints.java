@@ -44,6 +44,8 @@ import uk.gov.ons.ctp.common.event.model.AddressNotValid;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
 import uk.gov.ons.ctp.common.event.model.Header;
+import uk.gov.ons.ctp.common.event.model.NewAddressPayload;
+import uk.gov.ons.ctp.common.event.model.NewAddressReportedEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalDetails;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
@@ -97,6 +99,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String mcsUprnEndpointUrl;
   private String ccUprnEndpointUrl;
   private String status = "";
+  private NewAddressReportedEvent newAddressReportedEvent;
+  private Header newAddressReportedHeader;
+  private NewAddressPayload newAddressReportedPayload;
 
   @Value("${keystore}")
   private String keyStore;
@@ -929,8 +934,36 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @Then("the CC SVC must publish a new address event to RM with the fake CaseID")
-  public void the_CC_SVC_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID() {
-    // Write code here that turns the phrase above into concrete actions
-    throw new cucumber.api.PendingException();
+  public void the_CC_SVC_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID()
+      throws CTPException {
+    log.info(
+        "Check that a NEW_ADDRESS_REPORTED event has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
+
+    String clazzName = "NewAddress.class";
+    String timeout = "2000ms";
+
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        clazzName,
+        timeout);
+
+    newAddressReportedEvent =
+        (NewAddressReportedEvent)
+            rabbit.getMessage(
+                queueName,
+                NewAddressReportedEvent.class,
+                TimeoutParser.parseTimeoutString(timeout));
+
+    assertNotNull(newAddressReportedEvent);
+    newAddressReportedHeader = newAddressReportedEvent.getEvent();
+    assertNotNull(addressNotValidHeader);
+    newAddressReportedPayload = newAddressReportedEvent.getPayload();
+    assertNotNull(newAddressReportedPayload);
+
+    EventType expectedType = EventType.ADDRESS_NOT_VALID;
+    Source expectedSource = Source.CONTACT_CENTRE_API;
+    Channel expectedChannel = Channel.CC;
   }
 }

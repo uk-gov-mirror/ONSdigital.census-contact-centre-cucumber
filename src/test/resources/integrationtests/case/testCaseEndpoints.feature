@@ -140,6 +140,7 @@ Feature: Test Contact centre Case Endpoints
     And the case service does not have any case created for the address in question
     And Get/Case API returns a 404 error because there is no case found
     And an empty queue exists for sending NewAddressReported events
+    And the fake case does not already exist in Firestore
     Given CC SVC creates a fake Case with the address details from AIMS
     Then the CC SVC must publish a new address event to RM with the fake CaseID
 
