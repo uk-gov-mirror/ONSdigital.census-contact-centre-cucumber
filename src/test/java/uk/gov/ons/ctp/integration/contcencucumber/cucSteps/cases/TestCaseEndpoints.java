@@ -18,12 +18,15 @@ import cucumber.api.java.en.When;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -52,6 +55,7 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
+import uk.gov.ons.ctp.common.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
@@ -64,11 +68,15 @@ import uk.gov.ons.ctp.integration.contactcentresvc.representation.RefusalRequest
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ResponseDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
+import uk.gov.ons.ctp.common.main.repository.impl.CaseDataRepositoryImpl;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
+import uk.gov.ons.ctp.common.firestore.FirestoreUtils;
 
 public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
+  
+  @Autowired private CaseDataRepositoryImpl dataRepo;
 
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
@@ -920,6 +928,37 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("E", fakeCase.getRegion());
     assertEquals("Exeter", fakeCase.getTownName());
     assertEquals(100040239948L, fakeCase.getUprn().getValue());
+  }
+
+  @Given("the fake case does not already exist in Firestore")
+  public void the_fake_case_does_not_already_exist_in_Firestore() throws CTPException {
+    
+    log.info("Make sure that the case does not already exist in Firestore otherwise a NEW_ADDRESS_REPORTED event will not get created");
+    Boolean caseAlreadyInFirestore;
+    FirestoreUtils firestoreUtils = new FirestoreUtils();
+    
+//    String newCaseCollection = "new-case";
+    
+//    caseAlreadyInFirestore = firestoreUtils.firestoreWait("new-case", caseKey, null, null, null, timeout);
+    
+ // Return stored case details if present
+    
+    UniquePropertyReferenceNumber uprn =  UniquePropertyReferenceNumber.create(uprnStr);
+    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(uprn);
+    if (cachedCase.isPresent()) {
+      log.with("uprn", uprnStr).debug("The case already exists in Firestore so we need to delete it for the test..");
+//      return Collections.singletonList(caseDTOMapper.map(cachedCase.get(), CaseDTO.class));
+    }
+    
+//caseFoundInFirestore =
+//        firestoreUtils.firestoreWait(caseCollection, caseKey, null, null, null, timeout);
+//    uacFoundInFirestore =
+//        firestoreUtils.firestoreWait(uacCollection, uacKey, null, null, null, timeout);
+//    log.with(caseFoundInFirestore).info("Is the case in Firestore? :");
+//    assertTrue(caseFoundInFirestore);
+//    log.with(uacFoundInFirestore).info("Is the uac in Firestore? :");
+//
+//    assertTrue(uacFoundInFirestore);
   }
 
   @Given("an empty queue exists for sending NewAddressReported events")

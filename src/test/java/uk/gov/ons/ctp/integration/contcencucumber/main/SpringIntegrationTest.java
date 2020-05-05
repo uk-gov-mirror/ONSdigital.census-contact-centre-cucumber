@@ -8,17 +8,21 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.ons.ctp.common.cloud.CloudDataStore;
+import uk.gov.ons.ctp.common.main.repository.CaseDataRepository;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
 @ContextConfiguration(
-    classes = {SpringIntegrationTest.class, ProductService.class},
+    classes = {SpringIntegrationTest.class, ProductService.class, CaseDataRepository.class, CloudDataStore.class},
     loader = SpringBootContextLoader.class,
     initializers = ConfigFileApplicationContextInitializer.class)
 @WebAppConfiguration
 @SpringBootTest
 @Import({
   uk.gov.ons.ctp.integration.contcencucumber.main.service.impl.ProductServiceImpl.class,
-  uk.gov.ons.ctp.integration.common.product.ProductReference.class
+  uk.gov.ons.ctp.integration.common.product.ProductReference.class,
+  uk.gov.ons.ctp.common.main.repository.impl.CaseDataRepositoryImpl.class,
+  uk.gov.ons.ctp.common.cloud.FirestoreDataStore.class
 })
 public class SpringIntegrationTest {
 
