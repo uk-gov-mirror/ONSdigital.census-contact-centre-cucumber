@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>cucumber-common</artifactId>
-			<version>0.0.15-SNAPSHOT</version>
+			<version>0.0.14</version>
 			<scope>test</scope>
 		</dependency>
 
