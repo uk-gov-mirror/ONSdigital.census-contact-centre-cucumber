@@ -39,6 +39,10 @@ public class CaseDataRepositoryImpl implements CaseDataRepository {
   @Override
   public Optional<CachedCase> readCachedCaseByUPRN(final UniquePropertyReferenceNumber uprn)
       throws CTPException {
+    log.info("Entering readCachedCaseByUPRN");
+    log.with(gcpProject).info("gcpProject");
+    log.with(caseSchemaName).info("caseSchemaName");
+    log.with(caseSchema).info("caseSchema");
     String key = String.valueOf(uprn.getValue());
     String[] searchByUprnPath = new String[] {"uprn"};
     List<CachedCase> results =
