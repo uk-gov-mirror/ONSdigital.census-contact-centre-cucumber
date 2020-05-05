@@ -945,8 +945,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     
     UniquePropertyReferenceNumber uprn =  UniquePropertyReferenceNumber.create(uprnStr);
     Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(uprn);
+    log.with("uprn", uprnStr).info("The uprn of the case we're looking for");
     if (cachedCase.isPresent()) {
-      log.with("uprn", uprnStr).debug("The case already exists in Firestore so we need to delete it for the test..");
+      log.with("uprn", uprnStr).info("The case already exists in Firestore so we need to delete it for the test..");
 //      return Collections.singletonList(caseDTOMapper.map(cachedCase.get(), CaseDTO.class));
     }
     
