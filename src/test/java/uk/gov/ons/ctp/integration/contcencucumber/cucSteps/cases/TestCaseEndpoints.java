@@ -46,6 +46,8 @@ import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalDetails;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
+import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
+import uk.gov.ons.ctp.common.event.model.SurveyLaunchedResponse;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
@@ -88,6 +90,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private URI caseForUprnUrl;
   private URI modifyCaseUrl;
   private AddressNotValidEvent addressNotValidEvent;
+  private SurveyLaunchedResponse surveyLaunchedResponse;
   private Header addressNotValidHeader;
   private AddressNotValidPayload addressNotValidPayload;
 
@@ -796,5 +799,49 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         getRestTemplate().exchange(modifyCaseUrl, HttpMethod.PUT, requestEntity, ResponseDTO.class);
 
     return requestModifyCaseResponse;
+  }
+  
+  @And("an empty queue exists for sending SurveyLaunched events")
+  public void an_empty_queue_exists_for_sending_SurveyLaunched_events() throws CTPException {
+    EventType eventType = EventType.valueOf("SURVEY_LAUNCHED");
+    log.info("Creating queue for events of type: '" + eventType + "'");
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+    rabbit.flushQueue(queueName);
+  }
+
+  @Then("a Survey Launched event is emitted to RM, which contains the {string}")
+  public void aSurveyLaunchedEventIsEmittedToRMWhichContainsTheStatus() throws CTPException {
+    log.info(
+        "Check that a SUVERY_LAUNCHED event has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
+
+    String clazzName = "SurveyLaunchedResponse.class";
+    String timeout = "2000ms";
+
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        clazzName,
+        timeout);
+
+    surveyLaunchedResponse =
+        (SurveyLaunchedResponse)
+            rabbit.getMessage(
+                queueName, SurveyLaunchedResponse
+                    .class, TimeoutParser.parseTimeoutString(timeout));
+
+      assertNotNull(surveyLaunchedResponse);
+
+      EventType expectedType = EventType.SURVEY_LAUNCHED;
+      String expectedQuestionnaireId = null;
+      UUID expectedCaseId = UUID.fromString(caseId);
+      String expectedAgentId = null;
+
+      assertEquals(expectedQuestionnaireId, surveyLaunchedResponse.getQuestionnaireId());
+      assertEquals(expectedCaseId, surveyLaunchedResponse.getCaseId());
+      assertEquals(expectedAgentId, surveyLaunchedResponse.getAgentId());
+      assertNotNull(addressNotValidHeader.getDateTime());
+      assertNotNull(addressNotValidHeader.getTransactionId());
   }
 }
