@@ -6,19 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +29,14 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
@@ -55,7 +53,6 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
-import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
@@ -67,12 +64,12 @@ import uk.gov.ons.ctp.integration.contactcentresvc.representation.Reason;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.RefusalRequestDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ResponseDTO;
+import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.repository.impl.CaseDataRepositoryImpl;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
-import uk.gov.ons.ctp.common.firestore.FirestoreUtils;
 
 public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   
@@ -934,15 +931,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_fake_case_does_not_already_exist_in_Firestore() throws CTPException {
     
     log.info("Make sure that the case does not already exist in Firestore otherwise a NEW_ADDRESS_REPORTED event will not get created");
-    Boolean caseAlreadyInFirestore;
-    FirestoreUtils firestoreUtils = new FirestoreUtils();
-    
-//    String newCaseCollection = "new-case";
-    
-//    caseAlreadyInFirestore = firestoreUtils.firestoreWait("new-case", caseKey, null, null, null, timeout);
-    
- // Return stored case details if present
-    
     UniquePropertyReferenceNumber uprn =  UniquePropertyReferenceNumber.create(uprnStr);
     Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(uprn);
     log.with("uprn", uprnStr).info("The uprn of the case we're looking for");
@@ -950,16 +938,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       log.with("uprn", uprnStr).info("The case already exists in Firestore so we need to delete it for the test..");
       dataRepo.deleteCachedCase(cachedCase.get().getId());
     }
-    
-//caseFoundInFirestore =
-//        firestoreUtils.firestoreWait(caseCollection, caseKey, null, null, null, timeout);
-//    uacFoundInFirestore =
-//        firestoreUtils.firestoreWait(uacCollection, uacKey, null, null, null, timeout);
-//    log.with(caseFoundInFirestore).info("Is the case in Firestore? :");
-//    assertTrue(caseFoundInFirestore);
-//    log.with(uacFoundInFirestore).info("Is the uac in Firestore? :");
-//
-//    assertTrue(uacFoundInFirestore);
   }
 
   @Given("an empty queue exists for sending NewAddressReported events")
