@@ -6,6 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,14 +38,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
@@ -72,7 +73,7 @@ import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
 public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
-  
+
   @Autowired private CaseDataRepositoryImpl dataRepo;
 
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
@@ -929,13 +930,15 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("the fake case does not already exist in Firestore")
   public void the_fake_case_does_not_already_exist_in_Firestore() throws CTPException {
-    
-    log.info("Make sure that the case does not already exist in Firestore otherwise a NEW_ADDRESS_REPORTED event will not get created");
-    UniquePropertyReferenceNumber uprn =  UniquePropertyReferenceNumber.create(uprnStr);
+
+    log.info(
+        "Make sure that the case does not already exist in Firestore otherwise a NEW_ADDRESS_REPORTED event will not get created");
+    UniquePropertyReferenceNumber uprn = UniquePropertyReferenceNumber.create(uprnStr);
     Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(uprn);
     log.with("uprn", uprnStr).info("The uprn of the case we're looking for");
     if (cachedCase.isPresent()) {
-      log.with("uprn", uprnStr).info("The case already exists in Firestore so we need to delete it for the test..");
+      log.with("uprn", uprnStr)
+          .info("The case already exists in Firestore so we need to delete it for the test..");
       dataRepo.deleteCachedCase(cachedCase.get().getId());
     }
   }
@@ -976,12 +979,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     assertNotNull(newAddressReportedEvent);
     newAddressReportedHeader = newAddressReportedEvent.getEvent();
-//    assertNotNull(addressNotValidHeader);
-//    newAddressReportedPayload = newAddressReportedEvent.getPayload();
-//    assertNotNull(newAddressReportedPayload);
-//
-//    EventType expectedType = EventType.ADDRESS_NOT_VALID;
-//    Source expectedSource = Source.CONTACT_CENTRE_API;
-//    Channel expectedChannel = Channel.CC;
+    //    assertNotNull(addressNotValidHeader);
+    //    newAddressReportedPayload = newAddressReportedEvent.getPayload();
+    //    assertNotNull(newAddressReportedPayload);
+    //
+    //    EventType expectedType = EventType.ADDRESS_NOT_VALID;
+    //    Source expectedSource = Source.CONTACT_CENTRE_API;
+    //    Channel expectedChannel = Channel.CC;
   }
 }

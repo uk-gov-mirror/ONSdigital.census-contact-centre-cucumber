@@ -1,9 +1,9 @@
 package uk.gov.ons.ctp.integration.contcencucumber.main.repository;
 
 import java.util.Optional;
-import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
+import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 
 /** Repository for Case Data */
 public interface CaseDataRepository {
@@ -17,10 +17,10 @@ public interface CaseDataRepository {
    */
   Optional<CachedCase> readCachedCaseByUPRN(final UniquePropertyReferenceNumber uprn)
       throws CTPException;
-  
+
   /**
    * Delete a case from Firestore
-   * 
+   *
    * @param schema
    * @param key
    * @return true if successful, otherwise false

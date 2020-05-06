@@ -8,12 +8,12 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
-import uk.gov.ons.ctp.integration.contcencucumber.cloud.CloudDataStore;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.error.CTPException.Fault;
-import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataRepository;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
+import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
+import uk.gov.ons.ctp.integration.contcencucumber.cloud.CloudDataStore;
+import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataRepository;
 
 @Service
 public class CaseDataRepositoryImpl implements CaseDataRepository {
@@ -28,8 +28,7 @@ public class CaseDataRepositoryImpl implements CaseDataRepository {
 
   private String caseSchema;
 
-  @Autowired
-  private CloudDataStore cloudDataStore;
+  @Autowired private CloudDataStore cloudDataStore;
 
   @PostConstruct
   public void init() {
@@ -53,8 +52,8 @@ public class CaseDataRepositoryImpl implements CaseDataRepository {
       return Optional.empty();
     } else if (results.size() > 1) {
       log.with("uprn", key).error("More than one cached skeleton case for UPRN");
-      throw new CTPException(Fault.SYSTEM_ERROR,
-          "More than one cached skeleton case for UPRN: " + key);
+      throw new CTPException(
+          Fault.SYSTEM_ERROR, "More than one cached skeleton case for UPRN: " + key);
     } else {
       return Optional.ofNullable(results.get(0));
     }
