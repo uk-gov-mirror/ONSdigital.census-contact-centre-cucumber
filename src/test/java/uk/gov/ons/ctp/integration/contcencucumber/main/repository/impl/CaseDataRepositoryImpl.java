@@ -28,7 +28,8 @@ public class CaseDataRepositoryImpl implements CaseDataRepository {
 
   private String caseSchema;
 
-  @Autowired private CloudDataStore cloudDataStore;
+  @Autowired
+  private CloudDataStore cloudDataStore;
 
   @PostConstruct
   public void init() {
@@ -52,10 +53,16 @@ public class CaseDataRepositoryImpl implements CaseDataRepository {
       return Optional.empty();
     } else if (results.size() > 1) {
       log.with("uprn", key).error("More than one cached skeleton case for UPRN");
-      throw new CTPException(
-          Fault.SYSTEM_ERROR, "More than one cached skeleton case for UPRN: " + key);
+      throw new CTPException(Fault.SYSTEM_ERROR,
+          "More than one cached skeleton case for UPRN: " + key);
     } else {
       return Optional.ofNullable(results.get(0));
     }
+  }
+
+  @Override
+  public void deleteCachedCase(String key) throws CTPException {
+
+    cloudDataStore.deleteObject(caseSchema, key);
   }
 }

@@ -17,4 +17,14 @@ public interface CaseDataRepository {
    */
   Optional<CachedCase> readCachedCaseByUPRN(final UniquePropertyReferenceNumber uprn)
       throws CTPException;
+  
+  /**
+   * Delete a case from Firestore
+   * 
+   * @param schema
+   * @param key
+   * @return true if successful, otherwise false
+   * @throws CTPException
+   */
+  void deleteCachedCase(String key) throws CTPException;
 }

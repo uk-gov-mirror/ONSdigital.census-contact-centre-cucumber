@@ -948,7 +948,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.with("uprn", uprnStr).info("The uprn of the case we're looking for");
     if (cachedCase.isPresent()) {
       log.with("uprn", uprnStr).info("The case already exists in Firestore so we need to delete it for the test..");
-//      return Collections.singletonList(caseDTOMapper.map(cachedCase.get(), CaseDTO.class));
+      dataRepo.deleteCachedCase(cachedCase.get().getId());
     }
     
 //caseFoundInFirestore =
@@ -998,12 +998,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     assertNotNull(newAddressReportedEvent);
     newAddressReportedHeader = newAddressReportedEvent.getEvent();
-    assertNotNull(addressNotValidHeader);
-    newAddressReportedPayload = newAddressReportedEvent.getPayload();
-    assertNotNull(newAddressReportedPayload);
-
-    EventType expectedType = EventType.ADDRESS_NOT_VALID;
-    Source expectedSource = Source.CONTACT_CENTRE_API;
-    Channel expectedChannel = Channel.CC;
+//    assertNotNull(addressNotValidHeader);
+//    newAddressReportedPayload = newAddressReportedEvent.getPayload();
+//    assertNotNull(newAddressReportedPayload);
+//
+//    EventType expectedType = EventType.ADDRESS_NOT_VALID;
+//    Source expectedSource = Source.CONTACT_CENTRE_API;
+//    Channel expectedChannel = Channel.CC;
   }
 }
