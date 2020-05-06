@@ -995,9 +995,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(newAddressReportedPayload);
 
     newAddress = newAddressReportedPayload.getNewAddress();
-    //    assertNotNull(newAddress.getSourceCaseId()); //TODO Find out why this is currently null
+    assertNull(newAddress.getSourceCaseId());
 
     collectionCase = newAddress.getCollectionCase();
+    assertNotNull(collectionCase.getId());
+    assertNull(collectionCase.getCaseType());
+    assertEquals("CENSUS", collectionCase.getSurvey());
+    assertNull(collectionCase.getFieldCoordinatorId());
+    assertNull(collectionCase.getFieldOfficerId());
 
     //    {
     //      "event":{
