@@ -982,7 +982,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
                 TimeoutParser.parseTimeoutString(timeout));
 
     assertNotNull(newAddressReportedEvent);
-    
+
     newAddressReportedHeader = newAddressReportedEvent.getEvent();
     assertNotNull(newAddressReportedHeader);
     assertEquals("NEW_ADDRESS_REPORTED", newAddressReportedHeader.getType());
@@ -990,48 +990,48 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("CC", newAddressReportedHeader.getChannel());
     assertNotNull(newAddressReportedHeader.getDateTime());
     assertNotNull(newAddressReportedHeader.getTransactionId());
-    
+
     newAddressReportedPayload = newAddressReportedEvent.getPayload();
     assertNotNull(newAddressReportedPayload);
 
     newAddress = newAddressReportedPayload.getNewAddress();
-//    assertNotNull(newAddress.getSourceCaseId()); //TODO Find out why this is currently null
-    
+    //    assertNotNull(newAddress.getSourceCaseId()); //TODO Find out why this is currently null
+
     collectionCase = newAddress.getCollectionCase();
-    
-//    {
-//      "event":{
-//         "type":"NEW_ADDRESS_REPORTED",
-//         "source":"FIELDWORK_GATEWAY",
-//         "channel":"FIELD",
-//         "dateTime":"2011-08-12T20:17:46.384Z",
-//         "transactionId":"c45de4dc-3c3b-11e9-b210-d663bd873d93"
-//      },
-//      "payload":{
-//         "newAddress":{
-//           "sourceCaseId":"jh4g0ci2-3c3b-11e9-b210-d663bd87df98",
-//           "collectionCase" : {
-//               "id":"bbd55984-0dbf-4499-bfa7-0aa4228700e9",
-//               "caseType":"SPG",
-//               "survey":"CENSUS",
-//               "fieldCoordinatorId":"SO_23",
-//               "fieldOfficerId":"SO_23_123",
-//               "address":{
-//                   "addressLine1":"100",
-//                   "addressLine2":"Kanes caravan park",
-//                   "addressLine3":"fairoak road",
-//                   "townName":"southampton",
-//                   "postcode":"SO190PG",
-//                   "region":"E",
-//                   "addressType":"SPG",
-//                   "addressLevel":"U",
-//                   "estabType":"Residential Caravaner",
-//                   "latitude":"50.917428",
-//                   "longitude":"-1.238193"
-//               }
-//           }
-//         }
-//      }
-//   }
+
+    //    {
+    //      "event":{
+    //         "type":"NEW_ADDRESS_REPORTED",
+    //         "source":"FIELDWORK_GATEWAY",
+    //         "channel":"FIELD",
+    //         "dateTime":"2011-08-12T20:17:46.384Z",
+    //         "transactionId":"c45de4dc-3c3b-11e9-b210-d663bd873d93"
+    //      },
+    //      "payload":{
+    //         "newAddress":{
+    //           "sourceCaseId":"jh4g0ci2-3c3b-11e9-b210-d663bd87df98",
+    //           "collectionCase" : {
+    //               "id":"bbd55984-0dbf-4499-bfa7-0aa4228700e9",
+    //               "caseType":"SPG",
+    //               "survey":"CENSUS",
+    //               "fieldCoordinatorId":"SO_23",
+    //               "fieldOfficerId":"SO_23_123",
+    //               "address":{
+    //                   "addressLine1":"100",
+    //                   "addressLine2":"Kanes caravan park",
+    //                   "addressLine3":"fairoak road",
+    //                   "townName":"southampton",
+    //                   "postcode":"SO190PG",
+    //                   "region":"E",
+    //                   "addressType":"SPG",
+    //                   "addressLevel":"U",
+    //                   "estabType":"Residential Caravaner",
+    //                   "latitude":"50.917428",
+    //                   "longitude":"-1.238193"
+    //               }
+    //           }
+    //         }
+    //      }
+    //   }
   }
 }
