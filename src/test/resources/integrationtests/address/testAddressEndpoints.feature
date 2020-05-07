@@ -53,10 +53,3 @@ Feature: Test Contact centre Address Endpoints
     And the respondent address exists in AIMS
     When the CC agent searches for the address
     Then the CC SVC returns address attributes with region code, address type and establishment type
-
-  #Scenario: Publish a new address event to RM
-    #Given the CC agent has confirmed the respondent address
-    #And the case service does not have any case created for the address in question
-    #When Get/Case API returns a 404 error because there is no case found
-    #And CC SVC creates a fake Case with the address details from AIMS
-    #Then the CC SVC must publish a new address event to RM with the fake CaseID

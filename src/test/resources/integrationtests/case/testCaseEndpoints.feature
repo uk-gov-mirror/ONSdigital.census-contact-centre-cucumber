@@ -143,13 +143,3 @@ Feature: Test Contact centre Case Endpoints
     And the fake case does not already exist in Firestore
     Given CC SVC creates a fake Case with the address details from AIMS
     Then the CC SVC must publish a new address event to RM with the fake CaseID
-
-  #Scenario: [CR-T149] Publish a fulfilment request event to RM when case does not exist in RM but in firestore cache
-    #Given the CC agent has confirmed the respondent address
-    #And the call to RM CaseAPI to get the Case returns a 404 error
-    #And CC SVC creates a fake Case with the address details from AIMS
-    #And CC SVC must publish a new address event to RM with a fake CaseID
-    #When the New case detail is stored in firestore cache
-    #And CC SVC has fetched the case details from firestore cache
-    #And selected a product code for the case
-    #Then publish a fulfilment request event to RM
