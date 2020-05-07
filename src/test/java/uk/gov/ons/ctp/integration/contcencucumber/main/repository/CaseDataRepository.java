@@ -2,7 +2,7 @@ package uk.gov.ons.ctp.integration.contcencucumber.main.repository;
 
 import java.util.Optional;
 import uk.gov.ons.ctp.common.error.CTPException;
-import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
+import uk.gov.ons.ctp.common.domain.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 
 /** Repository for Case Data */
