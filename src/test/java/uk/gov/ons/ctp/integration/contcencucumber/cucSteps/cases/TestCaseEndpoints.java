@@ -20,9 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +47,6 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalDetails;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
-import uk.gov.ons.ctp.common.event.model.SurveyLaunchedResponse;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
@@ -57,7 +54,6 @@ import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseStatus;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.EstabType;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
-import uk.gov.ons.ctp.integration.contactcentresvc.representation.LaunchRequestDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ModifyCaseRequestDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.Reason;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.RefusalRequestDTO;
@@ -822,8 +818,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       log.info("SURVEY LAUNCH: The response from " + telephoneEndpointUrl.toString());
       assertNotNull("SURVEY LAUNCH failure", response);
     } catch (Exception e) {
-      fail(
-          "SURVEY launch HAS FAILED - the contact centre does not give a response code of 200");
+      fail("SURVEY launch HAS FAILED - the contact centre does not give a response code of 200");
     }
   }
 
@@ -834,8 +829,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     try {
       launchSurveyResponseString =
           getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       System.out.println(ex.getMessage());
     }
 
@@ -845,34 +839,30 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Then("a Survey Launched event is emitted to RM, which contains the launch status type")
   public void aSurveyLaunchedEventIsEmittedToRMWhichContainsTheLaunchStatusType() {
     log.info(
-          "Check that a SURVEY_LAUNCHED event has now been put on the empty queue, named {}, ready to be picked up by RM",
-          queueName);
+        "Check that a SURVEY_LAUNCHED event has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
 
-      String clazzName = "SurveyLaunchedEvent.class";
-      String timeout = "2000ms";
+    String clazzName = "SurveyLaunchedEvent.class";
+    String timeout = "2000ms";
 
-      log.info(
-          "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
-          queueName,
-          clazzName,
-          timeout);
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        clazzName,
+        timeout);
 
     SurveyLaunchedEvent launchedEvent = null;
-      try {
-        launchedEvent =
-                rabbit.getMessage(
-                    queueName, SurveyLaunchedEvent
-                        .class, TimeoutParser.parseTimeoutString(timeout));
-      }
-      catch (Exception exception) {
-      }
-
-      assertNotNull(launchedEvent.getEvent());
-      assertEquals(EventType.SURVEY_LAUNCHED, launchedEvent.getEvent().getType());
-      assertNotNull(launchedEvent.getPayload().getResponse().getQuestionnaireId());
-      assertNotNull(launchedEvent.getPayload().getResponse().getCaseId());
-      assertEquals(agentId, launchedEvent.getPayload().getResponse().getAgentId());
+    try {
+      launchedEvent =
+          rabbit.getMessage(
+              queueName, SurveyLaunchedEvent.class, TimeoutParser.parseTimeoutString(timeout));
+    } catch (Exception exception) {
     }
+
+    assertNotNull(launchedEvent.getEvent());
+    assertEquals(EventType.SURVEY_LAUNCHED, launchedEvent.getEvent().getType());
+    assertNotNull(launchedEvent.getPayload().getResponse().getQuestionnaireId());
+    assertNotNull(launchedEvent.getPayload().getResponse().getCaseId());
+    assertEquals(agentId, launchedEvent.getPayload().getResponse().getAgentId());
+  }
 }
-
-
