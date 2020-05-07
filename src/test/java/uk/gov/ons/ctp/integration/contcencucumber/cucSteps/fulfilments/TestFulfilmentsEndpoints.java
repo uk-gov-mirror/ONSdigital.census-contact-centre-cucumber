@@ -47,6 +47,7 @@ import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.PostalFulfilmentRequestDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ResponseDTO;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.SMSFulfilmentRequestDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
@@ -73,6 +74,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Autowired private ProductService productService;
   private URI fulfilmentByPostUrl;
+  private URI fulfilmentBySMSUrl;
 
   private static final String RABBIT_EXCHANGE = "events";
 
@@ -457,13 +459,15 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     for (Product p : listOfProducts) {
       String productGroup = p.getProductGroup().toString().toUpperCase();
       String deliveryChannel = p.getDeliveryChannel().toString().toUpperCase();
-      if (productGroup.equals(strProductGroup) && deliveryChannel.equals(strDeliveryChannel)) {
+      if (productGroup.equals(strProductGroup)
+          && deliveryChannel.equals(strDeliveryChannel)
+          && p.getFulfilmentCode() != null) {
         productCodeSelected = p.getFulfilmentCode();
       }
     }
     log.info("The product code selected is: " + productCodeSelected);
     if (productCodeSelected == null) {
-      throw new cucumber.api.PendingException(
+      throw new PendingException(
           "The Product Reference Service contains no products that match this combination of productGroup ("
               + strProductGroup
               + ") and deliveryChannel ("
@@ -473,8 +477,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     try {
       log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
-      ResponseEntity<ResponseDTO> fulfilmentRequestResponse =
-          requestFulfilmentByPost(caseId, productCodeSelected);
+      ResponseEntity<ResponseDTO> fulfilmentRequestResponse;
+      if (strDeliveryChannel.equalsIgnoreCase("SMS")) {
+        fulfilmentRequestResponse = requestFulfilmentBySMS(caseId, productCodeSelected);
+      } else {
+        fulfilmentRequestResponse = requestFulfilmentByPost(caseId, productCodeSelected);
+      }
       HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
       log.with(contactCentreStatus)
           .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
@@ -488,20 +496,6 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       fail();
       System.exit(0);
     }
-  }
-
-  @When(
-      "CC Advisor selects the product code for productGroup {string}, deliveryChannel {string} {string} {string}")
-  public void cc_Advisor_selects_the_product_code_for_productGroup_deliveryChannel(
-      String strProductGroup, String strDeliveryChannel, String pending, String uprn) {
-    StringBuilder stb =
-        new StringBuilder("This test is PENDING for uprn: ")
-            .append(uprn)
-            .append(" Product Group: ")
-            .append(strProductGroup)
-            .append(" Delivery Channel: ")
-            .append(strDeliveryChannel);
-    throw new PendingException(stb.toString());
   }
 
   @Then(
@@ -573,45 +567,28 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     Address address = fulfilmentRequest.getAddress();
     // SPG and CE indiv product requests do not need an indiv id creating (see CaseServiceImpl, line
     // 435
-    if (individual.equals("true") && address.getAddressType().equals("HH")) {
-      assertNotNull(fulfilmentRequest.getIndividualCaseId());
-    } else {
-      assertNull(fulfilmentRequest.getIndividualCaseId());
-    }
+
     assertEquals(
         "The FulfilmentRequested event contains an incorrect value of 'uprn'",
         expectedUprn,
         address.getUprn());
-    assertEquals(
-        "The FulfilmentRequested event contains an incorrect value of 'addressType'",
-        expectedAddressType,
-        address.getAddressType());
+    if (expectedAddressType.equalsIgnoreCase("SMS")) {
+      assertNull("SMS Address type should be NULL", address.getAddressType());
+    } else {
+      if (individual.equals("true") && address.getAddressType().equals("HH")) {
+        assertNotNull(fulfilmentRequest.getIndividualCaseId());
+      } else {
+        assertNull(fulfilmentRequest.getIndividualCaseId());
+      }
+      assertEquals(
+          "The FulfilmentRequested event contains an incorrect value of 'addressType'",
+          expectedAddressType,
+          address.getAddressType());
+    }
     assertEquals(
         "The FulfilmentRequested event contains an incorrect value of 'region'",
         expectedRegion,
         address.getRegion());
-  }
-
-  @Then(
-      "a fulfilment request event is emitted to RM for UPRN = {string} addressType = {string} individual = {string} and region = {string} {string}")
-  public void
-      a_fulfilment_request_event_is_emitted_to_RM_for_UPRN_addressType_individual_and_region(
-          String uprn,
-          String expectedAddressType,
-          String individual,
-          String expectedRegion,
-          String pending)
-          throws CTPException {
-    StringBuilder stb =
-        new StringBuilder("This test is PENDING for uprn: ")
-            .append(uprn)
-            .append(" Address Type: ")
-            .append(expectedAddressType)
-            .append(" Individual: ")
-            .append(individual)
-            .append(" Expected Region: ")
-            .append(expectedRegion);
-    throw new PendingException(stb.toString());
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
@@ -705,5 +682,37 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
               + httpClientErrorException.getMessage());
     }
     return requestFulfilmentByPostResponse;
+  }
+
+  private ResponseEntity<ResponseDTO> requestFulfilmentBySMS(String caseId, String productCode) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId)
+            .pathSegment("fulfilment")
+            .pathSegment("sms");
+
+    ResponseEntity<ResponseDTO> requestFulfilmentBySMSResponse = null;
+    fulfilmentBySMSUrl = builder.build().encode().toUri();
+
+    log.with(fulfilmentBySMSUrl).info("The url for requesting the SMS fulfilment");
+
+    SMSFulfilmentRequestDTO smsFulfilmentRequestDTO =
+        new SMSFulfilmentRequestDTO(
+            UUID.fromString(caseId), "447777777777", productCode, new Date());
+
+    HttpEntity<SMSFulfilmentRequestDTO> requestEntity = new HttpEntity<>(smsFulfilmentRequestDTO);
+
+    try {
+      requestFulfilmentBySMSResponse =
+          getRestTemplate()
+              .exchange(fulfilmentBySMSUrl, HttpMethod.POST, requestEntity, ResponseDTO.class);
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "A HttpClientErrorException has occurred when trying to post to fulfilmentRequestBySMS endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
+    }
+    return requestFulfilmentBySMSResponse;
   }
 }
