@@ -903,7 +903,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @When("CC SVC creates a fake Case with the address details from AIMS")
-  public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() {
+  public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() throws CTPException {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
@@ -941,6 +941,10 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("EX2 4LU", response.getPostcode());
     assertEquals(100040239948L, response.getUprn().getValue());
     // assertNotNull(response.getCaseEvents());
+    
+    UniquePropertyReferenceNumber uprn = response.getUprn();
+    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(uprn);
+    assertTrue(cachedCase.isPresent());
   }
 
   @Given("the fake case does not already exist in Firestore")
