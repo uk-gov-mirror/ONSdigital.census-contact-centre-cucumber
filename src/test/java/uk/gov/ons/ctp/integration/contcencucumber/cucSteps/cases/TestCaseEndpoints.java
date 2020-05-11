@@ -924,14 +924,23 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
                 null,
                 new ParameterizedTypeReference<List<CaseDTO>>() {});
     caseDTOList = caseResponse.getBody();
-    CaseDTO fakeCase = caseDTOList.get(0);
+    CaseDTO response = caseDTOList.get(0);
 
-    assertEquals("1 West Grove Road", fakeCase.getAddressLine1());
-    assertEquals("HH", fakeCase.getAddressType());
-    assertNotNull(fakeCase.getId());
-    assertEquals("E", fakeCase.getRegion());
-    assertEquals("Exeter", fakeCase.getTownName());
-    assertEquals(100040239948L, fakeCase.getUprn().getValue());
+    assertNotNull(response.getId());
+    // assertNotNull(response.getCaseRef());
+    // assertEquals("HH", response.getCaseType());
+    assertEquals("HH", response.getAddressType());
+    // assertFalse(response.isSecureEstablishment());
+    // assertEquals(Arrays.asList(DeliveryChannel.SMS, DeliveryChannel.POST),
+    // response.getAllowedDeliveryChannels());
+    // assertEquals(AddressLevel.U, response.getEstabType());
+    // assertNotNull(response.getCreatedDateTime());
+    assertEquals("1 West Grove Road", response.getAddressLine1());
+    assertEquals("Exeter", response.getTownName());
+    assertEquals("E", response.getRegion());
+    assertEquals("EX2 4LU", response.getPostcode());
+    assertEquals(100040239948L, response.getUprn().getValue());
+    // assertNotNull(response.getCaseEvents());
   }
 
   @Given("the fake case does not already exist in Firestore")
