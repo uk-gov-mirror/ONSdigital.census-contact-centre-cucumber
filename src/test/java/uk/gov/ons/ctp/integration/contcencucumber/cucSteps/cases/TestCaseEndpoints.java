@@ -941,9 +941,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("EX2 4LU", response.getPostcode());
     assertEquals(100040239948L, response.getUprn().getValue());
     // assertNotNull(response.getCaseEvents());
-    
-    UniquePropertyReferenceNumber uprn = response.getUprn();
-    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(uprn);
+
+    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(response.getUprn());
+    log.with(cachedCase).info("The fake case that has been created in Firestore");
     assertTrue(cachedCase.isPresent());
   }
 
