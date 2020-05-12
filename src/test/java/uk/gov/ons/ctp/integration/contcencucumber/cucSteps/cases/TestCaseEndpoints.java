@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -1033,5 +1034,82 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNull(address.getLongitude());
     assertEquals(uprnStr, address.getUprn());
     assertNull(address.getArid());
+  }
+
+  @Given("the CC agent has selected an address that is not of addressType CE, HH, or SPG")
+  public void the_CC_agent_has_selected_an_address_that_is_not_of_addressType_CE_HH_or_SPG() {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("addresses")
+            .queryParam("input", "Public Telephone 13M From 11 Nine Acres");
+
+    ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
+        getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
+
+    log.with(addressQueryResponse).info("The address query response here");
+
+    AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
+
+    List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
+
+    int i = 0;
+    boolean addressExists = false;
+    String addressToFind =
+        "Public Telephone 13M From 11 Nine Acres On Unnamed Road, "
+            + "Steep Marsh Bungalows, Steep, Petersfield, GU32 2BW";
+    String addressFound = "";
+    int indexFound = 500;
+    log.info(
+        "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
+    while ((i < addressesFound.size()) && (addressExists == false)) {
+      addressFound = addressesFound.get(i).getFormattedAddress();
+
+      if (addressFound.equals(addressToFind)) {
+        log.with(addressFound).info("This is the address that was found in AIMS");
+        addressExists = true;
+        indexFound = i;
+      }
+      i++;
+    }
+    assertEquals(
+        "The address query response does not contain the correct address",
+        addressToFind,
+        addressFound);
+
+    uprnStr = addressesFound.get(indexFound).getUprn();
+    String addressTypeFound = addressesFound.get(indexFound).getAddressType();
+    log.with(addressTypeFound).info("The addressType of the address found");
+    assertFalse(addressTypeFound.equals("CE"));
+    assertFalse(addressTypeFound.equals("HH"));
+    assertFalse(addressTypeFound.equals("SPG"));
+  }
+
+  @Then("the CC SVC must also return a {int} error")
+  public void the_CC_SVC_must_also_return_a_error(Integer expectedErrNum) {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprnStr);
+    ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+
+    log.info(
+        "As the case does not exist in the case service the endpoint {}, like the AIMS endpoint, should also throw a 404 error.",
+        ccUprnEndpointUrl);
+
+    ResponseEntity<List<CaseDTO>> caseResponse =
+        getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CaseDTO>>() {});
   }
 }
