@@ -825,8 +825,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String requestSurveyLaunch() {
     log.with(telephoneEndpointUrl).info("The url for requesting the survey launch");
     String launchSurveyResponseString = null;
-    launchSurveyResponseString =
-          getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
+    launchSurveyResponseString = getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
     return launchSurveyResponseString;
   }
 
