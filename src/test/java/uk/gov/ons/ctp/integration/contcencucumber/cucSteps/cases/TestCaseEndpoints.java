@@ -824,19 +824,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private String requestSurveyLaunch() {
     log.with(telephoneEndpointUrl).info("The url for requesting the survey launch");
-
     String launchSurveyResponseString = null;
-    try {
-      launchSurveyResponseString =
+    launchSurveyResponseString =
           getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
-    } catch (Exception ex) {
-      System.out.println(ex.getMessage());
-    }
-
     return launchSurveyResponseString;
   }
 
-  @Then("a Survey Launched event is emitted to RM, which contains the launch status type")
+  @Then("a Survey Launched event is emitted to RM")
   public void aSurveyLaunchedEventIsEmittedToRMWhichContainsTheLaunchStatusType() {
     log.info(
         "Check that a SURVEY_LAUNCHED event has now been put on the empty queue, named {}, ready to be picked up by RM",
@@ -857,6 +851,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
           rabbit.getMessage(
               queueName, SurveyLaunchedEvent.class, TimeoutParser.parseTimeoutString(timeout));
     } catch (Exception exception) {
+      fail("SURVEY launch HAS FAILED - the contact centre does not give a response code of 200");
     }
 
     assertNotNull(launchedEvent.getEvent());

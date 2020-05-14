@@ -12,7 +12,7 @@ Feature: Test Contact Centre Telephone Capture Endpoint
     And an empty queue exists for sending SurveyLaunched events
     And EQ is launched <caseType> <caseId> <individual>
     When CC Advisor selects the survey launch
-    Then a Survey Launched event is emitted to RM, which contains the launch status type
+    Then a Survey Launched event is emitted to RM
 
     Examples:
       | caseId                                  | individual   | caseType  |
