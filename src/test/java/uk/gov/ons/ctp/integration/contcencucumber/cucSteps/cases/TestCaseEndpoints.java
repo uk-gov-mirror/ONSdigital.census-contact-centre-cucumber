@@ -64,6 +64,7 @@ import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.CaseStatus;
+import uk.gov.ons.ctp.integration.contactcentresvc.representation.DeliveryChannel;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.FulfilmentDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.ModifyCaseRequestDTO;
 import uk.gov.ons.ctp.integration.contactcentresvc.representation.Reason;
@@ -930,12 +931,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     CaseDTO response = caseDTOList.get(0);
 
     assertNotNull(response.getId());
-    // assertNotNull(response.getCaseRef());
-    // assertEquals("HH", response.getCaseType());
+    assertNull(response.getCaseRef());
+    assertEquals("HH", response.getCaseType());
     assertEquals("HH", response.getAddressType());
-    // assertFalse(response.isSecureEstablishment());
-    // assertEquals(Arrays.asList(DeliveryChannel.SMS, DeliveryChannel.POST),
-    // response.getAllowedDeliveryChannels());
+    assertFalse(response.isSecureEstablishment());
+    assertEquals(
+        Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
+        response.getAllowedDeliveryChannels());
     // assertEquals(AddressLevel.U, response.getEstabType());
     // assertNotNull(response.getCreatedDateTime());
     assertEquals("1 West Grove Road", response.getAddressLine1());
