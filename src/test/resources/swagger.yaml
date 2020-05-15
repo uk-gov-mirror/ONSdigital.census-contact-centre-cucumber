@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: ONS Contact Centre API
   description: Provides features and functions required by the Contact Centre.
-  version: "5.2.0-oas3"
+  version: "5.10.0-oas3"
 security:
   - basicAuth: []
 tags:
@@ -12,7 +12,8 @@ paths:
     get:
       operationId: addressQuery
       tags:
-        - routes
+        - CONTACT_CENTRE
+        - ASSISTED_DIGITAL
       summary: Search for an address.
       description: >-
         Returns a ranked list of addresses matching the search query in the
@@ -54,7 +55,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.address.AddressBySearchResponseContainer
+                  #/components/schemas/AddressQueryResponseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -75,19 +76,14 @@ paths:
     get:
       operationId: postcodeQuery
       tags:
-        - routes
+        - CONTACT_CENTRE
+        - ASSISTED_DIGITAL
       summary: Search for an address by postcode.
       description: >-
         Returns a alpha-numeric ordered list of addresses matching the postcode
         query.
       parameters:
-        - in: query
-          name: postcode
-          required: true
-          description: Specifies the postcode search string (e.g. 'PO15 5RR').
-          schema:
-            type: string
-            pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+        - $ref: '#/components/parameters/POSTCODE_REQUEST'
         - in: query
           name: offset
           required: false
@@ -113,7 +109,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.postcode.AddressByPostcodeResponseContainer
+                  #/components/schemas/AddressQueryResponseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -133,7 +129,7 @@ paths:
     post:
       operationId: caseCreation
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Create a case for an address not found through the address search
       description: >-
         When an address cannot be found in search, this operation will result in a new case being created for the address
@@ -144,7 +140,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+                  #/components/schemas/CaseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -161,7 +157,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/uk.gov.ons.responsemanagement.model.server.request.post.case'
+              $ref: '#/components/schemas/NewCaseRequestDTO'
         description: object detailing an until now unknown address for a case
 
 
@@ -169,9 +165,11 @@ paths:
     get:
       operationId: caseByUprnQuery
       tags:
-        - routes
+        - CONTACT_CENTRE
+        - ASSISTED_DIGITAL
       summary: Search for a case by address uprn.
-      description: Returns a case
+      description: >-
+        Returns a case
       parameters:
         - in: path
           name: uprn
@@ -194,7 +192,7 @@ paths:
                 type: array
                 items:
                   $ref: >-
-                    #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+                    #/components/schemas/CaseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -216,17 +214,12 @@ paths:
     get:
       operationId: ccsCaseByPostcodeQuery
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Search for a CCS case by address postcode.
-      description: Returns a list of cases
+      description: >-
+        Returns a list of cases
       parameters:
-        - in: path
-          name: postcode
-          required: true
-          description: 'Lookup CCS cases by postcode'
-          schema:
-            type: string
-            pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+        - $ref: '#/components/parameters/POSTCODE_PATH'
         - in: query
           name: caseEvents
           description: true if case events are additionally required
@@ -241,7 +234,7 @@ paths:
                 type: array
                 items:
                   $ref: >-
-                    #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+                    #/components/schemas/CaseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -263,7 +256,7 @@ paths:
     put:
       operationId: caseUpdate
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Update the address details of a case or change it's status
       description: >-
         Update the address details for a known case or report a change of address status.
@@ -273,7 +266,7 @@ paths:
         - in: path
           name: caseId
           required: true
-          description: Obtain an EQ survey launch URL by caseID
+          description: The id of the case being modified
           schema:
             type: string
       responses:
@@ -283,7 +276,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.Response
+                  #/components/schemas/ResponseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -300,15 +293,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/uk.gov.ons.responsemanagement.model.server.request.put.case'
-        description: object detailing an until now unknown address for a case
+              $ref: '#/components/schemas/ModifyCaseRequestDTO'
+        description: object detailing a change to the details of a case
 
     get:
       operationId: caseByIdQuery
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Search for a case by its Id.
-      description: Returns a case
+      description: >-
+        Returns a case
       parameters:
         - in: path
           name: caseId
@@ -328,7 +322,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+                  #/components/schemas/CaseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -350,9 +344,10 @@ paths:
     get:
       operationId: caseByReferenceQuery
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Search for a case by its reference.
-      description: Returns a case by the case reference if available.
+      description: >-
+        Returns a case by the case reference if available.
       parameters:
         - in: path
           name: reference
@@ -373,7 +368,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+                  #/components/schemas/CaseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -395,9 +390,10 @@ paths:
     get:
       operationId: LaunchByCaseIdQuery
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Obtain an EQ launch URL and token for a case.
-      description: Returns a case
+      description: >-
+        Returns an EQ launch URL for the case
       parameters:
         - in: path
           name: caseId
@@ -440,11 +436,59 @@ paths:
             Internal server error. Failed to process the request due to an
             internal error.
 
+  /cases/{caseId}/uac:
+    get:
+      operationId: GetUACForCase
+      tags:
+        - ASSISTED_DIGITAL
+      summary: Obtain a UAC for a case.
+      description: >-
+        Returns a UAC for the case
+      parameters:
+        - in: path
+          name: caseId
+          required: true
+          description: Obtain a UAC for a caseEQ survey launch URL by caseID
+          schema:
+            type: string
+        - in: query
+          name: adLocationId
+          required: true
+          description: Assisted Digital Location Identifier
+          schema:
+            type: string
+            pattern: '^\d{1,8}$'
+        - in: query
+          name: individual
+          required: true
+          description: the UAC for an individual questionnaire is required
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success. A json object return containing a single use UAC.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/UACResponseDTO
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
   /cases/{caseId}/fulfilment/post:
     post:
       operationId: postFulfilment
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Request a fulfilment for a Case
       description: >-
         Request a fulfilment for a Case.
@@ -466,7 +510,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.Response
+                  #/components/schemas/ResponseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -484,16 +528,17 @@ paths:
           application/json:
             schema:
               $ref: >-
-                #/components/schemas/uk.gov.ons.responsemanagement.model.server.request.fulfilmentpost
+                #/components/schemas/PostalFulfilmentRequestDTO
         description: object detailing fulfilment request
 
   /cases/{caseId}/fulfilment/sms:
     post:
       operationId: smsFulfilment
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Request a fulfilment for a Case
-      description: Returns a case
+      description: >-
+        Requests a fulfilment for a case
       parameters:
         - in: path
           name: caseId
@@ -509,7 +554,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.Response
+                  #/components/schemas/ResponseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -527,16 +572,17 @@ paths:
           application/json:
             schema:
               $ref: >-
-                #/components/schemas/uk.gov.ons.responsemanagement.model.server.request.fulfilmentsms
+                #/components/schemas/SMSFulfilmentRequestDTO
         description: object detailing fulfilment request
 
   /fulfilments:
     get:
       operationId: fulfilments
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Get a list of available fulfilments.
-      description: Returns a JSON array containing available fulfilments
+      description: >-
+        Returns a JSON array containing available fulfilments
       parameters:
         - in: query
           name: caseType
@@ -548,6 +594,20 @@ paths:
               - HH
               - CE
               - SPG
+        - in: query
+          name: productGroup
+          required: false
+          description: Lookup fulfilments by product group
+          schema:
+            type: string
+            enum:
+              - INVITE
+              - QUESTIONNAIRE
+              - CONTINUATION
+              - LARGE_PRINT
+              - EASY_PRINT
+              - UAC
+              - TRANSLATION
         - in: query
           name: deliveryChannel
           required: false
@@ -582,7 +642,7 @@ paths:
                 type: array
                 items:
                   $ref: >-
-                    #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.fulfilmentcode
+                    #/components/schemas/FulfilmentDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -600,7 +660,7 @@ paths:
     post:
       operationId: refusals
       tags:
-        - routes
+        - CONTACT_CENTRE
       summary: Log when someone is unable/unwilling to complete a response
       description: >-
         Logs a refusal against a Case, 'unknown' should be used in place of a caseid if lookup cannot be performed due to API not being available.
@@ -620,7 +680,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.Response
+                  #/components/schemas/ResponseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -638,7 +698,7 @@ paths:
           application/json:
             schema:
               $ref: >-
-                #/components/schemas/uk.gov.ons.responsemanagement.model.server.request.refusal
+                #/components/schemas/RefusalRequestDTO
         description: object detailing refusal
 
   /version:
@@ -655,7 +715,7 @@ paths:
             application/json:
               schema:
                 $ref: >-
-                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseVersion
+                  #/components/schemas/VersionResponseDTO
         '400':
           description: >-
             Bad request. Indicates an issue with the request. Further details
@@ -673,6 +733,18 @@ paths:
 
 components:
   parameters:
+    POSTCODE_REQUEST:
+      in: query
+      name: postcode
+      required: true
+      schema:
+        $ref: '#/components/schemas/POSTCODE_CONST'
+    POSTCODE_PATH:
+      in: path
+      name: postcode
+      required: true
+      schema:
+        $ref: '#/components/schemas/POSTCODE_CONST'
     CallIdentifier:
       name: X-CALL-ID
       description: >-
@@ -696,24 +768,9 @@ components:
       name: X-APP-ID
 
   schemas:
-
-    uk.gov.ons.responsemanagement.model.server.request.case:
+    CaseRequestDTO:
       type: object
       properties:
-        estabType:
-          type: string
-          enum:
-            - HOUSEHOLD
-            - SHELTERED_ACCOMODATION
-            - HALL_OF_RESIDENCE
-            - CARE_HOME
-            - BOARDING_SCHOOL
-            - HOTEL
-            - HOSTEL
-            - RESIDENTIAL_CARAVANER
-            - GYPSY_ROMA_TRAVELLER
-            - RESIDENTIAL_BOATER
-          description: 'the establishment type of the address'
         addressLine1:
           type: string
           maxLength: 60
@@ -738,9 +795,7 @@ components:
             - N
           description: 'The region e.g. England (E), Wales (W), Northern Ireland (N)'
         postcode:
-          type: string
-          description: postcode of address
-          pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+          $ref:  '#/components/schemas/POSTCODE_CONST'
         ceOrgName:
           type: string
           maxLength: 60
@@ -753,42 +808,108 @@ components:
           format: datetime
           description: The request date time stamp
 
-    uk.gov.ons.responsemanagement.model.server.request.put.case:
+    ModifyCaseRequestDTO:
       allOf:
-        - $ref: '#/components/schemas/uk.gov.ons.responsemanagement.model.server.request.case'
+        - $ref: '#/components/schemas/CaseRequestDTO'
         - type: object
           properties:
+            caseId:
+              type: string
+              format: uuid
+              description: CaseId of case to modify
+            notes:
+              type: string
+              maxLength: 512
+              description: Textual context regarding the modification
+            estabType:
+              type: string
+              enum:
+                - HALL_OF_RESIDENCE
+                - CARE_HOME
+                - HOSPITAL
+                - HOSPICE
+                - MENTAL_HEALTH_HOSPITAL
+                - MEDICAL_CARE_OTHER
+                - BOARDING_SCHOOL
+                - LOW_OR_MEDIUM_SECURE_MENTAL_HEALTH
+                - HIGH_SECURE_MENTAL_HEALTH
+                - HOTEL
+                - YOUTH_HOSTEL
+                - HOSTEL
+                - MILITARY_SLA
+                - MILITARY_US
+                - RELIGIOUS_COMMUNITY
+                - RESIDENTIAL_CHILDRENS_HOME
+                - EDUCATION_OTHER
+                - PRISON
+                - IMMIGRATION_REMOVAL_CENTRE
+                - APPROVED_PREMISES
+                - ROUGH_SLEEPER
+                - STAFF_ACCOMMODATION
+                - CAMPHILL
+                - HOLIDAY_PARK
+                - HOUSEHOLD
+                - SHELTERED_ACCOMMODATION
+                - RESIDENTIAL_CARAVAN
+                - RESIDENTIAL_BOAT
+                - GATED_APARTMENTS
+                - MOD_HOUSEHOLDS
+                - FOREIGN_OFFICES
+                - CASTLES
+                - GRT_SITE
+                - MILITARY_SFA
+                - EMBASSY
+                - ROYAL_HOUSEHOLD
+                - CARAVAN_SITE
+                - MARINA
+                - TRAVELLING_PERSONS
+                - TRANSIENT_PERSONS
+                - OTHER
+              description: 'the establishment type of the address'
             status:
               type: string
               enum:
                 - UNCHANGED
+                - SPLIT_ADDRESS
+                - MERGED
                 - DERELICT
                 - DEMOLISHED
                 - NON_RESIDENTIAL
+                - PROPERTY_IS_A_HOUSEHOLD
+                - PROPERTY_IS_A_CE
                 - UNDER_CONSTRUCTION
-                - UNOCCUPIED
           description: 'the reported status of an address'
         - type: object
           required:
             - region
+            - status
+            - caseId
             - addressLine1
             - townName
             - estabType
             - postcode
             - dateTime
 
-    uk.gov.ons.responsemanagement.model.server.request.post.case:
+    NewCaseRequestDTO:
       allOf:
-        - $ref: '#/components/schemas/uk.gov.ons.responsemanagement.model.server.request.case'
+        - $ref: '#/components/schemas/CaseRequestDTO'
         - type: object
+          properties:
+            caseType:
+              type: string
+              enum:
+                - HH
+                - CE
+                - SPG
+              description: case type
           required:
             - region
             - addressLine1
             - townName
-            - estabType
+            - caseType
             - dateTime
 
-    uk.gov.ons.responsemanagement.model.server.request.fulfilmentpost:
+    PostalFulfilmentRequestDTO:
       properties:
         caseId:
           type: string
@@ -808,7 +929,6 @@ components:
           description: the surname of the person requesting fulfilment
         fulfilmentCode:
           type: string
-          maxLength: 12
           description: the fulfilment code for the fulfilment
         dateTime:
           type: string
@@ -819,7 +939,7 @@ components:
         - fulfilmentCode
         - dateTime
 
-    uk.gov.ons.responsemanagement.model.server.request.fulfilmentsms:
+    SMSFulfilmentRequestDTO:
       properties:
         caseId:
           type: string
@@ -830,7 +950,6 @@ components:
           pattern: '^447[0-9]{9}$'
         fulfilmentCode:
           type: string
-          maxLength: 12
           description: the fulfilment code for the fulfilment
         dateTime:
           type: string
@@ -842,7 +961,7 @@ components:
         - fulfilmentCode
         - dateTime
 
-    uk.gov.ons.responsemanagement.model.server.request.refusal:
+    RefusalRequestDTO:
       properties:
         refusal:
           type: object
@@ -851,6 +970,10 @@ components:
               type: string
               format: uuid
               description: CaseId to log refusal against
+            agentId:
+              type: string
+              pattern: '^\d{1,5}$'
+              description: employee identifier
             reason:
               type: string
               enum:
@@ -901,9 +1024,7 @@ components:
                 - N
               description: 'The region e.g. England (E), Wales (W), Northern Ireland (N) (for use if no caseid is available)'
             postcode:
-              type: string
-              description: postcode of address  (for use if no caseid is available)
-              pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+              $ref: '#/components/schemas/POSTCODE_CONST'
             uprn:
               type: string
               pattern: '^\d{1,12}$'
@@ -913,20 +1034,23 @@ components:
               format: datetime
               description: The requested time of the refusal
       required:
+        - agentId
         - caseId
         - reason
         - dateTime
 
-    uk.gov.ons.responsemanagement.model.server.response.fulfilmentcode:
+    FulfilmentDTO:
       properties:
         fulfilmentCode:
           type: string
-        caseType:
-          type: string
-          enum:
-            - HH
-            - CE
-            - SPG
+        caseTypes:
+          type: array
+          items:
+            type: string
+            enum:
+              - HH
+              - CE
+              - SPG
           description: case type
         individual:
           type: boolean
@@ -934,31 +1058,20 @@ components:
           type: array
           items:
             type: string
-        language:
+            enum:
+              - E
+              - W
+              - N
+        productGroup:
           type: string
           enum:
-            - ara
-            - ben
-            - cmn
-            - eng
-            - fre
-            - gle
-            - guj
-            - ita
-            - kur
-            - lit
-            - pan
-            - pol
-            - por
-            - rus
-            - som
-            - spa
-            - tur
-            - uls
-            - vie
-            - wel
-            - yid
-            - yue
+            - INVITE
+            - QUESTIONNAIRE
+            - CONTINUATION
+            - LARGE_PRINT
+            - EASY_READ
+            - UAC
+            - TRANSLATION
         description:
           type: string
         deliveryChannel:
@@ -966,8 +1079,16 @@ components:
           enum:
             - POST
             - SMS
+      required:
+        - fulfilmentCode
+        - caseTypes
+        - individual
+        - regions
+        - productGroup
+        - description
+        - deliveryChannel
 
-    uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer:
+    CaseDTO:
       properties:
         id:
           type: string
@@ -989,6 +1110,9 @@ components:
             - CE
             - SPG
           description: address type
+        secureEstablishment:
+          type: boolean
+          description: indicates that the case is resident at a secure establishment
         allowedDeliveryChannels:
           type: array
           items:
@@ -1009,6 +1133,10 @@ components:
             - RESIDENTIAL_CARAVANER
             - GYPSY_ROMA_TRAVELLER
             - RESIDENTIAL_BOATER
+            - OTHER
+        estabDescription:
+          type: string
+          maxLength: 60
         createdDateTime:
           type: string
           format: datetime
@@ -1042,12 +1170,28 @@ components:
         uprn:
           type: string
           description: uprn (Unique Property Reference Number) of address
+        estabUprn:
+          type: string
+          description: uprn (Unique Property Reference Number) of the parent establishments address
         caseEvents:
           type: array
           items:
             $ref: >-
-              #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseEvent
-    uk.gov.ons.responsemanagement.model.server.response.case.CaseEvent:
+              #/components/schemas/CaseEventDTO
+      required:
+        - id
+        - caseType
+        - region
+        - allowedDeliveryChannels
+        - estabType
+        - estabDescription
+        - createdDateTime
+        - addressLine1
+        - townName
+        - postcode
+        - uprn
+
+    CaseEventDTO:
       properties:
         category:
           type: string
@@ -1056,8 +1200,12 @@ components:
         createdDateTime:
           type: string
           format: datetime
+      required:
+        - category
+        - description
+        - createdDateTime
 
-    uk.gov.ons.responsemanagement.model.server.response.address.AddressBySearchResponseContainer:
+    AddressQueryResponseDTO:
       properties:
         dataVersion:
           type: string
@@ -1065,7 +1213,7 @@ components:
           type: array
           items:
             $ref: >-
-              #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseAddress
+              #/components/schemas/AddressDTO
         total:
           type: integer
           format: int64
@@ -1074,7 +1222,7 @@ components:
         - addresses
         - total
 
-    uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseVersion:
+    VersionResponseDTO:
       properties:
         apiVersion:
           type: string
@@ -1083,7 +1231,7 @@ components:
       required:
         - dataVersion
 
-    uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseAddress:
+    AddressDTO:
       properties:
         region:
           type: string
@@ -1093,6 +1241,8 @@ components:
             - N
             - S
           description: 'The region e.g. England (E), Wales (W), Northern Ireland (N), Scotland (S)'
+        estabDescription:
+          type: string
         estabType:
           type: string
           enum:
@@ -1106,6 +1256,7 @@ components:
             - RESIDENTIAL_CARAVANER
             - GYPSY_ROMA_TRAVELLER
             - RESIDENTIAL_BOATER
+            - OTHER
         addressType:
           type: string
           enum:
@@ -1122,28 +1273,12 @@ components:
         - uprn
         - region
         - estabType
+        - estabDescription
         - addressType
         - formattedAddress
         - welshFormattedAddress
 
-    uk.gov.ons.responsemanagement.model.server.response.postcode.AddressByPostcodeResponseContainer:
-      properties:
-        dataVersion:
-          type: string
-        addresses:
-          type: array
-          items:
-            $ref: >-
-              #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseAddress
-        total:
-          type: integer
-          format: int64
-      required:
-        - dataVersion
-        - addresses
-        - total
-
-    uk.gov.ons.responsemanagement.model.server.response.Response:
+    ResponseDTO:
       properties:
         id:
           type: string
@@ -1152,3 +1287,22 @@ components:
           format: datetime
       required:
         - dateTime
+
+    UACResponseDTO:
+      properties:
+        id:
+          type: string
+        uac:
+          type: string
+        dateTime:
+          type: string
+          format: datetime
+      required:
+        - dateTime
+
+    POSTCODE_CONST:
+      type: string
+      pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+
+
+

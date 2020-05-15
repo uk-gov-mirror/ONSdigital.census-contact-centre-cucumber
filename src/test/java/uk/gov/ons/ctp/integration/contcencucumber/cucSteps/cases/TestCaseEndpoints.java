@@ -17,9 +17,12 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.swagger.client.model.CaseDTO;
 import io.swagger.client.model.FulfilmentDTO;
+import io.swagger.client.model.ModifyCaseRequestDTO;
+import io.swagger.client.model.ModifyCaseRequestDTO.EstabTypeEnum;
+import io.swagger.client.model.ModifyCaseRequestDTO.StatusEnum;
 import io.swagger.client.model.RefusalRequestDTO;
+import io.swagger.client.model.RefusalRequestDTORefusal.ReasonEnum;
 import io.swagger.client.model.ResponseDTO;
-import java.awt.desktop.UserSessionEvent.Reason;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +57,6 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
-import uk.gov.ons.ctp.integration.common.product.model.Product.Region;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
@@ -69,7 +71,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String uprn;
   private RefusalRequestDTO refusalDTO;
   private ResponseDTO responseDTO;
-  private Reason reason = RefusalFixture.A_REASON;
+  private ReasonEnum reason = RefusalFixture.A_REASON;
   private String agentId = RefusalFixture.AN_AGENT_ID;
   private CaseDTO caseDTO;
   private List<CaseDTO> caseDTOList;
@@ -173,7 +175,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {
     assertNotNull("Case Query Response must not be null", caseDTO);
     assertEquals(
-        "Case Query Response UPRN must match", caseDTO.getUprn().getValue(), uprn.longValue());
+        "Case Query Response UPRN must match", caseDTO.getUprn(), uprn.longValue());
   }
 
   @Then("the correct number of events are returned {string} {int}")
@@ -191,7 +193,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @And("the establishment UPRN is {string}")
   public void the_establishment_UPRN_is(String expectedEstabUprn) {
-    UniquePropertyReferenceNumber estabUprn = caseDTO.getEstabUprn();
+    UniquePropertyReferenceNumber estabUprn = UniquePropertyReferenceNumber.create(caseDTO.getEstabUprn());
     if (StringUtils.isBlank(expectedEstabUprn)) {
       assertNull("There should be no establishment UPRN", estabUprn);
     } else {
@@ -546,7 +548,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @And("I supply a {string} reason for Refusal")
   public void i_supply_a_reason_for_Refusal(String reason) {
-    this.reason = StringUtils.isBlank(reason) ? null : Reason.valueOf(reason);
+    this.reason = StringUtils.isBlank(reason) ? null : ReasonEnum.valueOf(reason);
   }
 
   @And("I supply an {string} agentId for Refusal")
@@ -771,21 +773,18 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     ModifyCaseRequestDTO modifyCaseRequestDTO = new ModifyCaseRequestDTO();
 
-    modifyCaseRequestDTO =
-        ModifyCaseRequestDTO.builder()
+    modifyCaseRequestDTO
             .caseId(UUID.fromString(caseId))
-            .estabType(EstabType.HOUSEHOLD)
-            .status(CaseStatus.valueOf(statusSelected))
-            .notes("Two houses have been knocked into one.")
-            .build();
-
+            .estabType(EstabTypeEnum.HOUSEHOLD)
+            .status(StatusEnum.valueOf(statusSelected))
+            .notes("Two houses have been knocked into one.");
     modifyCaseRequestDTO.setAddressLine1("Brathay");
     modifyCaseRequestDTO.setAddressLine2("2A Priors Way");
     modifyCaseRequestDTO.setAddressLine3("Olivers");
     modifyCaseRequestDTO.setTownName("Winchester");
-    modifyCaseRequestDTO.setRegion(Region.E);
+    modifyCaseRequestDTO.setRegion(ModifyCaseRequestDTO.RegionEnum.E);
     modifyCaseRequestDTO.setPostcode("SO22 4HJ");
-    modifyCaseRequestDTO.setDateTime(new Date());
+    modifyCaseRequestDTO.setDateTime(new Date().toString());
 
     HttpEntity<ModifyCaseRequestDTO> requestEntity = new HttpEntity<>(modifyCaseRequestDTO);
 

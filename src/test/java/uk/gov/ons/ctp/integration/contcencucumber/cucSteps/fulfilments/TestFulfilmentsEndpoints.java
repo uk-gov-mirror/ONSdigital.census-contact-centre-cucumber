@@ -17,6 +17,7 @@ import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
 import io.swagger.client.model.FulfilmentDTO;
+import io.swagger.client.model.FulfilmentDTO.CaseTypesEnum;
 import io.swagger.client.model.PostalFulfilmentRequestDTO;
 import io.swagger.client.model.ResponseDTO;
 import io.swagger.client.model.SMSFulfilmentRequestDTO;
@@ -46,7 +47,6 @@ import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
-import uk.gov.ons.ctp.integration.common.product.model.Product.CaseType;
 import uk.gov.ons.ctp.integration.common.product.model.Product.Region;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
@@ -88,7 +88,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("I Search fulfilments")
   public void i_Search_fulfilments() {
-    searchFulfillments(caseDTO.getCaseType(), caseDTO.getRegion(), "true");
+    searchFulfillments(caseDTO.getCaseType().name(), caseDTO.getRegion().name(), "true");
   }
 
   @Given("I Search fulfilments {string} {string} {string}")
@@ -143,7 +143,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private boolean fulfilmentContainsCaseType(final FulfilmentDTO dto, final String caseType) {
     boolean containsCaseType = false;
-    for (CaseType caseType1 : dto.getCaseTypes()) {
+    for (CaseTypesEnum caseType1 : dto.getCaseTypes()) {
       if (caseType1.name().equalsIgnoreCase(caseType)) {
         containsCaseType = true;
       }
@@ -231,7 +231,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
               assertEquals(
                   "Cases must have the correct UPRN",
                   uprn,
-                  Long.toString(caseDetails.getUprn().getValue()));
+                  caseDetails.getUprn());
               assertTrue(
                   "Cases must have the correct ID" + caseIds,
                   caseIdList.contains(caseDetails.getId().toString()));
@@ -251,7 +251,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Then("the correct fulfilments are returned for my case")
   public void the_correct_fulfilments_are_returned_for_my_case() throws CTPException {
     List<Product> expectedProducts =
-        getExpectedProducts(caseDTO.getCaseType(), caseDTO.getRegion(), "true");
+        getExpectedProducts(caseDTO.getCaseType().name(), caseDTO.getRegion().name(), "true");
     List<String> expectedCodes =
         expectedProducts.stream().map(ex -> ex.getFulfilmentCode()).collect(Collectors.toList());
 
@@ -667,7 +667,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     postalFulfilmentRequest.setForename("Joanna");
     postalFulfilmentRequest.setSurname("Bloggs");
     postalFulfilmentRequest.setFulfilmentCode(productCode);
-    postalFulfilmentRequest.setDateTime(new Date());
+    postalFulfilmentRequest.setDateTime(new Date().toString());
 
     HttpEntity<PostalFulfilmentRequestDTO> requestEntity =
         new HttpEntity<>(postalFulfilmentRequest);
@@ -699,8 +699,11 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.with(fulfilmentBySMSUrl).info("The url for requesting the SMS fulfilment");
 
     SMSFulfilmentRequestDTO smsFulfilmentRequestDTO =
-        new SMSFulfilmentRequestDTO(
-            UUID.fromString(caseId), "447777777777", productCode, new Date());
+        new SMSFulfilmentRequestDTO();
+    smsFulfilmentRequestDTO.caseId(UUID.fromString(caseId))
+        .fulfilmentCode(productCode)
+        .dateTime(new Date().toString());
+        smsFulfilmentRequestDTO.setTelNo("447777777777");
 
     HttpEntity<SMSFulfilmentRequestDTO> requestEntity = new HttpEntity<>(smsFulfilmentRequestDTO);
 
