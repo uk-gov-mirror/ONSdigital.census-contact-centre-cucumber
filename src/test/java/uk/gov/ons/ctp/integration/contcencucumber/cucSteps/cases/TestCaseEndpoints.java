@@ -938,14 +938,16 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(
         Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
         response.getAllowedDeliveryChannels());
-    // assertEquals(AddressLevel.U, response.getEstabType());
-    // assertNotNull(response.getCreatedDateTime());
+    assertEquals(EstabType.HOUSEHOLD, response.getEstabType());
+    assertEquals("Household", response.getEstabDescription());
+    assertNotNull(response.getCreatedDateTime());
     assertEquals("1 West Grove Road", response.getAddressLine1());
     assertEquals("Exeter", response.getTownName());
     assertEquals("E", response.getRegion());
     assertEquals("EX2 4LU", response.getPostcode());
     assertEquals(100040239948L, response.getUprn().getValue());
-    // assertNotNull(response.getCaseEvents());
+    assertNull(response.getEstabUprn());
+    assertNull(response.getCaseEvents());
 
     Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(response.getUprn());
     log.with(cachedCase).info("The fake case that has been created in Firestore");
