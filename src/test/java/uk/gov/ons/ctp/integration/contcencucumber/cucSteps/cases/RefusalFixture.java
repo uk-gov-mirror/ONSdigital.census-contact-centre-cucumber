@@ -1,19 +1,19 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
+
+import io.swagger.client.model.RefusalRequestDTO;
 import java.util.Date;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import uk.gov.ons.ctp.common.event.model.AddressCompact;
 import uk.gov.ons.ctp.common.event.model.Contact;
 import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
-import uk.gov.ons.ctp.integration.contactcentresvc.representation.Reason;
-import uk.gov.ons.ctp.integration.contactcentresvc.representation.RefusalRequestDTO;
-import uk.gov.ons.ctp.integration.contactcentresvc.representation.Region;
+
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RefusalFixture {
 
-  public static final Reason A_REASON = Reason.HARD;
+  public static final String A_REASON = "HARD";
   public static final String AN_AGENT_ID = "123";
   public static final String SOME_NOTES = "Description of refusal";
   public static final String A_TITLE = "Mr";
@@ -25,31 +25,31 @@ public final class RefusalFixture {
   public static final String AN_ADDR_LINE_3 = "Oldham";
   public static final String A_TOWN = "Manchester";
   public static final String A_POSTCODE = "OL3 5DJ";
-  public static final Region A_REGION = Region.E;
+  public static final String A_REGION = "E";
   public static final String A_UPRN_STR = "1234";
   public static final UniquePropertyReferenceNumber A_UPRN =
       new UniquePropertyReferenceNumber(A_UPRN_STR);
 
-  public static RefusalRequestDTO createRequest(String caseId, String agentId, Reason reason) {
+  public static RefusalRequestDTO createRequest(String caseId, String agentId, String reason) {
     Date dateTime = new Date();
 
     RefusalRequestDTO refusal =
-        RefusalRequestDTO.builder()
-            .caseId(caseId)
-            .agentId(agentId)
-            .notes(SOME_NOTES)
-            .title(A_TITLE)
-            .forename(A_FORENAME)
-            .surname(A_SURNAME)
-            .telNo(A_TEL_NO)
-            .addressLine1(AN_ADDR_LINE_1)
-            .addressLine2(AN_ADDR_LINE_2)
-            .addressLine3(AN_ADDR_LINE_3)
-            .townName(A_TOWN)
-            .postcode(A_POSTCODE)
-            .uprn(A_UPRN)
-            .region(A_REGION)
-            .reason(reason)
+        new RefusalRequestDTO();
+            refusal.setCaseId(caseId);
+            refusal.setAgentId(agentId);
+            refusal.setNotes(SOME_NOTES);
+            refusal.setTitle(A_TITLE);
+            refusal.setForename(A_FORENAME);
+            refusal.setSurname(A_SURNAME);
+            refusal.setTelNo(A_TEL_NO);
+            refusal.setAddressLine1(AN_ADDR_LINE_1);
+            refusal.setAddressLine2(AN_ADDR_LINE_2);
+            refusal.setAddressLine3(AN_ADDR_LINE_3);
+            refusal.setTownName(A_TOWN);
+            refusal.setPostcode(A_POSTCODE);
+            refusal.setUprn(Long.getLong(A_UPRN_STR);
+            refusal.setRegion(A_REGION);
+    refusal.setReason(reason)
             .dateTime(dateTime)
             .build();
     return refusal;
