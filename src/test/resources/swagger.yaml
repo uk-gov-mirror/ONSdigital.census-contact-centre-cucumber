@@ -1,0 +1,1154 @@
+openapi: 3.0.0
+info:
+  title: ONS Contact Centre API
+  description: Provides features and functions required by the Contact Centre.
+  version: "5.2.0-oas3"
+security:
+  - basicAuth: []
+tags:
+  - name: routes
+paths:
+  /addresses:
+    get:
+      operationId: addressQuery
+      tags:
+        - routes
+      summary: Search for an address.
+      description: >-
+        Returns a ranked list of addresses matching the search query in the
+        specified format.
+      parameters:
+        - in: query
+          name: input
+          required: true
+          description: >-
+            Specifies the address search string (e.g. 'Segensworth Road,
+            Titchfield, PO15 5RR').
+          schema:
+            type: string
+            maximum: 250
+            default: 0
+        - in: query
+          name: offset
+          required: false
+          description: 'Specifies the offset from zero, used for pagination.'
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 250
+            default: 0
+        - in: query
+          name: limit
+          required: false
+          description: Specifies the number of addresses to return.
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            default: 100
+
+      responses:
+        '200':
+          description: Success. A json return of matched addresses.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.address.AddressBySearchResponseContainer
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: >-
+            Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: >-
+            Server too busy. The Address Index API is experiencing exceptional
+            load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+  /addresses/postcode:
+    get:
+      operationId: postcodeQuery
+      tags:
+        - routes
+      summary: Search for an address by postcode.
+      description: >-
+        Returns a alpha-numeric ordered list of addresses matching the postcode
+        query.
+      parameters:
+        - in: query
+          name: postcode
+          required: true
+          description: Specifies the postcode search string (e.g. 'PO15 5RR').
+          schema:
+            type: string
+            pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+        - in: query
+          name: offset
+          required: false
+          description: 'Specifies the offset from zero, used for pagination.'
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 250
+            default: 0
+        - in: query
+          name: limit
+          required: false
+          description: Specifies the number of addresses to return.
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            default: 100
+      responses:
+        '200':
+          description: Success. A json return of matched addresses.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.postcode.AddressByPostcodeResponseContainer
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: >-
+            Server too busy. The Address Index API is experiencing exceptional
+            load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+  /cases:
+    post:
+      operationId: caseCreation
+      tags:
+        - routes
+      summary: Create a case for an address not found through the address search
+      description: >-
+        When an address cannot be found in search, this operation will result in a new case being created for the address
+      responses:
+        '200':
+          description: Success. Confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/uk.gov.ons.responsemanagement.model.server.request.post.case'
+        description: object detailing an until now unknown address for a case
+
+
+  /cases/uprn/{uprn}:
+    get:
+      operationId: caseByUprnQuery
+      tags:
+        - routes
+      summary: Search for a case by address uprn.
+      description: Returns a case
+      parameters:
+        - in: path
+          name: uprn
+          required: true
+          description: 'Lookup a case by the UPRN '
+          schema:
+            type: string
+            pattern: '^\d{1,12}$'
+        - in: query
+          name: caseEvents
+          description: true if case events are additionally required
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success. A json object return of matched case.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: >-
+                    #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '403':
+          description: Forbidden. The case exists, but it's not being returned as it's not a household case.
+        '404':
+          description: Not found. A case doesn't exist for the supplied uprn.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+  /cases/ccs/postcode/{postcode}:
+    get:
+      operationId: ccsCaseByPostcodeQuery
+      tags:
+        - routes
+      summary: Search for a CCS case by address postcode.
+      description: Returns a list of cases
+      parameters:
+        - in: path
+          name: postcode
+          required: true
+          description: 'Lookup CCS cases by postcode'
+          schema:
+            type: string
+            pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+        - in: query
+          name: caseEvents
+          description: true if case events are additionally required
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success. A json array of matched cases.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: >-
+                    #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '403':
+          description: Forbidden. The case exists, but it's not being returned as it's not a household case.
+        '404':
+          description: Not found. A case doesn't exist for the supplied uprn.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+  /cases/{caseId}:
+    put:
+      operationId: caseUpdate
+      tags:
+        - routes
+      summary: Update the address details of a case or change it's status
+      description: >-
+        Update the address details for a known case or report a change of address status.
+        MUST contain the original case data retrieved from one of the GET /cases endpoints
+        with relevant amendments applied.
+      parameters:
+        - in: path
+          name: caseId
+          required: true
+          description: Obtain an EQ survey launch URL by caseID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success. Confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.Response
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/uk.gov.ons.responsemanagement.model.server.request.put.case'
+        description: object detailing an until now unknown address for a case
+
+    get:
+      operationId: caseByIdQuery
+      tags:
+        - routes
+      summary: Search for a case by its Id.
+      description: Returns a case
+      parameters:
+        - in: path
+          name: caseId
+          required: true
+          description: 'Lookup a case by the case uuid '
+          schema:
+            type: string
+        - in: query
+          name: caseEvents
+          description: true if case events are additionally required
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success. A json object return of matched case.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '403':
+          description: Forbidden. The case exists, but it's being not returned as it's not a household case.
+        '404':
+          description: Not found. A case doesn't exist for the supplied caseId.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+  /cases/ref/{reference}:
+    get:
+      operationId: caseByReferenceQuery
+      tags:
+        - routes
+      summary: Search for a case by its reference.
+      description: Returns a case by the case reference if available.
+      parameters:
+        - in: path
+          name: reference
+          required: true
+          description: Case reference e.g 123000001
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: caseEvents
+          description: true if case events are additionally required
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success. A json object return of matched case.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '403':
+          description: Forbidden. The case exists, but it's not being returned as it's not a household case.
+        '404':
+          description: Not found. A case doesn't exist for the supplied uprn.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+  /cases/{caseId}/launch:
+    get:
+      operationId: LaunchByCaseIdQuery
+      tags:
+        - routes
+      summary: Obtain an EQ launch URL and token for a case.
+      description: Returns a case
+      parameters:
+        - in: path
+          name: caseId
+          required: true
+          description: Obtain an EQ survey launch URL by caseID
+          schema:
+            type: string
+        - in: query
+          name: agentId
+          required: true
+          description: employee identifier
+          schema:
+            type: string
+            pattern: '^\d{1,5}$'
+        - in: query
+          name: individual
+          required: true
+          description: the launch of an individual questionnaire is required
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success. A json object return containing a launch url with token.
+          content:
+            application/json:
+              schema:
+                properties:
+                  url:
+                    type: string
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+  /cases/{caseId}/fulfilment/post:
+    post:
+      operationId: postFulfilment
+      tags:
+        - routes
+      summary: Request a fulfilment for a Case
+      description: >-
+        Request a fulfilment for a Case.
+        If the fulfilment code is for an individual then the request will be rejected as a bad
+        request if any of the following fields are not provided in the request body:
+        'title', 'forename' or 'surname'.
+      parameters:
+        - in: path
+          name: caseId
+          description: The Case UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success. Confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.Response
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/uk.gov.ons.responsemanagement.model.server.request.fulfilmentpost
+        description: object detailing fulfilment request
+
+  /cases/{caseId}/fulfilment/sms:
+    post:
+      operationId: smsFulfilment
+      tags:
+        - routes
+      summary: Request a fulfilment for a Case
+      description: Returns a case
+      parameters:
+        - in: path
+          name: caseId
+          description: The Case UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success. Confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.Response
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/uk.gov.ons.responsemanagement.model.server.request.fulfilmentsms
+        description: object detailing fulfilment request
+
+  /fulfilments:
+    get:
+      operationId: fulfilments
+      tags:
+        - routes
+      summary: Get a list of available fulfilments.
+      description: Returns a JSON array containing available fulfilments
+      parameters:
+        - in: query
+          name: caseType
+          required: false
+          description: Lookup fulfilments by casetype
+          schema:
+            type: string
+            enum:
+              - HH
+              - CE
+              - SPG
+        - in: query
+          name: deliveryChannel
+          required: false
+          description: Lookup fulfilments by delivery channel
+          schema:
+            type: string
+            enum:
+              - SMS
+              - POST
+        - in: query
+          name: region
+          required: false
+          description: 'Lookup fulfilments by region e.g. England (E), Wales (W), Northern Ireland (N)'
+          schema:
+            type: string
+            enum:
+              - E
+              - W
+              - N
+        - in: query
+          name: individual
+          required: false
+          description: 'Lookup fulfilments suitable for an individual (true) or not (false)'
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success. A json object return of fulfilment options.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: >-
+                    #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.fulfilmentcode
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+  /cases/{caseId}/refusal:
+    post:
+      operationId: refusals
+      tags:
+        - routes
+      summary: Log when someone is unable/unwilling to complete a response
+      description: >-
+        Logs a refusal against a Case, 'unknown' should be used in place of a caseid if lookup cannot be performed due to API not being available.
+        Address fields are optional, these are only required in the instance where the API is down and the contact centre operative needs to record the address fields due to Case lookup not being available.
+      parameters:
+        - in: path
+          name: caseId
+          description: The Case UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success. Confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.Response
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: Server too busy. The ONS API is experiencing exceptional load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/uk.gov.ons.responsemanagement.model.server.request.refusal
+        description: object detailing refusal
+
+  /version:
+    get:
+      operationId: versionQuery
+      tags:
+        - routes
+      summary: Get version information.
+      description: Returns version information for the api and the data (AddressBase).
+      responses:
+        '200':
+          description: Success. A json return of version information.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseVersion
+        '400':
+          description: >-
+            Bad request. Indicates an issue with the request. Further details
+            are provided in the response.
+        '401':
+          description: Unauthorised. The API key provided with the request is invalid.
+        '429':
+          description: >-
+            Server too busy. The Address Index API is experiencing exceptional
+            load.
+        '500':
+          description: >-
+            Internal server error. Failed to process the request due to an
+            internal error.
+
+components:
+  parameters:
+    CallIdentifier:
+      name: X-CALL-ID
+      description: >-
+        a unique call identifier that can be used to cross reference an API call
+        to a contact centre call, MUST NOT be personal info e.g. phonenumber
+      in: header
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    appId:
+      type: apiKey
+      in: header
+      name: X-APP-ID
+
+  schemas:
+
+    uk.gov.ons.responsemanagement.model.server.request.case:
+      type: object
+      properties:
+        estabType:
+          type: string
+          enum:
+            - HOUSEHOLD
+            - SHELTERED_ACCOMODATION
+            - HALL_OF_RESIDENCE
+            - CARE_HOME
+            - BOARDING_SCHOOL
+            - HOTEL
+            - HOSTEL
+            - RESIDENTIAL_CARAVANER
+            - GYPSY_ROMA_TRAVELLER
+            - RESIDENTIAL_BOATER
+          description: 'the establishment type of the address'
+        addressLine1:
+          type: string
+          maxLength: 60
+          description: updated address line1
+        addressLine2:
+          type: string
+          maxLength: 60
+          description: updated address line2
+        addressLine3:
+          type: string
+          maxLength: 60
+          description: updated address line3
+        townName:
+          type: string
+          maxLength: 30
+          description: The post town of the address
+        region:
+          type: string
+          enum:
+            - E
+            - W
+            - N
+          description: 'The region e.g. England (E), Wales (W), Northern Ireland (N)'
+        postcode:
+          type: string
+          description: postcode of address
+          pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+        ceOrgName:
+          type: string
+          maxLength: 60
+          description: CE Organisation name
+        ceUsualResidents:
+          type: integer
+          description: CE number of usual residents if caller knows, optional only if address type is CE
+        dateTime:
+          type: string
+          format: datetime
+          description: The request date time stamp
+
+    uk.gov.ons.responsemanagement.model.server.request.put.case:
+      allOf:
+        - $ref: '#/components/schemas/uk.gov.ons.responsemanagement.model.server.request.case'
+        - type: object
+          properties:
+            status:
+              type: string
+              enum:
+                - UNCHANGED
+                - DERELICT
+                - DEMOLISHED
+                - NON_RESIDENTIAL
+                - UNDER_CONSTRUCTION
+                - UNOCCUPIED
+          description: 'the reported status of an address'
+        - type: object
+          required:
+            - region
+            - addressLine1
+            - townName
+            - estabType
+            - postcode
+            - dateTime
+
+    uk.gov.ons.responsemanagement.model.server.request.post.case:
+      allOf:
+        - $ref: '#/components/schemas/uk.gov.ons.responsemanagement.model.server.request.case'
+        - type: object
+          required:
+            - region
+            - addressLine1
+            - townName
+            - estabType
+            - dateTime
+
+    uk.gov.ons.responsemanagement.model.server.request.fulfilmentpost:
+      properties:
+        caseId:
+          type: string
+          format: uuid
+          description: CaseId to request fulfilment for.
+        title:
+          type: string
+          maxLength: 12
+          description: the title of the person requesting fulfilment
+        forename:
+          type: string
+          maxLength: 60
+          description: the forename of the person requesting fulfilment
+        surname:
+          type: string
+          maxLength: 60
+          description: the surname of the person requesting fulfilment
+        fulfilmentCode:
+          type: string
+          maxLength: 12
+          description: the fulfilment code for the fulfilment
+        dateTime:
+          type: string
+          format: datetime
+          description: The request date time stamp
+      required:
+        - caseId
+        - fulfilmentCode
+        - dateTime
+
+    uk.gov.ons.responsemanagement.model.server.request.fulfilmentsms:
+      properties:
+        caseId:
+          type: string
+          format: uuid
+          description: CaseId to request fulfilment for.
+        telNo:
+          type: string
+          pattern: '^447[0-9]{9}$'
+        fulfilmentCode:
+          type: string
+          maxLength: 12
+          description: the fulfilment code for the fulfilment
+        dateTime:
+          type: string
+          format: datetime
+          description: The request date time stamp
+      required:
+        - caseId
+        - telNo
+        - fulfilmentCode
+        - dateTime
+
+    uk.gov.ons.responsemanagement.model.server.request.refusal:
+      properties:
+        refusal:
+          type: object
+          properties:
+            caseId:
+              type: string
+              format: uuid
+              description: CaseId to log refusal against
+            reason:
+              type: string
+              enum:
+                - EXTRAORDINARY
+                - HARD
+              description: 'the reason for the refusal'
+            title:
+              type: string
+              maxLength: 12
+              description: the title of the person refusing
+            forename:
+              type: string
+              maxLength: 60
+              description: the forename of the person refusing
+            surname:
+              type: string
+              maxLength: 60
+              description: the surname of the person refusing
+            telNo:
+              type: string
+              pattern: '^[0-9]*$'
+              description: the telephone number of the individual refusing
+            notes:
+              type: string
+              maxLength: 512
+              description: notes about the refusal
+            addressLine1:
+              type: string
+              maxLength: 60
+              description: address line1 (for use if no caseid is available)
+            addressLine2:
+              type: string
+              maxLength: 60
+              description: address line2  (for use if no caseid is available)
+            addressLine3:
+              type: string
+              maxLength: 60
+              description: updated address line3  (for use if no caseid is available)
+            townName:
+              type: string
+              maxLength: 30
+              description: The post town of the address  (for use if no caseid is available)
+            region:
+              type: string
+              enum:
+                - E
+                - W
+                - N
+              description: 'The region e.g. England (E), Wales (W), Northern Ireland (N) (for use if no caseid is available)'
+            postcode:
+              type: string
+              description: postcode of address  (for use if no caseid is available)
+              pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
+            uprn:
+              type: string
+              pattern: '^\d{1,12}$'
+              description: The address UPRN if known
+            dateTime:
+              type: string
+              format: datetime
+              description: The requested time of the refusal
+      required:
+        - caseId
+        - reason
+        - dateTime
+
+    uk.gov.ons.responsemanagement.model.server.response.fulfilmentcode:
+      properties:
+        fulfilmentCode:
+          type: string
+        caseType:
+          type: string
+          enum:
+            - HH
+            - CE
+            - SPG
+          description: case type
+        individual:
+          type: boolean
+        regions:
+          type: array
+          items:
+            type: string
+        language:
+          type: string
+          enum:
+            - ara
+            - ben
+            - cmn
+            - eng
+            - fre
+            - gle
+            - guj
+            - ita
+            - kur
+            - lit
+            - pan
+            - pol
+            - por
+            - rus
+            - som
+            - spa
+            - tur
+            - uls
+            - vie
+            - wel
+            - yid
+            - yue
+        description:
+          type: string
+        deliveryChannel:
+          type: string
+          enum:
+            - POST
+            - SMS
+
+    uk.gov.ons.responsemanagement.model.server.response.case.CaseContainer:
+      properties:
+        id:
+          type: string
+          format: uuid
+        caseRef:
+          type: string
+          pattern: "^[0-9]{10}$"
+        caseType:
+          type: string
+          enum:
+            - HH
+            - CE
+            - SPG
+          description: case type
+        addressType:
+          type: string
+          enum:
+            - HH
+            - CE
+            - SPG
+          description: address type
+        allowedDeliveryChannels:
+          type: array
+          items:
+            type: string
+            enum:
+              - SMS
+              - POST
+        estabType:
+          type: string
+          enum:
+            - HOUSEHOLD
+            - SHELTERED_ACCOMODATION
+            - HALL_OF_RESIDENCE
+            - CARE_HOME
+            - BOARDING_SCHOOL
+            - HOTEL
+            - HOSTEL
+            - RESIDENTIAL_CARAVANER
+            - GYPSY_ROMA_TRAVELLER
+            - RESIDENTIAL_BOATER
+        createdDateTime:
+          type: string
+          format: datetime
+        addressLine1:
+          type: string
+          maxLength: 60
+          description: address line1
+        addressLine2:
+          type: string
+          maxLength: 60
+          description: address line2
+        addressLine3:
+          type: string
+          maxLength: 60
+          description: address line3
+        townName:
+          type: string
+          maxLength: 30
+          description: The post town of the address
+        region:
+          type: string
+          enum:
+            - E
+            - W
+            - N
+          description: 'The region e.g. England (E), Wales (W), Northern Ireland (N)'
+        postcode:
+          type: string
+          description: postcode of address
+          maxLength: 8
+        uprn:
+          type: string
+          description: uprn (Unique Property Reference Number) of address
+        caseEvents:
+          type: array
+          items:
+            $ref: >-
+              #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.case.CaseEvent
+    uk.gov.ons.responsemanagement.model.server.response.case.CaseEvent:
+      properties:
+        category:
+          type: string
+        description:
+          type: string
+        createdDateTime:
+          type: string
+          format: datetime
+
+    uk.gov.ons.responsemanagement.model.server.response.address.AddressBySearchResponseContainer:
+      properties:
+        dataVersion:
+          type: string
+        addresses:
+          type: array
+          items:
+            $ref: >-
+              #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseAddress
+        total:
+          type: integer
+          format: int64
+      required:
+        - dataVersion
+        - addresses
+        - total
+
+    uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseVersion:
+      properties:
+        apiVersion:
+          type: string
+        dataVersion:
+          type: string
+      required:
+        - dataVersion
+
+    uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseAddress:
+      properties:
+        region:
+          type: string
+          enum:
+            - E
+            - W
+            - N
+            - S
+          description: 'The region e.g. England (E), Wales (W), Northern Ireland (N), Scotland (S)'
+        estabType:
+          type: string
+          enum:
+            - HOUSEHOLD
+            - SHELTERED_ACCOMODATION
+            - HALL_OF_RESIDENCE
+            - CARE_HOME
+            - BOARDING_SCHOOL
+            - HOTEL
+            - HOSTEL
+            - RESIDENTIAL_CARAVANER
+            - GYPSY_ROMA_TRAVELLER
+            - RESIDENTIAL_BOATER
+        addressType:
+          type: string
+          enum:
+            - HH
+            - CE
+            - SPG
+        uprn:
+          type: string
+        formattedAddress:
+          type: string
+        welshFormattedAddress:
+          type: string
+      required:
+        - uprn
+        - region
+        - estabType
+        - addressType
+        - formattedAddress
+        - welshFormattedAddress
+
+    uk.gov.ons.responsemanagement.model.server.response.postcode.AddressByPostcodeResponseContainer:
+      properties:
+        dataVersion:
+          type: string
+        addresses:
+          type: array
+          items:
+            $ref: >-
+              #/components/schemas/uk.gov.ons.responsemanagement.model.server.response.address.AddressResponseAddress
+        total:
+          type: integer
+          format: int64
+      required:
+        - dataVersion
+        - addresses
+        - total
+
+    uk.gov.ons.responsemanagement.model.server.response.Response:
+      properties:
+        id:
+          type: string
+        dateTime:
+          type: string
+          format: datetime
+      required:
+        - dateTime
