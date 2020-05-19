@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import cucumber.api.java.en.Given;
@@ -41,22 +40,17 @@ public class TestAddressEndpoints extends TestBase {
 
   @When("I Search Addresses By Postcode")
   public void i_Search_Addresses_By_Postcode() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("addresses")
-            .pathSegment("postcode")
-            .queryParam("postcode", postcode);
-    addressQueryResponseDTO =
-        getRestTemplate()
-            .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
+        .pathSegment("addresses").pathSegment("postcode").queryParam("postcode", postcode);
+    addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(),
+        AddressQueryResponseDTO.class);
   }
 
   @Then("A list of addresses for my postcode is returned")
   public void a_list_of_addresses_for_my_postcode_is_returned() {
     assertNotNull("Address Query Response must not be null", addressQueryResponseDTO);
-    assertNotEquals(
-        "Address list size must not be zero", 0, addressQueryResponseDTO.getAddresses().size());
+    assertNotEquals("Address list size must not be zero", 0,
+        addressQueryResponseDTO.getAddresses().size());
   }
 
   @Given("I have an invalid Postcode {string}")
@@ -66,16 +60,11 @@ public class TestAddressEndpoints extends TestBase {
 
   @When("I Search Addresses By Invalid Postcode")
   public void i_Search_Addresses_By_Invalid_Postcode() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("addresses")
-            .pathSegment("postcode")
-            .queryParam("postcode", postcode);
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
+        .pathSegment("addresses").pathSegment("postcode").queryParam("postcode", postcode);
     try {
-      addressQueryResponseDTO =
-          getRestTemplate()
-              .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
+      addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(),
+          AddressQueryResponseDTO.class);
     } catch (HttpClientErrorException hcee) {
       assertNull(" Invalid format Address Query Response must be null", addressQueryResponseDTO);
     }
@@ -85,8 +74,8 @@ public class TestAddressEndpoints extends TestBase {
   public void an_empty_list_of_addresses_for_my_postcode_is_returned() {
     if (addressQueryResponseDTO != null) {
       assertNotNull("Address Query Response must not be null", addressQueryResponseDTO);
-      assertEquals(
-          "Address list size must be zero", 0, addressQueryResponseDTO.getAddresses().size());
+      assertEquals("Address list size must be zero", 0,
+          addressQueryResponseDTO.getAddresses().size());
     }
   }
 
@@ -97,21 +86,17 @@ public class TestAddressEndpoints extends TestBase {
 
   @When("I Search Addresses By Address Search")
   public void i_Search_Addresses_By_Address_Search() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("addresses")
-            .queryParam("input", addressSearchString);
-    addressQueryResponseDTO =
-        getRestTemplate()
-            .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
+        .pathSegment("addresses").queryParam("input", addressSearchString);
+    addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(),
+        AddressQueryResponseDTO.class);
   }
 
   @Then("A list of addresses for my search is returned")
   public void a_list_of_addresses_for_my_search_is_returned() {
     assertNotNull("Address Query Response must not be null", addressQueryResponseDTO);
-    assertNotEquals(
-        "Address list size must not be zero", 0, addressQueryResponseDTO.getAddresses().size());
+    assertNotEquals("Address list size must not be zero", 0,
+        addressQueryResponseDTO.getAddresses().size());
   }
 
   @Given("I have an invalid address {string}")
@@ -121,15 +106,11 @@ public class TestAddressEndpoints extends TestBase {
 
   @When("I Search invalid Addresses By Address Search")
   public void i_Search_invalid_Addresses_By_Address_Search() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("addresses")
-            .queryParam("input", addressSearchString);
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
+        .pathSegment("addresses").queryParam("input", addressSearchString);
     try {
-      addressQueryResponseDTO =
-          getRestTemplate()
-              .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
+      addressQueryResponseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(),
+          AddressQueryResponseDTO.class);
     } catch (HttpClientErrorException hcee) {
       assertNull(" Invalid format Address Query Response must be null", addressQueryResponseDTO);
     }
@@ -139,8 +120,8 @@ public class TestAddressEndpoints extends TestBase {
   public void an_empty_list_of_addresses_for_my_search_is_returned() {
     if (addressQueryResponseDTO != null) {
       assertNotNull("Address Query Response must not be null", addressQueryResponseDTO);
-      assertEquals(
-          "Address list size must be zero", 0, addressQueryResponseDTO.getAddresses().size());
+      assertEquals("Address list size must be zero", 0,
+          addressQueryResponseDTO.getAddresses().size());
     }
   }
 
@@ -151,11 +132,8 @@ public class TestAddressEndpoints extends TestBase {
 
   @Given("the respondent address exists in AIMS")
   public void the_respondent_address_exists_in_AIMS() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("addresses")
-            .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
+        .pathSegment("addresses").queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
     addressEndpointUrl = builder.build().encode().toUri().toString();
 
     log.info("Using the following endpoint to check address exists in AIMS: " + addressEndpointUrl);
@@ -165,10 +143,8 @@ public class TestAddressEndpoints extends TestBase {
     aimsEndpointBody = aimsEndpointResponse.getBody();
     log.with(aimsEndpointBody).info("The response body");
     log.with(aimsEndpointResponse.getStatusCode()).info("The response status");
-    assertEquals(
-        "THE ADDRESS MAY NOT EXIST IN AIMS - AIMS does not give a response code of 200",
-        HttpStatus.OK,
-        aimsEndpointResponse.getStatusCode());
+    assertEquals("THE ADDRESS MAY NOT EXIST IN AIMS - AIMS does not give a response code of 200",
+        HttpStatus.OK, aimsEndpointResponse.getStatusCode());
   }
 
   @When("the CC agent searches for the address")
@@ -176,29 +152,19 @@ public class TestAddressEndpoints extends TestBase {
     log.info("Nothing to do here: the CC agent searches for the address");
   }
 
-  @Then(
-      "the CC SVC returns address attributes with region code, address type and establishment type")
-  public void
-      the_CC_SVC_returns_address_attributes_with_region_code_address_type_and_establishment_type() {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("addresses")
-            .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
+  @Then("the CC SVC returns address attributes with region code, address type and establishment type")
+  public void the_CC_SVC_returns_address_attributes_with_region_code_address_type_and_establishment_type() {
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort)
+        .pathSegment("addresses").queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        getRestTemplate()
-            .exchange(
-                builder.build().encode().toUri(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
+        getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET, null,
+            new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
 
     addressEndpointUrl = builder.build().encode().toUri().toString();
 
-    log.info(
-        "Using the following endpoint to check CCSVC returns expected values: "
-            + addressEndpointUrl);
+    log.info("Using the following endpoint to check CCSVC returns expected values: "
+        + addressEndpointUrl);
 
     log.with(addressQueryResponse).info("The address query response here");
 
@@ -207,23 +173,12 @@ public class TestAddressEndpoints extends TestBase {
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
     int i = 0;
-//    boolean addressExists = false;
     String addressToFind = "1 West Grove Road, Exeter, EX2 4LU";
     String addressFound = "";
     int indexFound = 500;
     log.info(
         "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
-//    while ((i < addressesFound.size()) && (addressExists == false)) {
-//addressFound = addressesFound.get(i).getFormattedAddress();
-//      log.with(addressFound).info("This is the address that was found in AIMS where i is: " + i);
-//      if (addressFound.equals(addressToFind)) {
-//        log.with(addressFound).info("This is the address that was found in AIMS");
-//        addressExists = true;
-//        indexFound = i;
-//      }
-//      i++;
-//    }
-    for (i=0; i< addressesFound.size(); i++) {
+    for (i = 0; i < addressesFound.size(); i++) {
       addressFound = addressesFound.get(i).getFormattedAddress();
       log.with(addressFound).info("This is the address that was found in AIMS where i is: " + i);
       if (addressFound.equals(addressToFind)) {
@@ -233,9 +188,7 @@ public class TestAddressEndpoints extends TestBase {
       }
     }
     log.info("The value of i: " + i);
-    assertEquals(
-        "The address query response does not contain the correct address",
-        addressToFind,
+    assertEquals("The address query response does not contain the correct address", addressToFind,
         addressFound);
 
     String regionCode = null;
