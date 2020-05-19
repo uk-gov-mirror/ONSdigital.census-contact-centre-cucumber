@@ -207,21 +207,30 @@ public class TestAddressEndpoints extends TestBase {
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
     int i = 0;
-    boolean addressExists = false;
+//    boolean addressExists = false;
     String addressToFind = "1 West Grove Road, Exeter, EX2 4LU";
     String addressFound = "";
     int indexFound = 500;
     log.info(
         "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
-    while ((i < addressesFound.size()) && (addressExists == false)) {
+//    while ((i < addressesFound.size()) && (addressExists == false)) {
+//addressFound = addressesFound.get(i).getFormattedAddress();
+//      log.with(addressFound).info("This is the address that was found in AIMS where i is: " + i);
+//      if (addressFound.equals(addressToFind)) {
+//        log.with(addressFound).info("This is the address that was found in AIMS");
+//        addressExists = true;
+//        indexFound = i;
+//      }
+//      i++;
+//    }
+    for (i=0; i< addressesFound.size(); i++) {
       addressFound = addressesFound.get(i).getFormattedAddress();
       log.with(addressFound).info("This is the address that was found in AIMS where i is: " + i);
       if (addressFound.equals(addressToFind)) {
         log.with(addressFound).info("This is the address that was found in AIMS");
-        addressExists = true;
         indexFound = i;
+        break;
       }
-      i++;
     }
     log.info("The value of i: " + i);
     assertEquals(
