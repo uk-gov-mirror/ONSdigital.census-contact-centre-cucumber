@@ -63,7 +63,7 @@ It also uses Scenario Outlines to utilize tabulated data in tests
     Given I have a valid case from my search UPRN
     When I Search fulfilments
     Then the correct fulfilments are returned for my case <fulfilments>
-```
+>
 A new travis.yml contains a script which runs the maven build, populates the local maven repo and copies the maven 
 settings.xml file. Tests are skipped as this would run the cucumber.
 
@@ -72,7 +72,7 @@ script:
   - travis_wait mvn install -DskipTests -Dmaven.repo.local=local-maven-repo/repository
   - cp $HOME/.m2/settings.xml m2
 ```
-
+>
 A smokeTests.feature has now been added. The smoke tests will run before the other tests during a normal run. However, the smoke tests are tagged with @smoke so that, if preferred, they can be run separately from the other tests as follows:
 
 ```
@@ -80,9 +80,9 @@ mvn test -Dcucumber.options="--tags @smoke"
 ```
 The advantage of running the smoke tests separately is that, if they find an error (such as that one of the services is not running), then the tests will fail faster than if the whole set of cucumber tests is run (otherwise the other tests would continue to run).
 
-To run all the CCCUC tests locally do as follows:
+##To run all the CCCUC tests locally do as follows:
 
-Make sure that your local IP address is whitelisted for access to AI e.g. try accessing this link: https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true
+Make sure that your local IP address is whitelisted for access to AI e.g. try accessing this link: [https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true](https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true)
 
 Run rabbitmq locally e.g. go into the census-rh-service repo, in the terminal, and enter this command: 
 
@@ -96,7 +96,7 @@ gcloud auth application-default login
 ```
 Run the mock case service locally (either using eclipse or mvn spring-boot:run)
 
-Make sure that you have set the following environment variables NB. the GOOGLE_CLOUD_PROJECT variable needs to be set in order for the Firestore collection to be given the correct name when the CCSVC runs:
+Make sure that you have set the following environment variables NB. the GOOGLE\_CLOUD\_PROJECT variable needs to be set in order for the Firestore collection to be given the correct name when the CCSVC runs:
 
 ```
 export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_SCHEME=https
@@ -114,11 +114,11 @@ Also, if there's a problem with using the AI in dev then an alternative is to po
 ```
 export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_HOST=whitelodge-ai-api.ai.census-gcp.onsdigital.uk
 ```
-NB. You can test access to whitelodge AI using this link: https://whitelodge-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true
+NB. You can test access to whitelodge AI using this link: [https://whitelodge-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true](https://whitelodge-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true)
 
 Run the contact centre service locally (either using eclipse or mvn spring-boot:run)
 
-In the cccuc repo, in the terminal, set the GOOGLE_CLOUD_PROJECT environment variable to the same value as for the CCSVC above: 
+In the cccuc repo, in the terminal, set the GOOGLE\_CLOUD\_PROJECT environment variable to the same value as for the CCSVC above: 
 
 ```
 export GOOGLE_CLOUD_PROJECT=<name of your project>
