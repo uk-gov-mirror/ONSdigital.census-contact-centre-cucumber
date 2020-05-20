@@ -2,6 +2,7 @@ package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
 
 import io.swagger.client.model.RefusalRequestDTO;
+import io.swagger.client.model.RefusalRequestDTORefusal;
 import io.swagger.client.model.RefusalRequestDTORefusal.ReasonEnum;
 import io.swagger.client.model.RefusalRequestDTORefusal.RegionEnum;
 import java.util.Date;
@@ -35,6 +36,7 @@ public final class RefusalFixture {
 
     RefusalRequestDTO refusal =
         new RefusalRequestDTO();
+            refusal.setRefusal(new RefusalRequestDTORefusal());
             refusal.getRefusal()
             .caseId(UUID.fromString(caseId))
             .agentId(agentId)

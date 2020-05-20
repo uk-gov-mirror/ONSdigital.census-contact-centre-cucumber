@@ -137,7 +137,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
               fulfilmentContainsCaseType(fulfilment, caseType));
           assertTrue(
               "Fulfilment should be of correct region",
-              fulfilment.getRegions().contains(Region.valueOf(region)));
+              fulfilment.getRegions().contains(FulfilmentDTO.RegionsEnum.valueOf(region)));
         });
   }
 
@@ -363,10 +363,10 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(
         "The uprn found is not the expected one",
         expectedUprn,
-        listOfCasesWithUprn.get(0).getUprn());
+        UniquePropertyReferenceNumber.create(listOfCasesWithUprn.get(0).getUprn()));
     assertEquals(
         "The caseType found is not the expected one",
-        strCaseType,
+        CaseDTO.CaseTypeEnum.valueOf(strCaseType),
         listOfCasesWithUprn.get(0).getCaseType());
   }
 
@@ -382,11 +382,11 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(
         "The uprn found is not the expected one",
         expectedUprn,
-        listOfCasesWithUprn.get(0).getUprn());
+        new UniquePropertyReferenceNumber(listOfCasesWithUprn.get(0).getUprn()));
     assertEquals(
         "The caseType found is not the expected one",
         strCaseType,
-        listOfCasesWithUprn.get(0).getCaseType());
+        listOfCasesWithUprn.get(0).getCaseType().name());
     log.with(strAddressLevel)
         .info(
             "We cannot assert that the case has this addressLevel - because the addressLevel field is not shown in the CaseDTO representation to Serco.");

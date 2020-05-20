@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: ONS Contact Centre API
   description: Provides features and functions required by the Contact Centre.
-  version: "5.10.0-oas3"
+  version: "5.10.1-oas3"
 security:
   - basicAuth: []
 tags:
@@ -601,7 +601,6 @@ paths:
           schema:
             type: string
             enum:
-              - INVITE
               - QUESTIONNAIRE
               - CONTINUATION
               - LARGE_PRINT
@@ -668,11 +667,10 @@ paths:
       parameters:
         - in: path
           name: caseId
-          description: The Case UUID
+          description: The Case UUID or 'unknown'
           required: true
           schema:
             type: string
-            format: uuid
       responses:
         '200':
           description: Success. Confirmation.
@@ -707,7 +705,7 @@ paths:
       tags:
         - routes
       summary: Get version information.
-      description: Returns version information for the api and the data (AddressBase).
+      description: Returns version information for the service api
       responses:
         '200':
           description: Success. A json return of version information.
@@ -721,10 +719,10 @@ paths:
             Bad request. Indicates an issue with the request. Further details
             are provided in the response.
         '401':
-          description: Unauthorised. The API key provided with the request is invalid.
+          description: Unauthorised.
         '429':
           description: >-
-            Server too busy. The Address Index API is experiencing exceptional
+            Server too busy. The server is experiencing exceptional
             load.
         '500':
           description: >-
@@ -1226,10 +1224,8 @@ components:
       properties:
         apiVersion:
           type: string
-        dataVersion:
-          type: string
       required:
-        - dataVersion
+        - apiVersion
 
     AddressDTO:
       properties:
@@ -1303,6 +1299,5 @@ components:
     POSTCODE_CONST:
       type: string
       pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
-
 
 

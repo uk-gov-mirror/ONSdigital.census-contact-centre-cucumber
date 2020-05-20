@@ -175,7 +175,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {
     assertNotNull("Case Query Response must not be null", caseDTO);
     assertEquals(
-        "Case Query Response UPRN must match", caseDTO.getUprn(), uprn.longValue());
+        "Case Query Response UPRN must match", caseDTO.getUprn(), Integer.toString(uprn));
   }
 
   @Then("the correct number of events are returned {string} {int}")
@@ -194,6 +194,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @And("the establishment UPRN is {string}")
   public void the_establishment_UPRN_is(String expectedEstabUprn) {
     UniquePropertyReferenceNumber estabUprn = UniquePropertyReferenceNumber.create(caseDTO.getEstabUprn());
+    if (estabUprn== null || estabUprn.getValue() == 0L) {
+      estabUprn = null;
+    }
     if (StringUtils.isBlank(expectedEstabUprn)) {
       assertNull("There should be no establishment UPRN", estabUprn);
     } else {
@@ -679,7 +682,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.with(caseId).debug("The case id returned by getCasesWithUprn endpoint");
 
     UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
-    assertEquals(expectedUprn, listOfCasesWithUprn.get(0).getUprn());
+    assertEquals(expectedUprn, UniquePropertyReferenceNumber.create(listOfCasesWithUprn.get(0).getUprn()));
   }
 
   @Given("an empty queue exists for sending AddressNotValid events")
