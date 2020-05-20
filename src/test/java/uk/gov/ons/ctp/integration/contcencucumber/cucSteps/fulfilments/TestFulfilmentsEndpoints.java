@@ -24,7 +24,6 @@ import io.swagger.client.model.SMSFulfilmentRequestDTO;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -663,7 +662,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     postalFulfilmentRequest.setForename("Joanna");
     postalFulfilmentRequest.setSurname("Bloggs");
     postalFulfilmentRequest.setFulfilmentCode(productCode);
-    postalFulfilmentRequest.setDateTime(new Date().toString());
+    postalFulfilmentRequest.setDateTime(getDateAsString());
 
     HttpEntity<PostalFulfilmentRequestDTO> requestEntity =
         new HttpEntity<>(postalFulfilmentRequest);
@@ -698,7 +697,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     smsFulfilmentRequestDTO
         .caseId(UUID.fromString(caseId))
         .fulfilmentCode(productCode)
-        .dateTime(new Date().toString());
+        .dateTime(getDateAsString());
     smsFulfilmentRequestDTO.setTelNo("447777777777");
 
     HttpEntity<SMSFulfilmentRequestDTO> requestEntity = new HttpEntity<>(smsFulfilmentRequestDTO);
