@@ -64,13 +64,6 @@ It also uses Scenario Outlines to utilize tabulated data in tests
     When I Search fulfilments
     Then the correct fulfilments are returned for my case <fulfilments>
 ```
-
-To run these tests - the following services need to be running:-
-
-contact-centre-service
-census-mock-case-api-service
-
-
 A new travis.yml contains a script which runs the maven build, populates the local maven repo and copies the maven 
 settings.xml file. Tests are skipped as this would run the cucumber.
 
@@ -86,3 +79,53 @@ A smokeTests.feature has now been added. The smoke tests will run before the oth
 mvn test -Dcucumber.options="--tags @smoke"
 ```
 The advantage of running the smoke tests separately is that, if they find an error (such as that one of the services is not running), then the tests will fail faster than if the whole set of cucumber tests is run (otherwise the other tests would continue to run).
+
+To run all the CCCUC tests locally do as follows:
+
+Make sure that your local IP address is whitelisted for access to AI e.g. try accessing this link: https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true
+
+Run rabbitmq locally e.g. go into the census-rh-service repo, in the terminal, and enter this command: 
+
+```
+docker-compose up -d
+```
+Run the following command to make sure that you have permission to access Firestore (no error occurs otherwise - it just freezes and fails): 
+
+```
+gcloud auth application-default login
+```
+Run the mock case service locally (either using eclipse or mvn spring-boot:run)
+
+Make sure that you have set the following environment variables NB. the GOOGLE_CLOUD_PROJECT variable needs to be set in order for the Firestore collection to be given the correct name when the CCSVC runs:
+
+```
+export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_SCHEME=https
+export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_HOST=rh-dev-ai-api.ai.census-gcp.onsdigital.uk
+export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_PORT=443
+export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_USERNAME=rhuser
+export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_PASSWORD=<password>
+export GOOGLE_CLOUD_PROJECT=<name of your project>
+```
+Obviously replace <password> with the rhuser password. The CCCUC tests should then pass when run locally against the CCSVC.
+And replace <name of your project> with something like census-rh-ellacook1
+
+Also, if there's a problem with using the AI in dev then an alternative is to point it at Whitelodge:
+
+```
+export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_HOST=whitelodge-ai-api.ai.census-gcp.onsdigital.uk
+```
+NB. You can test access to whitelodge AI using this link: https://whitelodge-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true
+
+Run the contact centre service locally (either using eclipse or mvn spring-boot:run)
+
+In the cccuc repo, in the terminal, set the GOOGLE_CLOUD_PROJECT environment variable to the same value as for the CCSVC above: 
+
+```
+export GOOGLE_CLOUD_PROJECT=<name of your project>
+```
+Now you can run cccuc in the terminal using this command: 
+
+```
+mvn clean install
+```
+
