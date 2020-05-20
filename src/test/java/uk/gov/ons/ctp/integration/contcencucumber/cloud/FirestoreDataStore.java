@@ -60,19 +60,6 @@ public class FirestoreDataStore implements CloudDataStore {
     try {
       result.get();
       log.with(schema).with(key).debug("Firestore save completed");
-    } catch (AbortedException e) {
-      if (e.getStatusCode().getCode() == StatusCode.Code.ABORTED) {
-        // Firestore is overloaded. Use Spring exponential backoff to force a retry.
-        // This is intended to catch 'Too much contention' exceptions, but will catch any aborted
-        // exception. Retrying on some currently unknown aborted condition is better than the risk
-        // of missing actual firestore overloading.
-        log.with("schema", schema).with("key", key).debug("Firestore contention detected", e);
-      }
-
-      log.with("schema", schema).with("key", key).error(e, "Failed to create object in Firestore");
-      String failureMessage =
-          "Failed to create object in Firestore. Schema: " + schema + " with key " + key;
-      throw new CTPException(Fault.SYSTEM_ERROR, e, failureMessage);
     } catch (Exception e) {
       log.with("schema", schema).with("key", key).error(e, "Failed to create object in Firestore");
       String failureMessage =
