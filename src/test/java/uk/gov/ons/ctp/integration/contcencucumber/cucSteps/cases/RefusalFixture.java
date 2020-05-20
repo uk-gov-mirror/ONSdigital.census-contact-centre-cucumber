@@ -2,15 +2,14 @@ package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
 
 import io.swagger.client.model.RefusalRequestDTO;
-import io.swagger.client.model.RefusalRequestDTORefusal;
-import io.swagger.client.model.RefusalRequestDTORefusal.ReasonEnum;
-import io.swagger.client.model.RefusalRequestDTORefusal.RegionEnum;
+import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
+import io.swagger.client.model.RefusalRequestDTO.RegionEnum;
 import java.util.Date;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import uk.gov.ons.ctp.common.event.model.AddressCompact;
 import uk.gov.ons.ctp.common.event.model.Contact;
+import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -36,9 +35,8 @@ public final class RefusalFixture {
 
     RefusalRequestDTO refusal =
         new RefusalRequestDTO();
-            refusal.setRefusal(new RefusalRequestDTORefusal());
-            refusal.getRefusal()
-            .caseId(UUID.fromString(caseId))
+            refusal
+            .caseId(caseId)
             .agentId(agentId)
             .notes(SOME_NOTES)
             .title(A_TITLE)
@@ -53,7 +51,7 @@ public final class RefusalFixture {
             .uprn(A_UPRN_STR)
             .region(A_REGION)
             .reason(reason)
-            .dateTime(dateTime.toString());
+            .dateTime(SpringIntegrationTest.getDateAsString());
 
     return refusal;
   }
@@ -80,4 +78,5 @@ public final class RefusalFixture {
     contact.setTelNo(A_TEL_NO);
     return contact;
   }
+
 }

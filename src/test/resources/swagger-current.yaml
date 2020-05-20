@@ -71,7 +71,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
   /addresses/postcode:
     get:
       operationId: postcodeQuery
@@ -124,7 +123,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
   /cases:
     post:
       operationId: caseCreation
@@ -209,7 +207,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
   /cases/ccs/postcode/{postcode}:
     get:
       operationId: ccsCaseByPostcodeQuery
@@ -251,7 +248,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
   /cases/{caseId}:
     put:
       operationId: caseUpdate
@@ -339,7 +335,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
   /cases/ref/{reference}:
     get:
       operationId: caseByReferenceQuery
@@ -385,7 +380,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
   /cases/{caseId}/launch:
     get:
       operationId: LaunchByCaseIdQuery
@@ -435,7 +429,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
   /cases/{caseId}/uac:
     get:
       operationId: GetUACForCase
@@ -654,7 +647,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
   /cases/{caseId}/refusal:
     post:
       operationId: refusals
@@ -728,7 +720,6 @@ paths:
           description: >-
             Internal server error. Failed to process the request due to an
             internal error.
-
 components:
   parameters:
     POSTCODE_REQUEST:
@@ -961,76 +952,72 @@ components:
 
     RefusalRequestDTO:
       properties:
-        refusal:
-          type: object
-          properties:
-            caseId:
-              type: string
-              format: uuid
-              description: CaseId to log refusal against
-            agentId:
-              type: string
-              pattern: '^\d{1,5}$'
-              description: employee identifier
-            reason:
-              type: string
-              enum:
-                - EXTRAORDINARY
-                - HARD
-              description: 'the reason for the refusal'
-            title:
-              type: string
-              maxLength: 12
-              description: the title of the person refusing
-            forename:
-              type: string
-              maxLength: 60
-              description: the forename of the person refusing
-            surname:
-              type: string
-              maxLength: 60
-              description: the surname of the person refusing
-            telNo:
-              type: string
-              pattern: '^[0-9]*$'
-              description: the telephone number of the individual refusing
-            notes:
-              type: string
-              maxLength: 512
-              description: notes about the refusal
-            addressLine1:
-              type: string
-              maxLength: 60
-              description: address line1 (for use if no caseid is available)
-            addressLine2:
-              type: string
-              maxLength: 60
-              description: address line2  (for use if no caseid is available)
-            addressLine3:
-              type: string
-              maxLength: 60
-              description: updated address line3  (for use if no caseid is available)
-            townName:
-              type: string
-              maxLength: 30
-              description: The post town of the address  (for use if no caseid is available)
-            region:
-              type: string
-              enum:
-                - E
-                - W
-                - N
-              description: 'The region e.g. England (E), Wales (W), Northern Ireland (N) (for use if no caseid is available)'
-            postcode:
-              $ref: '#/components/schemas/POSTCODE_CONST'
-            uprn:
-              type: string
-              pattern: '^\d{1,12}$'
-              description: The address UPRN if known
-            dateTime:
-              type: string
-              format: datetime
-              description: The requested time of the refusal
+        caseId:
+          type: string
+          description: CaseId to log refusal against
+        agentId:
+          type: string
+          pattern: '^\d{1,5}$'
+          description: employee identifier
+        reason:
+          type: string
+          enum:
+            - EXTRAORDINARY
+            - HARD
+          description: 'the reason for the refusal'
+        title:
+          type: string
+          maxLength: 12
+          description: the title of the person refusing
+        forename:
+          type: string
+          maxLength: 60
+          description: the forename of the person refusing
+        surname:
+          type: string
+          maxLength: 60
+          description: the surname of the person refusing
+        telNo:
+          type: string
+          pattern: '^[0-9]*$'
+          description: the telephone number of the individual refusing
+        notes:
+          type: string
+          maxLength: 512
+          description: notes about the refusal
+        addressLine1:
+          type: string
+          maxLength: 60
+          description: address line1 (for use if no caseid is available)
+        addressLine2:
+          type: string
+          maxLength: 60
+          description: address line2  (for use if no caseid is available)
+        addressLine3:
+          type: string
+          maxLength: 60
+          description: updated address line3  (for use if no caseid is available)
+        townName:
+          type: string
+          maxLength: 30
+          description: The post town of the address  (for use if no caseid is available)
+        region:
+          type: string
+          enum:
+            - E
+            - W
+            - N
+          description: 'The region e.g. England (E), Wales (W), Northern Ireland (N) (for use if no caseid is available)'
+        postcode:
+          $ref: '#/components/schemas/POSTCODE_CONST'
+        uprn:
+          type: string
+          pattern: '^\d{1,12}$'
+          description: The address UPRN if known
+        dateTime:
+          type: string
+          format: datetime
+          description: The requested time of the refusal
       required:
         - agentId
         - caseId
@@ -1299,5 +1286,3 @@ components:
     POSTCODE_CONST:
       type: string
       pattern: 'GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|BX|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\\d[\\dA-Z]?[ ]?\\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\\d{1,4}'
-
-

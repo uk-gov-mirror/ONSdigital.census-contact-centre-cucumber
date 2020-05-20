@@ -21,12 +21,11 @@ import io.swagger.client.model.ModifyCaseRequestDTO;
 import io.swagger.client.model.ModifyCaseRequestDTO.EstabTypeEnum;
 import io.swagger.client.model.ModifyCaseRequestDTO.StatusEnum;
 import io.swagger.client.model.RefusalRequestDTO;
-import io.swagger.client.model.RefusalRequestDTORefusal.ReasonEnum;
+import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.ResponseDTO;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -787,7 +786,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     modifyCaseRequestDTO.setTownName("Winchester");
     modifyCaseRequestDTO.setRegion(ModifyCaseRequestDTO.RegionEnum.E);
     modifyCaseRequestDTO.setPostcode("SO22 4HJ");
-    modifyCaseRequestDTO.setDateTime(new Date().toString());
+    modifyCaseRequestDTO.setDateTime(getDateAsString());
 
     HttpEntity<ModifyCaseRequestDTO> requestEntity = new HttpEntity<>(modifyCaseRequestDTO);
 

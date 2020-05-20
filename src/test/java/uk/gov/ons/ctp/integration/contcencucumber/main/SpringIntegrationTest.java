@@ -1,5 +1,9 @@
 package uk.gov.ons.ctp.integration.contcencucumber.main;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,5 +32,12 @@ public class SpringIntegrationTest {
 
   protected RestTemplate getRestTemplate(final String username, final String password) {
     return new RestTemplateBuilder().basicAuthentication(username, password).build();
+  }
+
+  public static String getDateAsString() {
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    Date today = Calendar.getInstance().getTime();
+    return sdf.format(today);
   }
 }
