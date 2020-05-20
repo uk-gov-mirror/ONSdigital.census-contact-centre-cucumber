@@ -1,6 +1,5 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
-
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.RefusalRequestDTO.RegionEnum;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import uk.gov.ons.ctp.common.event.model.AddressCompact;
 import uk.gov.ons.ctp.common.event.model.Contact;
 import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
-
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RefusalFixture {
@@ -33,25 +31,24 @@ public final class RefusalFixture {
   public static RefusalRequestDTO createRequest(String caseId, String agentId, ReasonEnum reason) {
     Date dateTime = new Date();
 
-    RefusalRequestDTO refusal =
-        new RefusalRequestDTO();
-            refusal
-            .caseId(caseId)
-            .agentId(agentId)
-            .notes(SOME_NOTES)
-            .title(A_TITLE)
-            .forename(A_FORENAME)
-            .surname(A_SURNAME)
-            .telNo(A_TEL_NO)
-            .addressLine1(AN_ADDR_LINE_1)
-            .addressLine2(AN_ADDR_LINE_2)
-            .addressLine3(AN_ADDR_LINE_3)
-            .townName(A_TOWN)
-            .postcode(A_POSTCODE)
-            .uprn(A_UPRN_STR)
-            .region(A_REGION)
-            .reason(reason)
-            .dateTime(SpringIntegrationTest.getDateAsString());
+    RefusalRequestDTO refusal = new RefusalRequestDTO();
+    refusal
+        .caseId(caseId)
+        .agentId(agentId)
+        .notes(SOME_NOTES)
+        .title(A_TITLE)
+        .forename(A_FORENAME)
+        .surname(A_SURNAME)
+        .telNo(A_TEL_NO)
+        .addressLine1(AN_ADDR_LINE_1)
+        .addressLine2(AN_ADDR_LINE_2)
+        .addressLine3(AN_ADDR_LINE_3)
+        .townName(A_TOWN)
+        .postcode(A_POSTCODE)
+        .uprn(A_UPRN_STR)
+        .region(A_REGION)
+        .reason(reason)
+        .dateTime(SpringIntegrationTest.getDateAsString());
 
     return refusal;
   }
@@ -78,5 +75,4 @@ public final class RefusalFixture {
     contact.setTelNo(A_TEL_NO);
     return contact;
   }
-
 }

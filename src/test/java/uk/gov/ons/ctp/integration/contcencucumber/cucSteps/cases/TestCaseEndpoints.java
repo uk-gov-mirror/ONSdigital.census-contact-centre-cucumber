@@ -173,8 +173,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Then("the correct case for my case ID is returned {int}")
   public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {
     assertNotNull("Case Query Response must not be null", caseDTO);
-    assertEquals(
-        "Case Query Response UPRN must match", caseDTO.getUprn(), Integer.toString(uprn));
+    assertEquals("Case Query Response UPRN must match", caseDTO.getUprn(), Integer.toString(uprn));
   }
 
   @Then("the correct number of events are returned {string} {int}")
@@ -192,8 +191,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @And("the establishment UPRN is {string}")
   public void the_establishment_UPRN_is(String expectedEstabUprn) {
-    UniquePropertyReferenceNumber estabUprn = UniquePropertyReferenceNumber.create(caseDTO.getEstabUprn());
-    if (estabUprn== null || estabUprn.getValue() == 0L) {
+    UniquePropertyReferenceNumber estabUprn =
+        UniquePropertyReferenceNumber.create(caseDTO.getEstabUprn());
+    if (estabUprn == null || estabUprn.getValue() == 0L) {
       estabUprn = null;
     }
     if (StringUtils.isBlank(expectedEstabUprn)) {
@@ -681,7 +681,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.with(caseId).debug("The case id returned by getCasesWithUprn endpoint");
 
     UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
-    assertEquals(expectedUprn, UniquePropertyReferenceNumber.create(listOfCasesWithUprn.get(0).getUprn()));
+    assertEquals(
+        expectedUprn, UniquePropertyReferenceNumber.create(listOfCasesWithUprn.get(0).getUprn()));
   }
 
   @Given("an empty queue exists for sending AddressNotValid events")
@@ -776,10 +777,10 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     ModifyCaseRequestDTO modifyCaseRequestDTO = new ModifyCaseRequestDTO();
 
     modifyCaseRequestDTO
-            .caseId(UUID.fromString(caseId))
-            .estabType(EstabTypeEnum.HOUSEHOLD)
-            .status(StatusEnum.valueOf(statusSelected))
-            .notes("Two houses have been knocked into one.");
+        .caseId(UUID.fromString(caseId))
+        .estabType(EstabTypeEnum.HOUSEHOLD)
+        .status(StatusEnum.valueOf(statusSelected))
+        .notes("Two houses have been knocked into one.");
     modifyCaseRequestDTO.setAddressLine1("Brathay");
     modifyCaseRequestDTO.setAddressLine2("2A Priors Way");
     modifyCaseRequestDTO.setAddressLine3("Olivers");

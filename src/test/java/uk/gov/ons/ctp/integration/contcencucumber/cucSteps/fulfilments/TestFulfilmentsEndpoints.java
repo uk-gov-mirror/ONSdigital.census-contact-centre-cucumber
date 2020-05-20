@@ -47,7 +47,6 @@ import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
-import uk.gov.ons.ctp.integration.common.product.model.Product.Region;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
@@ -228,10 +227,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       try {
         caseDTOList.forEach(
             caseDetails -> {
-              assertEquals(
-                  "Cases must have the correct UPRN",
-                  uprn,
-                  caseDetails.getUprn());
+              assertEquals("Cases must have the correct UPRN", uprn, caseDetails.getUprn());
               assertTrue(
                   "Cases must have the correct ID" + caseIds,
                   caseIdList.contains(caseDetails.getId().toString()));
@@ -698,12 +694,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     log.with(fulfilmentBySMSUrl).info("The url for requesting the SMS fulfilment");
 
-    SMSFulfilmentRequestDTO smsFulfilmentRequestDTO =
-        new SMSFulfilmentRequestDTO();
-    smsFulfilmentRequestDTO.caseId(UUID.fromString(caseId))
+    SMSFulfilmentRequestDTO smsFulfilmentRequestDTO = new SMSFulfilmentRequestDTO();
+    smsFulfilmentRequestDTO
+        .caseId(UUID.fromString(caseId))
         .fulfilmentCode(productCode)
         .dateTime(new Date().toString());
-        smsFulfilmentRequestDTO.setTelNo("447777777777");
+    smsFulfilmentRequestDTO.setTelNo("447777777777");
 
     HttpEntity<SMSFulfilmentRequestDTO> requestEntity = new HttpEntity<>(smsFulfilmentRequestDTO);
 
