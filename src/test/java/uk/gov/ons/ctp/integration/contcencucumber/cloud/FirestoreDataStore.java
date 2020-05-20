@@ -50,7 +50,7 @@ public class FirestoreDataStore implements CloudDataStore {
    */
   @Override
   public void storeObject(final String schema, final String key, final Object value)
-      throws CTPException, DataStoreContentionException {
+      throws CTPException {
     log.with(schema).with(key).debug("Saving object to Firestore");
 
     // Store the object
@@ -67,8 +67,6 @@ public class FirestoreDataStore implements CloudDataStore {
         // exception. Retrying on some currently unknown aborted condition is better than the risk
         // of missing actual firestore overloading.
         log.with("schema", schema).with("key", key).debug("Firestore contention detected", e);
-        throw new DataStoreContentionException(
-            "Firestore contention on schema '" + schema + "'", e);
       }
 
       log.with("schema", schema).with("key", key).error(e, "Failed to create object in Firestore");

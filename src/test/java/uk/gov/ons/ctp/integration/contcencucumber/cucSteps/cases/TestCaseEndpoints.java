@@ -84,6 +84,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
+  private static final long RABBIT_TIMEOUT = 2000L;
 
   private String caseId;
   private String uprn;
@@ -996,10 +997,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     newAddressReportedEvent =
         (NewAddressReportedEvent)
-            rabbit.getMessage(
-                queueName,
-                NewAddressReportedEvent.class,
-                TimeoutParser.parseTimeoutString(timeout));
+            rabbit.getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
 
     assertNotNull(newAddressReportedEvent);
 
