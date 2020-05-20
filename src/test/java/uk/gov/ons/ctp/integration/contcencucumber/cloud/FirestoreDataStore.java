@@ -3,8 +3,6 @@ package uk.gov.ons.ctp.integration.contcencucumber.cloud;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.google.api.core.ApiFuture;
-import com.google.api.gax.rpc.AbortedException;
-import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.Firestore;
