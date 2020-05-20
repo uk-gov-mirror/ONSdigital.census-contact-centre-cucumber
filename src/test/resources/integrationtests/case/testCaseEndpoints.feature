@@ -143,3 +143,9 @@ Feature: Test Contact centre Case Endpoints
     And the fake case does not already exist in Firestore
     Given CC SVC creates a fake Case with the address details from AIMS
     Then the CC SVC must publish a new address event to RM with the fake CaseID
+
+  Scenario: [CR-T377] AddressType Not Applicable
+    Given the CC agent has selected an address that is not of addressType CE, HH, or SPG
+    And the case service does not have any case created for the address in question
+    When Get/Case API returns a 404 error because there is no case found
+    Then the CC SVC must also return a "404 Not Found" error

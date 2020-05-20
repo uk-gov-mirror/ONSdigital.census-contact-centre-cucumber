@@ -10,12 +10,5 @@ target
 target/**
 src/test/java/uk/gov/ons/ctp/integration/contcencucumber/DevelopTestRunner.java
 m2
-src/.DS_Store
-src/test/.DS_Store
-src/test/java/.DS_Store
-src/test/java/uk/.DS_Store
-src/test/java/uk/gov/.DS_Store
-src/test/java/uk/gov/ons/.DS_Store
-src/test/java/uk/gov/ons/ctp/.DS_Store
-src/test/java/uk/gov/ons/ctp/integration/.DS_Store
-
+**/.DS_Store
+bin/
