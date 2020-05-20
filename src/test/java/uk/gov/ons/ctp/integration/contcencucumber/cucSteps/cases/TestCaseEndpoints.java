@@ -1097,7 +1097,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(launchedEvent.getPayload().getResponse().getCaseId());
     assertEquals(agentId, launchedEvent.getPayload().getResponse().getAgentId());
   }
-  
+
   @Given("the CC agent has selected an address that is not of addressType CE, HH, or SPG")
   public void the_CC_agent_has_selected_an_address_that_is_not_of_addressType_CE_HH_or_SPG() {
     UriComponentsBuilder builder =
