@@ -206,39 +206,30 @@ public class TestAddressEndpoints extends TestBase {
 
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
-    int i = 0;
-    String addressToFind = "1 West Grove Road, Exeter, EX2 4LU";
-    String addressFound = "";
-    int indexFound = 500;
-    log.info(
-        "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
-    for (i = 0; i < addressesFound.size(); i++) {
-      addressFound = addressesFound.get(i).getFormattedAddress();
+    AddressDTO addressFound = null;
+    for (int i = 0; i < addressesFound.size(); i++) {
+      addressFound = addressesFound.get(i);
       log.with(addressFound).info("This is the address that was found in AIMS where i is: " + i);
-      if (addressFound.equals(addressToFind)) {
+      if (addressFound.getFormattedAddress().equals("1 West Grove Road, Exeter, EX2 4LU")) {
         log.with(addressFound).info("This is the address that was found in AIMS");
-        indexFound = i;
         break;
       }
     }
-    log.with(indexFound).info("The index of the address found in the list of addresses.");
+    assertNotNull(addressFound);
     assertEquals(
         "The address query response does not contain the correct address",
-        addressToFind,
-        addressFound);
+        "1 West Grove Road, Exeter, EX2 4LU",
+        addressFound.getFormattedAddress());
 
-    String regionCode = null;
-    regionCode = addressesFound.get(indexFound).getRegion();
+    String regionCode = addressFound.getRegion();
     log.with(regionCode).info("This is the region code that was found in AIMS");
     assertNotNull(regionCode);
 
-    String addressType = null;
-    addressType = addressesFound.get(indexFound).getAddressType();
+    String addressType = addressFound.getAddressType();
     log.with(addressType).info("This is the address type that was found in AIMS");
     assertNotNull(addressType);
 
-    String estabType = null;
-    estabType = addressesFound.get(indexFound).getEstabType();
+    String estabType = addressFound.getEstabType();
     log.with(estabType).info("This is the establishment type that was found in AIMS");
     assertNotNull(estabType);
   }
