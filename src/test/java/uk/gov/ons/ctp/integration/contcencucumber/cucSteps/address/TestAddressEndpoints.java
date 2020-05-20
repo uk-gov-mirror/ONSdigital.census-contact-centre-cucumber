@@ -221,7 +221,7 @@ public class TestAddressEndpoints extends TestBase {
         break;
       }
     }
-    log.info("The value of i: " + i);
+    log.with(indexFound).info("The index of the address found in the list of addresses.");
     assertEquals(
         "The address query response does not contain the correct address",
         addressToFind,
