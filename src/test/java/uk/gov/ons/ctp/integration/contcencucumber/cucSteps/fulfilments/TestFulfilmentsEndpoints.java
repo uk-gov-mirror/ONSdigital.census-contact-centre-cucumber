@@ -100,7 +100,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
-            .pathSegment("/fulfilments")
+            .pathSegment("fulfilments")
             .queryParam("caseType", caseType)
             .queryParam("region", region)
             .queryParam("individual", individual);

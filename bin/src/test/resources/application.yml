@@ -1,0 +1,45 @@
+info:
+  name: ${project.artifactId}
+  version: ${project.version}
+  origin: ${scm.url}
+  commit: ${buildNumber}
+  branch: ${scmBranch}
+  built: ${timestamp}
+
+# logging config here as a reminder as to how to override logback from cmd line
+# ie -Dlogging.level.org.springframework=DEBUG
+logging:
+  level:
+    root: INFO
+    uk.gov.ons.ctp: INFO
+    org.springframework: ERROR
+  profile: DEV
+  useJson: false
+
+contact-centre:
+  username: ${CONTACT_CENTRE_SERVICE_USERNAME:serco_cks}
+  password: ${CONTACT_CENTRE_SERVICE_PASSWORD:temporary}
+  host: ${CONTACT_CENTRE_SERVICE_URL:http://localhost}
+  port: ${CONTACT_CENTRE_SERVICE_PORT:8171}
+
+mock-case-service:
+  host: ${MOCK_CASE_SERVICE_URL:http://localhost}
+  port: ${MOCK_CASE_SERVICE_PORT:8161}
+
+keystore: '{ 
+	"keys": { 
+	  "57db285d00430f8c9dbaa3e1fb281f7053acd977": {
+		 "type": "public", 
+		 "purpose": "authentication",
+		 "value": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAuTeQiTUPhOTEh/tIYx1R\nHjw0gLrfL2yFPh2bmWPirhLFiEZCIl8Nci7as8ta6HykUajUgvl0rt5O3t/RaPdm\nUB4uLDZXF1CWHoP1L6oeplwG3mnmp15cBi0in/iMNcbeTrVPm6m5liIZ91p80Z41\n/zwIO8EyvMRpMQO6LuLsSMLmIbXS8gleZOeV1tIegp2Q8WGmx5+U/PMoPmN61cjH\nMgCyFJY6/U3GAVBj2ZIQsKqcJ1yJHRx+mvA4yQ+ElpPh4BN+xvNUfuQ+NHfvI3le\nl/Wma5TxMlimS+2ONj9bSe0xSh9qAjFWx6L6A4IZqLnX70eW9fnY8hO7IphNFsMC\nZH2zp1KJls8Z0nCRGdCumAExHJ7ddOG5TJ5BfiMboOh7dlFSOaBEWWSa+S96oDXc\nf8zzhaBiAp1sBpU+WTyKyg4Pixjwy5ygbUjkPQWN4jSas5k/fyZIsYKyoBs7vT52\n+gxBZdXVVsa0jHOrZbvNSQv6cK2b+BLwPqTTGsAlKTT68c7OvGYxGU/bpoKDXGtG\nuX/05K0L/PHPuXq8TxgPbfAlvxReQLIvBdlxQTr9uRGagN8She1U2wi+7UD31nDh\nGMERIX+gKKME0C3FFYyyDtCRBd93KKbA/gF6avcbUV7z/L70WAX4r7KxjLWUYdBB\nxWHJrYaak598jLk/YZ1E5EsCAwEAAQ==\n-----END PUBLIC KEY-----" 
+	}, 
+	  "1fd9125153420767a7259ee3dada222e74812f82": {
+		 "type": "private", 
+		 "purpose": "authentication", 
+		 "value": "-----BEGIN RSA PRIVATE KEY-----\n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\n-----END RSA PRIVATE KEY-----" 
+	} 
+  } 
+}'
+
+cloud-storage:
+  case-schema-name: new-case

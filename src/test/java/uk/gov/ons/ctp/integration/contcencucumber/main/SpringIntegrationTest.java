@@ -13,12 +13,8 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataReposi
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
 @ContextConfiguration(
-    classes = {
-      SpringIntegrationTest.class,
-      ProductService.class,
-      CaseDataRepository.class,
-      CloudDataStore.class
-    },
+    classes = {SpringIntegrationTest.class, ProductService.class, CaseDataRepository.class,
+        CloudDataStore.class},
     loader = SpringBootContextLoader.class,
     initializers = ConfigFileApplicationContextInitializer.class)
 @WebAppConfiguration

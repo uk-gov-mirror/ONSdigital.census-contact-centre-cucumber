@@ -15,32 +15,25 @@
 		<version>0.0.15</version>
 	</parent>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.google.cloud</groupId>
-				<artifactId>libraries-bom</artifactId>
-				<version>3.5.0</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
-
-		<!-- <dependency> <groupId>uk.gov.ons.ctp.integration.common</groupId> 
-			<artifactId>test-framework</artifactId> <version>0.0.11</version> <scope>test</scope> 
-			</dependency> <dependency> <groupId>uk.gov.ons.ctp.integration.common</groupId> 
-			<artifactId>cucumber-common</artifactId> <version>0.0.14</version> <scope>test</scope> 
-			</dependency> -->
-
 		<dependency>
-			<groupId>com.google.cloud</groupId>
-			<artifactId>google-cloud-firestore</artifactId>
+			<groupId>uk.gov.ons.ctp.integration.common</groupId>
+			<artifactId>test-framework</artifactId>
+			<version>0.0.11</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
+<<<<<<< HEAD
+			<groupId>uk.gov.ons.ctp.integration.common</groupId>
+			<artifactId>cucumber-common</artifactId>
+			<version>0.0.14</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+=======
+>>>>>>> master
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
@@ -118,11 +111,11 @@
 			<artifactId>spring-boot-test-autoconfigure</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-test</artifactId>
+          <scope>compile</scope>
+        </dependency>
 
 		<!-- SPRING END -->
 
@@ -134,23 +127,45 @@
 
 		<!-- ONS libraries -->
 
+<<<<<<< HEAD
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>cucumber-common</artifactId>
-			<version>0.0.15</version>
-			<scope>test</scope>
+			<artifactId>framework</artifactId>
+			<version>0.0.56</version>
 		</dependency>
+=======
+        <dependency>
+          <groupId>uk.gov.ons.ctp.integration.common</groupId>
+          <artifactId>cucumber-common</artifactId>
+          <version>0.0.15</version>
+          <scope>test</scope>
+        </dependency>
+>>>>>>> master
 
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>event-publisher</artifactId>
+<<<<<<< HEAD
+			<version>0.0.30</version>
+=======
 			<version>0.0.32</version>
+>>>>>>> master
 		</dependency>
 
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration</groupId>
 			<artifactId>contactcentreserviceapi</artifactId>
+<<<<<<< HEAD
+			<version>0.0.86</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>compile</scope>
+=======
 			<version>0.0.87</version>
+>>>>>>> master
 		</dependency>
 
 		<dependency>
@@ -165,11 +180,11 @@
 			<version>1.0.6</version>
 		</dependency>
 
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>eq-launcher</artifactId>
-			<version>0.0.25</version>
-		</dependency>
+        <dependency>
+          <groupId>uk.gov.ons.ctp.integration.common</groupId>
+          <artifactId>eq-launcher</artifactId>
+          <version>0.0.25</version>
+        </dependency>
 
 		<!-- ONS END -->
 

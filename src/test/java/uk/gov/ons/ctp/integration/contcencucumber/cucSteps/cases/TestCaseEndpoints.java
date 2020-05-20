@@ -890,7 +890,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     } catch (RestClientException e) {
       log.with(e.getMessage())
           .info("catching the error returned by the mock case service endpoint");
-      status = e.getMessage();
+      status = e.getMessage().substring(0, 13);
     }
 
     log.info("The response status: " + status);
