@@ -232,7 +232,7 @@
 							<includeGroupIds>uk.gov.ons.ctp.integration</includeGroupIds>
 							<includeArtifactIds>contactcentreserviceapi</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
-							<outputDirectory>./src/test/resources</outputDirectory>
+							<outputDirectory>${project.build.directory}</outputDirectory>
 							<includes>swagger-current.yml</includes>
 							<excludes>**/*.class</excludes>
 							<overWriteReleases>false</overWriteReleases>
@@ -255,7 +255,7 @@
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<inputSpec>${project.basedir}/src/test/resources/swagger-current.yml</inputSpec>
+							<inputSpec>${project.build.directory}/swagger-current.yml</inputSpec>
 							<language>java</language>
 							<configOptions>
 								<sourceFolder>src/gen/java/main</sourceFolder>
