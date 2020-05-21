@@ -42,6 +42,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.ons.ctp.common.domain.EstabType;
+import uk.gov.ons.ctp.common.domain.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
@@ -53,7 +55,7 @@ import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalDetails;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
-import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
+import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
@@ -322,6 +324,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("confirmed CaseType {string} {string}")
   public void confirmed_caseType(final String caseId, final String individual)
       throws InterruptedException {
+    this.caseId = caseId;
     boolean isIndividual = Boolean.parseBoolean(individual);
     log.info(
         "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
@@ -471,7 +474,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotEquals("Must have different tx_id values", result1.get("tx_id"), result2.get("tx_id"));
     assertEquals("Must have the correct ru_ref value", "100041045599", result1.get("ru_ref"));
     assertEquals("Must have the correct language_code value", "en", result1.get("language_code"));
-    assertEquals("Must have the correct user_id value", "1", result1.get("user_id"));
+    assertEquals("Must have the correct user_id value", agentId, result1.get("user_id"));
     assertEquals(
         "Must have the correct collection_exercise_sid value",
         "49871667-117d-4a63-9101-f6a0660f73f6",
@@ -614,15 +617,15 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     return mockCaseApiResponse.getStatusCode();
   }
 
-  private ResponseEntity<String> getEqToken(String caseId, boolean forIndividual) {
+  private ResponseEntity<String> getEqToken(String caseId, boolean isIndividual) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("launch")
-            .queryParam("agentId", 1)
-            .queryParam("individual", forIndividual);
+            .queryParam("agentId", agentId)
+            .queryParam("individual", isIndividual);
 
     telephoneEndpointUrl = builder.build().encode().toUri().toString();
     log.info("Using the following endpoint to launch EQ: " + telephoneEndpointUrl);
@@ -795,5 +798,65 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         getRestTemplate().exchange(modifyCaseUrl, HttpMethod.PUT, requestEntity, ResponseDTO.class);
 
     return requestModifyCaseResponse;
+  }
+
+  @And("an empty queue exists for sending SurveyLaunched events")
+  public void an_empty_queue_exists_for_sending_SurveyLaunched_events() throws CTPException {
+    EventType eventType = EventType.valueOf("SURVEY_LAUNCHED");
+    log.info("Creating queue for events of type: '" + eventType + "'");
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+    rabbit.flushQueue(queueName);
+  }
+
+  @When("CC Advisor selects the survey launch")
+  public void cc_Advisor_selects_the_launch() {
+    try {
+      log.with(caseId)
+          .info("Now putting a ModifyCaseRequestDTO on the modifyCase endpoint for this case id..");
+      final String response = requestSurveyLaunch();
+      log.info("SURVEY LAUNCH: The response from " + telephoneEndpointUrl.toString());
+      assertNotNull("SURVEY LAUNCH failure", response);
+    } catch (Exception e) {
+      fail("SURVEY launch HAS FAILED - the contact centre does not give a response code of 200");
+    }
+  }
+
+  private String requestSurveyLaunch() {
+    log.with(telephoneEndpointUrl).info("The url for requesting the survey launch");
+    String launchSurveyResponseString = null;
+    launchSurveyResponseString = getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
+    return launchSurveyResponseString;
+  }
+
+  @Then("a Survey Launched event is emitted to RM")
+  public void aSurveyLaunchedEventIsEmittedToRMWhichContainsTheLaunchStatusType() {
+    log.info(
+        "Check that a SURVEY_LAUNCHED event has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
+
+    String clazzName = "SurveyLaunchedEvent.class";
+    String timeout = "2000ms";
+
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        clazzName,
+        timeout);
+
+    SurveyLaunchedEvent launchedEvent = null;
+    try {
+      launchedEvent =
+          rabbit.getMessage(
+              queueName, SurveyLaunchedEvent.class, TimeoutParser.parseTimeoutString(timeout));
+    } catch (Exception exception) {
+      fail("SURVEY launch HAS FAILED - the contact centre does not give a response code of 200");
+    }
+
+    assertNotNull(launchedEvent.getEvent());
+    assertEquals(EventType.SURVEY_LAUNCHED, launchedEvent.getEvent().getType());
+    assertNotNull(launchedEvent.getPayload().getResponse().getQuestionnaireId());
+    assertNotNull(launchedEvent.getPayload().getResponse().getCaseId());
+    assertEquals(agentId, launchedEvent.getPayload().getResponse().getAgentId());
   }
 }

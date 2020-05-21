@@ -42,7 +42,6 @@ import uk.gov.ons.ctp.common.event.model.FulfilmentPayload;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequest;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequestedEvent;
 import uk.gov.ons.ctp.common.event.model.Header;
-import uk.gov.ons.ctp.common.model.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
@@ -98,7 +97,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
-            .pathSegment("/fulfilments")
+            .pathSegment("fulfilments")
             .queryParam("caseType", caseType)
             .queryParam("region", region)
             .queryParam("individual", individual);

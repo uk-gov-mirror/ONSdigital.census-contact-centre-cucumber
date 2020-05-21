@@ -12,17 +12,10 @@
 	<parent>
 		<groupId>uk.gov.ons.ctp.integration</groupId>
 		<artifactId>census-int-common-config</artifactId>
-		<version>0.0.13</version>
+		<version>0.0.15</version>
 	</parent>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>cucumber-common</artifactId>
-			<version>0.0.13</version>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -49,18 +42,6 @@
 			<artifactId>cucumber-spring</artifactId>
 			<version>4.4.0</version>
 		</dependency>
-
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>eq-launcher</artifactId>
-			<version>0.0.21</version>
-		</dependency>
-
-		<!-- <dependency> <groupId>junit</groupId> <artifactId>junit</artifactId>
-			<version>4.12</version> <scope>test</scope> </dependency> <dependency> <groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId> <version>2.9.8</version> </dependency> -->
-
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -99,9 +80,7 @@
 		<dependency>
 			<groupId>com.godaddy</groupId>
 			<artifactId>logging</artifactId>
-			<version>1.2.5</version>
 		</dependency>
-
 
 		<!-- Spring dependencies -->
 
@@ -116,6 +95,12 @@
 			<artifactId>spring-boot-test-autoconfigure</artifactId>
 		</dependency>
 
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-test</artifactId>
+          <scope>compile</scope>
+        </dependency>
+
 		<!-- SPRING END -->
 
 		<dependency>
@@ -124,24 +109,19 @@
 			<version>1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.jayway.restassured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<version>2.9.0</version>
-		</dependency>
-
 		<!-- ONS libraries -->
 
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>framework</artifactId>
-			<version>0.0.52</version>
-		</dependency>
+        <dependency>
+          <groupId>uk.gov.ons.ctp.integration.common</groupId>
+          <artifactId>cucumber-common</artifactId>
+          <version>0.0.15</version>
+          <scope>test</scope>
+        </dependency>
 
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>event-publisher</artifactId>
-			<version>0.0.29</version>
+			<version>0.0.32</version>
 		</dependency>
 
 		<dependency>
@@ -151,15 +131,21 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>compile</scope>
+			<groupId>uk.gov.ons.ctp.integration.common</groupId>
+			<artifactId>census-int-case-api-client</artifactId>
+			<version>0.0.13</version>
 		</dependency>
 
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>census-int-case-api-client</artifactId>
-			<version>0.0.12</version>
+			<artifactId>product-reference</artifactId>
+			<version>1.0.6</version>
+		</dependency>
+
+		<dependency>
+      <groupId>uk.gov.ons.ctp.integration.common</groupId>
+      <artifactId>eq-launcher</artifactId>
+      <version>0.0.25</version>
 		</dependency>
 
 		<dependency>
@@ -214,6 +200,7 @@
 		<!-- End of SWAGGER dependencies -->
 
 	</dependencies>
+
 	<build>
 		<plugins>
 
@@ -276,7 +263,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.20</version>
 				<configuration>
 					<!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
 					<testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
