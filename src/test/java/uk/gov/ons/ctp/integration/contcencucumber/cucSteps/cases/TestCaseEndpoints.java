@@ -16,7 +16,10 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import io.swagger.client.model.AddressDTO;
+import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
+import io.swagger.client.model.CaseDTO.AllowedDeliveryChannelsEnum;
 import io.swagger.client.model.FulfilmentDTO;
 import io.swagger.client.model.ModifyCaseRequestDTO;
 import io.swagger.client.model.ModifyCaseRequestDTO.EstabTypeEnum;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -67,6 +71,8 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
+import uk.gov.ons.ctp.integration.common.product.model.Product.DeliveryChannel;
+import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.repository.impl.CaseDataRepositoryImpl;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
@@ -101,18 +107,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private URI caseForUprnUrl;
   private URI modifyCaseUrl;
   private AddressNotValidEvent addressNotValidEvent;
-  private Header addressNotValidHeader;
-  private AddressNotValidPayload addressNotValidPayload;
   private String uprnStr;
-  private String mcsUprnEndpointUrl;
-  private String ccUprnEndpointUrl;
   private String status = "";
-  private NewAddressReportedEvent newAddressReportedEvent;
-  private Header newAddressReportedHeader;
-  private NewAddressPayload newAddressReportedPayload;
-  private NewAddress newAddress;
-  private CollectionCaseNewAddress collectionCase;
-  private Address address;
 
   @Value("${keystore}")
   private String keyStore;
@@ -218,7 +214,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_establishment_UPRN_is(String expectedEstabUprn) {
     UniquePropertyReferenceNumber estabUprn =
         UniquePropertyReferenceNumber.create(caseDTO.getEstabUprn());
-    if (estabUprn == null || estabUprn.getValue() == 0L) {
+    if (estabUprn.getValue() == 0L) {
       estabUprn = null;
     }
     if (StringUtils.isBlank(expectedEstabUprn)) {
@@ -254,10 +250,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment(caseId);
     try {
       caseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
-    } catch (HttpClientErrorException httpClientErrorException) {
+    } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
-    } catch (HttpServerErrorException httpServerErrorException) {
-      this.exception = httpServerErrorException;
     }
   }
 
@@ -535,7 +529,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void a_Refusal_event_is_sent(String type) throws CTPException {
     log.info("Check that a Refusal event has been sent");
     RespondentRefusalEvent event =
-        (RespondentRefusalEvent) rabbit.getMessage(queueName, RespondentRefusalEvent.class, 2_000L);
+        rabbit.getMessage(queueName, RespondentRefusalEvent.class, 2_000L);
 
     assertNotNull(event);
     Header header = event.getEvent();
@@ -567,10 +561,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       responseDTO =
           getRestTemplate()
               .postForObject(builder.build().encode().toUri(), refusalDTO, ResponseDTO.class);
-    } catch (HttpClientErrorException httpClientErrorException) {
+    } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
-    } catch (HttpServerErrorException httpServerErrorException) {
-      this.exception = httpServerErrorException;
     }
   }
 
@@ -757,17 +749,16 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         timeout);
 
     addressNotValidEvent =
-        (AddressNotValidEvent)
-            rabbit.getMessage(
-                queueName, AddressNotValidEvent.class, TimeoutParser.parseTimeoutString(timeout));
+        rabbit.getMessage(
+            queueName, AddressNotValidEvent.class, TimeoutParser.parseTimeoutString(timeout));
 
     if (expectedReason.equals("UNCHANGED")) {
       assertNull(addressNotValidEvent);
     } else {
       assertNotNull(addressNotValidEvent);
-      addressNotValidHeader = addressNotValidEvent.getEvent();
+      Header addressNotValidHeader = addressNotValidEvent.getEvent();
       assertNotNull(addressNotValidHeader);
-      addressNotValidPayload = addressNotValidEvent.getPayload();
+      AddressNotValidPayload addressNotValidPayload = addressNotValidEvent.getPayload();
       assertNotNull(addressNotValidPayload);
 
       EventType expectedType = EventType.ADDRESS_NOT_VALID;
@@ -795,7 +786,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment("cases")
             .pathSegment(caseId);
 
-    ResponseEntity<ResponseDTO> requestModifyCaseResponse = null;
+    ResponseEntity<ResponseDTO> requestModifyCaseResponse;
     modifyCaseUrl = builder.build().encode().toUri();
 
     log.with(modifyCaseUrl).info("The url for requesting the postal fulfilment");
@@ -843,15 +834,15 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
 
+    assert addressQueryBody != null;
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
-    int i = 0;
     String addressToFind = "1 West Grove Road, Exeter, EX2 4LU";
     String addressFound = "";
     int indexFound = 500;
     log.info(
         "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
-    for (i = 0; i < addressesFound.size(); i++) {
+    for (int i = 0; i < addressesFound.size(); i++) {
       addressFound = addressesFound.get(i).getFormattedAddress();
 
       if (addressFound.equals(addressToFind)) {
@@ -876,7 +867,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
-    mcsUprnEndpointUrl = builder.build().encode().toUri().toString();
+    String mcsUprnEndpointUrl = builder.build().encode().toUri().toString();
 
     log.info(
         "Using the following mock case service endpoint to check case does not exist for uprn in question: "
@@ -887,7 +878,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     } catch (RestClientException e) {
       log.with(e.getMessage())
           .info("catching the error returned by the mock case service endpoint");
-      status = e.getMessage().substring(0, 13);
+      status = Objects.requireNonNull(e.getMessage()).substring(0, 13);
     }
 
     log.info("The response status: " + status);
@@ -909,7 +900,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
-    ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+    String ccUprnEndpointUrl = builder.build().encode().toUri().toString();
 
     log.info(
         "As the case does not exist in the case service the endpoint {} should cause a new fake case to be created",
@@ -923,28 +914,29 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
                 null,
                 new ParameterizedTypeReference<List<CaseDTO>>() {});
     caseDTOList = caseResponse.getBody();
+    assert caseDTOList != null;
     CaseDTO response = caseDTOList.get(0);
 
     assertNotNull(response.getId());
     assertNull(response.getCaseRef());
-    assertEquals("HH", response.getCaseType());
-    assertEquals("HH", response.getAddressType());
+    assertEquals("HH", response.getCaseType().name());
+    assertEquals("HH", response.getAddressType().name());
     assertFalse(response.isSecureEstablishment());
     assertEquals(
-        Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
+        Arrays.asList(AllowedDeliveryChannelsEnum.POST, AllowedDeliveryChannelsEnum.SMS),
         response.getAllowedDeliveryChannels());
-    assertEquals(EstabType.HOUSEHOLD, response.getEstabType());
+    assertEquals(EstabTypeEnum.HOUSEHOLD.name(), response.getEstabType().name());
     assertEquals("Household", response.getEstabDescription());
     assertNotNull(response.getCreatedDateTime());
     assertEquals("1 West Grove Road", response.getAddressLine1());
     assertEquals("Exeter", response.getTownName());
-    assertEquals("E", response.getRegion());
+    assertEquals("E", response.getRegion().name());
     assertEquals("EX2 4LU", response.getPostcode());
-    assertEquals(100040239948L, response.getUprn().getValue());
+    assertEquals(100040239948L, Long.parseLong(response.getUprn()));
     assertNull(response.getEstabUprn());
     assertNull(response.getCaseEvents());
 
-    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(response.getUprn());
+    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(UniquePropertyReferenceNumber.create(response.getUprn()));
     log.with(cachedCase).info("The fake case that has been created in Firestore");
     assertTrue(cachedCase.isPresent());
   }
@@ -991,13 +983,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         clazzName,
         timeout);
 
-    newAddressReportedEvent =
-        (NewAddressReportedEvent)
-            rabbit.getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
+    NewAddressReportedEvent newAddressReportedEvent = rabbit
+        .getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
 
     assertNotNull(newAddressReportedEvent);
 
-    newAddressReportedHeader = newAddressReportedEvent.getEvent();
+    Header newAddressReportedHeader = newAddressReportedEvent.getEvent();
     assertNotNull(newAddressReportedHeader);
     assertEquals("NEW_ADDRESS_REPORTED", newAddressReportedHeader.getType().toString());
     assertEquals("CONTACT_CENTRE_API", newAddressReportedHeader.getSource().toString());
@@ -1005,20 +996,20 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(newAddressReportedHeader.getDateTime());
     assertNotNull(newAddressReportedHeader.getTransactionId());
 
-    newAddressReportedPayload = newAddressReportedEvent.getPayload();
+    NewAddressPayload newAddressReportedPayload = newAddressReportedEvent.getPayload();
     assertNotNull(newAddressReportedPayload);
 
-    newAddress = newAddressReportedPayload.getNewAddress();
+    NewAddress newAddress = newAddressReportedPayload.getNewAddress();
     assertNull(newAddress.getSourceCaseId());
 
-    collectionCase = newAddress.getCollectionCase();
+    CollectionCaseNewAddress collectionCase = newAddress.getCollectionCase();
     assertNotNull(collectionCase.getId());
     assertNull(collectionCase.getCaseType());
     assertEquals("CENSUS", collectionCase.getSurvey());
     assertNull(collectionCase.getFieldCoordinatorId());
     assertNull(collectionCase.getFieldOfficerId());
 
-    address = collectionCase.getAddress();
+    Address address = collectionCase.getAddress();
     assertEquals("1 West Grove Road", address.getAddressLine1());
     assertEquals("", address.getAddressLine2());
     assertEquals("", address.getAddressLine3());
@@ -1049,7 +1040,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       log.with(caseId)
           .info("Now putting a ModifyCaseRequestDTO on the modifyCase endpoint for this case id..");
       final String response = requestSurveyLaunch();
-      log.info("SURVEY LAUNCH: The response from " + telephoneEndpointUrl.toString());
+      log.info("SURVEY LAUNCH: The response from " + telephoneEndpointUrl);
       assertNotNull("SURVEY LAUNCH failure", response);
     } catch (Exception e) {
       fail("SURVEY launch HAS FAILED - the contact centre does not give a response code of 200");
@@ -1058,9 +1049,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private String requestSurveyLaunch() {
     log.with(telephoneEndpointUrl).info("The url for requesting the survey launch");
-    String launchSurveyResponseString = null;
-    launchSurveyResponseString = getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
-    return launchSurveyResponseString;
+    return getRestTemplate()
+        .getForObject(telephoneEndpointUrl, String.class);
   }
 
   @Then("a Survey Launched event is emitted to RM")
