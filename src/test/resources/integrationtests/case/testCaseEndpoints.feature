@@ -124,13 +124,22 @@ Feature: Test Contact centre Case Endpoints
     Then an AddressNotValid event is emitted to RM, which contains the <status>, or no event is sent if the status is UNCHANGED
 
     Examples: 
-      | uprn         | status               | 
-      | "1347459995" | "DERELICT"           | 
-      | "1347459995" | "DEMOLISHED"         | 
-      | "1347459995" | "NON_RESIDENTIAL"    | 
-      | "1347459995" | "UNDER_CONSTRUCTION" | 
-      | "1347459995" | "SPLIT_ADDRESS"      | 
-      | "1347459995" | "MERGED"             | 
-      | "1347459995" | "UNCHANGED"          | 
-      | "1347459995" | "PROPERTY_IS_A_HOUSEHOLD"          | 
-      | "1347459995" | "PROPERTY_IS_A_CE"          | 
+      | uprn         | status                    |
+      | "1347459995" | "DERELICT"                |
+      | "1347459995" | "DEMOLISHED"              |
+      | "1347459995" | "NON_RESIDENTIAL"         |
+      | "1347459995" | "UNDER_CONSTRUCTION"      |
+      | "1347459995" | "SPLIT_ADDRESS"           |
+      | "1347459995" | "MERGED"                  |
+      | "1347459995" | "UNCHANGED"               |
+      | "1347459995" | "PROPERTY_IS_A_HOUSEHOLD" |
+      | "1347459995" | "PROPERTY_IS_A_CE"        |
+
+  Scenario: [CR-T148] Publish a new address event to RM
+    Given the CC agent has confirmed the respondent address
+    And the case service does not have any case created for the address in question
+    And Get/Case API returns a 404 error because there is no case found
+    And an empty queue exists for sending NewAddressReported events
+    And the fake case does not already exist in Firestore
+    Given CC SVC creates a fake Case with the address details from AIMS
+    Then the CC SVC must publish a new address event to RM with the fake CaseID

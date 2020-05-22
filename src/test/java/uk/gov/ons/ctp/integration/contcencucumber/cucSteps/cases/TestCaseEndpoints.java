@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -28,9 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -40,6 +43,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.domain.EstabType;
@@ -48,10 +52,15 @@ import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 import uk.gov.ons.ctp.common.event.EventPublisher.Source;
+import uk.gov.ons.ctp.common.event.model.Address;
 import uk.gov.ons.ctp.common.event.model.AddressNotValid;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
+import uk.gov.ons.ctp.common.event.model.CollectionCaseNewAddress;
 import uk.gov.ons.ctp.common.event.model.Header;
+import uk.gov.ons.ctp.common.event.model.NewAddress;
+import uk.gov.ons.ctp.common.event.model.NewAddressPayload;
+import uk.gov.ons.ctp.common.event.model.NewAddressReportedEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalDetails;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalEvent;
 import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
@@ -59,14 +68,18 @@ import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
+import uk.gov.ons.ctp.integration.contcencucumber.main.repository.impl.CaseDataRepositoryImpl;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
 public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
+  @Autowired private CaseDataRepositoryImpl dataRepo;
+
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
+  private static final long RABBIT_TIMEOUT = 2000L;
 
   private String caseId;
   private String uprn;
@@ -90,6 +103,16 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private AddressNotValidEvent addressNotValidEvent;
   private Header addressNotValidHeader;
   private AddressNotValidPayload addressNotValidPayload;
+  private String uprnStr;
+  private String mcsUprnEndpointUrl;
+  private String ccUprnEndpointUrl;
+  private String status = "";
+  private NewAddressReportedEvent newAddressReportedEvent;
+  private Header newAddressReportedHeader;
+  private NewAddressPayload newAddressReportedPayload;
+  private NewAddress newAddress;
+  private CollectionCaseNewAddress collectionCase;
+  private Address address;
 
   @Value("${keystore}")
   private String keyStore;
@@ -798,6 +821,217 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         getRestTemplate().exchange(modifyCaseUrl, HttpMethod.PUT, requestEntity, ResponseDTO.class);
 
     return requestModifyCaseResponse;
+  }
+
+  @Given("the CC agent has confirmed the respondent address")
+  public void the_CC_agent_has_confirmed_the_respondent_address() {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("addresses")
+            .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
+
+    ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
+        getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
+
+    log.with(addressQueryResponse).info("The address query response here");
+
+    AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
+
+    List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
+
+    int i = 0;
+    String addressToFind = "1 West Grove Road, Exeter, EX2 4LU";
+    String addressFound = "";
+    int indexFound = 500;
+    log.info(
+        "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
+    for (i = 0; i < addressesFound.size(); i++) {
+      addressFound = addressesFound.get(i).getFormattedAddress();
+
+      if (addressFound.equals(addressToFind)) {
+        log.with(addressFound).info("This is the address that was found in AIMS");
+        indexFound = i;
+        break;
+      }
+    }
+    assertEquals(
+        "The address query response does not contain the correct address",
+        addressToFind,
+        addressFound);
+
+    uprnStr = addressesFound.get(indexFound).getUprn();
+  }
+
+  @Given("the case service does not have any case created for the address in question")
+  public void the_case_service_does_not_have_any_case_created_for_the_address_in_question() {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+            .port(mcsBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprnStr);
+    mcsUprnEndpointUrl = builder.build().encode().toUri().toString();
+
+    log.info(
+        "Using the following mock case service endpoint to check case does not exist for uprn in question: "
+            + mcsUprnEndpointUrl);
+
+    try {
+      getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+    } catch (RestClientException e) {
+      log.with(e.getMessage())
+          .info("catching the error returned by the mock case service endpoint");
+      status = e.getMessage().substring(0, 13);
+    }
+
+    log.info("The response status: " + status);
+  }
+
+  @When("Get\\/Case API returns a {int} error because there is no case found")
+  public void get_Case_API_returns_a_error_because_there_is_no_case_found(Integer int1) {
+    assertEquals(
+        "THE CASE SHOULD NOT EXIST - the mock case service endpoint should give a response code of 404",
+        "404 Not Found",
+        status);
+  }
+
+  @When("CC SVC creates a fake Case with the address details from AIMS")
+  public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() throws CTPException {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprnStr);
+    ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+
+    log.info(
+        "As the case does not exist in the case service the endpoint {} should cause a new fake case to be created",
+        ccUprnEndpointUrl);
+
+    ResponseEntity<List<CaseDTO>> caseResponse =
+        getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CaseDTO>>() {});
+    caseDTOList = caseResponse.getBody();
+    CaseDTO response = caseDTOList.get(0);
+
+    assertNotNull(response.getId());
+    assertNull(response.getCaseRef());
+    assertEquals("HH", response.getCaseType());
+    assertEquals("HH", response.getAddressType());
+    assertFalse(response.isSecureEstablishment());
+    assertEquals(
+        Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
+        response.getAllowedDeliveryChannels());
+    assertEquals(EstabType.HOUSEHOLD, response.getEstabType());
+    assertEquals("Household", response.getEstabDescription());
+    assertNotNull(response.getCreatedDateTime());
+    assertEquals("1 West Grove Road", response.getAddressLine1());
+    assertEquals("Exeter", response.getTownName());
+    assertEquals("E", response.getRegion());
+    assertEquals("EX2 4LU", response.getPostcode());
+    assertEquals(100040239948L, response.getUprn().getValue());
+    assertNull(response.getEstabUprn());
+    assertNull(response.getCaseEvents());
+
+    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(response.getUprn());
+    log.with(cachedCase).info("The fake case that has been created in Firestore");
+    assertTrue(cachedCase.isPresent());
+  }
+
+  @Given("the fake case does not already exist in Firestore")
+  public void the_fake_case_does_not_already_exist_in_Firestore() throws CTPException {
+
+    log.info(
+        "Make sure that the case does not already exist in Firestore otherwise a NEW_ADDRESS_REPORTED event will not get created");
+    UniquePropertyReferenceNumber uprn = UniquePropertyReferenceNumber.create(uprnStr);
+    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(uprn);
+    log.with("uprn", uprnStr).info("The uprn of the case we're looking for");
+    if (cachedCase.isPresent()) {
+      log.with("uprn", uprnStr)
+          .info("The case already exists in Firestore so we need to delete it for the test..");
+      dataRepo.deleteCachedCase(cachedCase.get().getId());
+    }
+  }
+
+  @Given("an empty queue exists for sending NewAddressReported events")
+  public void an_empty_queue_exists_for_sending_NewAddressReported_events() throws CTPException {
+    String eventTypeAsString = "NEW_ADDRESS_REPORTED";
+    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
+    EventType eventType = EventType.valueOf(eventTypeAsString);
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+
+    rabbit.flushQueue(queueName);
+  }
+
+  @Then("the CC SVC must publish a new address event to RM with the fake CaseID")
+  public void the_CC_SVC_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID()
+      throws CTPException {
+    log.info(
+        "Check that a NEW_ADDRESS_REPORTED event has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
+
+    String clazzName = "NewAddress.class";
+    String timeout = "2000ms";
+
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        clazzName,
+        timeout);
+
+    newAddressReportedEvent =
+        (NewAddressReportedEvent)
+            rabbit.getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
+
+    assertNotNull(newAddressReportedEvent);
+
+    newAddressReportedHeader = newAddressReportedEvent.getEvent();
+    assertNotNull(newAddressReportedHeader);
+    assertEquals("NEW_ADDRESS_REPORTED", newAddressReportedHeader.getType().toString());
+    assertEquals("CONTACT_CENTRE_API", newAddressReportedHeader.getSource().toString());
+    assertEquals("CC", newAddressReportedHeader.getChannel().toString());
+    assertNotNull(newAddressReportedHeader.getDateTime());
+    assertNotNull(newAddressReportedHeader.getTransactionId());
+
+    newAddressReportedPayload = newAddressReportedEvent.getPayload();
+    assertNotNull(newAddressReportedPayload);
+
+    newAddress = newAddressReportedPayload.getNewAddress();
+    assertNull(newAddress.getSourceCaseId());
+
+    collectionCase = newAddress.getCollectionCase();
+    assertNotNull(collectionCase.getId());
+    assertNull(collectionCase.getCaseType());
+    assertEquals("CENSUS", collectionCase.getSurvey());
+    assertNull(collectionCase.getFieldCoordinatorId());
+    assertNull(collectionCase.getFieldOfficerId());
+
+    address = collectionCase.getAddress();
+    assertEquals("1 West Grove Road", address.getAddressLine1());
+    assertEquals("", address.getAddressLine2());
+    assertEquals("", address.getAddressLine3());
+    assertEquals("Exeter", address.getTownName());
+    assertEquals("EX2 4LU", address.getPostcode());
+    assertEquals("E", address.getRegion());
+    assertEquals("HH", address.getAddressType());
+    assertEquals("U", address.getAddressLevel());
+    assertEquals("Household", address.getEstabType());
+    assertNull(address.getLatitude());
+    assertNull(address.getLongitude());
+    assertEquals(uprnStr, address.getUprn());
+    assertNull(address.getArid());
   }
 
   @And("an empty queue exists for sending SurveyLaunched events")

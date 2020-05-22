@@ -40,3 +40,6 @@ keystore: '{
 	} 
   } 
 }'
+
+cloud-storage:
+  case-schema-name: new-case
