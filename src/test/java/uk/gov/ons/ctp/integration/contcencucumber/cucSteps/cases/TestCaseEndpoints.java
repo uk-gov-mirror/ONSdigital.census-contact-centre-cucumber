@@ -50,7 +50,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.gov.ons.ctp.common.domain.EstabType;
 import uk.gov.ons.ctp.common.domain.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
@@ -71,7 +70,6 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
-import uk.gov.ons.ctp.integration.common.product.model.Product.DeliveryChannel;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.repository.impl.CaseDataRepositoryImpl;
@@ -936,7 +934,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNull(response.getEstabUprn());
     assertNull(response.getCaseEvents());
 
-    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(UniquePropertyReferenceNumber.create(response.getUprn()));
+    Optional<CachedCase> cachedCase =
+        dataRepo.readCachedCaseByUPRN(UniquePropertyReferenceNumber.create(response.getUprn()));
     log.with(cachedCase).info("The fake case that has been created in Firestore");
     assertTrue(cachedCase.isPresent());
   }
@@ -983,8 +982,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         clazzName,
         timeout);
 
-    NewAddressReportedEvent newAddressReportedEvent = rabbit
-        .getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
+    NewAddressReportedEvent newAddressReportedEvent =
+        rabbit.getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
 
     assertNotNull(newAddressReportedEvent);
 
@@ -1049,8 +1048,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private String requestSurveyLaunch() {
     log.with(telephoneEndpointUrl).info("The url for requesting the survey launch");
-    return getRestTemplate()
-        .getForObject(telephoneEndpointUrl, String.class);
+    return getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
   }
 
   @Then("a Survey Launched event is emitted to RM")
