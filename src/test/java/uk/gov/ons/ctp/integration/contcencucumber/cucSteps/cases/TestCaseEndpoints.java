@@ -894,7 +894,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(
         "THE CASE SHOULD NOT EXIST - the mock case service endpoint should give a response code of "
             + returnStatus,
-        "404 Not Found ",
+        "404 Not Found",
         status);
   }
 

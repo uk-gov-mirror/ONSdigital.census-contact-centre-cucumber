@@ -148,4 +148,4 @@ Feature: Test Contact centre Case Endpoints
     Given the CC agent has selected an address that is not of addressType CE, HH, or SPG
     And the case service does not have any case created for the address in question
     When Get/Case API returns a "404" error because there is no case found
-    Then the CC SVC must also return a "404 Not Found:" error
+    Then the CC SVC must also return a "404 Not Found" error
