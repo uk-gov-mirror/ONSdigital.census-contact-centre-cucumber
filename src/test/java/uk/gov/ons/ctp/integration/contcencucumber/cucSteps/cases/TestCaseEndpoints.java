@@ -988,8 +988,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         clazzName,
         timeout);
 
-    NewAddressReportedEvent newAddressReportedEvent = (NewAddressReportedEvent)
-        rabbit.getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
+    NewAddressReportedEvent newAddressReportedEvent =
+        (NewAddressReportedEvent)
+            rabbit.getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
 
     assertNotNull(newAddressReportedEvent);
 
@@ -1120,7 +1121,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     int indexFound = 500;
     log.info(
         "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
-    for (int i=0; i< addressesFound.size(); i++) {
+    for (int i = 0; i < addressesFound.size(); i++) {
       addressFound = addressesFound.get(i).getFormattedAddress();
       if (addressFound.equals(addressToFind)) {
         log.with(addressFound).info("This is the address that was found in AIMS");
