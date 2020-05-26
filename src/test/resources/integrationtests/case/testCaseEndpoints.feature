@@ -138,7 +138,7 @@ Feature: Test Contact centre Case Endpoints
   Scenario: [CR-T148] Publish a new address event to RM
     Given the CC agent has confirmed the respondent address
     And the case service does not have any case created for the address in question
-    And Get/Case API returns a 404 error because there is no case found
+    And Get/Case API returns a "404" error because there is no case found
     And an empty queue exists for sending NewAddressReported events
     And the fake case does not already exist in Firestore
     Given CC SVC creates a fake Case with the address details from AIMS
@@ -147,5 +147,5 @@ Feature: Test Contact centre Case Endpoints
   Scenario: [CR-T377] AddressType Not Applicable
     Given the CC agent has selected an address that is not of addressType CE, HH, or SPG
     And the case service does not have any case created for the address in question
-    When Get/Case API returns a 404 error because there is no case found
-    Then the CC SVC must also return a "404 Not Found" error
+    When Get/Case API returns a "404" error because there is no case found
+    Then the CC SVC must also return a "404 Not Found:" error

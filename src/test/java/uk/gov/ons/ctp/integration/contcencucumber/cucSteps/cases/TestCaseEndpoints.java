@@ -106,18 +106,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private URI caseForUprnUrl;
   private URI modifyCaseUrl;
   private AddressNotValidEvent addressNotValidEvent;
-  private Header addressNotValidHeader;
-  private AddressNotValidPayload addressNotValidPayload;
   private String uprnStr;
-  private String mcsUprnEndpointUrl;
   private String ccUprnEndpointUrl;
   private String status = "";
-  private NewAddressReportedEvent newAddressReportedEvent;
-  private Header newAddressReportedHeader;
-  private NewAddressPayload newAddressReportedPayload;
-  private NewAddress newAddress;
-  private CollectionCaseNewAddress collectionCase;
-  private Address address;
 
   @Value("${keystore}")
   private String keyStore;
@@ -766,9 +757,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       assertNull(addressNotValidEvent);
     } else {
       assertNotNull(addressNotValidEvent);
-      addressNotValidHeader = addressNotValidEvent.getEvent();
+      Header addressNotValidHeader = addressNotValidEvent.getEvent();
       assertNotNull(addressNotValidHeader);
-      addressNotValidPayload = addressNotValidEvent.getPayload();
+      AddressNotValidPayload addressNotValidPayload = addressNotValidEvent.getPayload();
       assertNotNull(addressNotValidPayload);
 
       EventType expectedType = EventType.ADDRESS_NOT_VALID;
@@ -880,7 +871,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
-    mcsUprnEndpointUrl = builder.build().encode().toUri().toString();
+    String mcsUprnEndpointUrl = builder.build().encode().toUri().toString();
 
     log.info(
         "Using the following mock case service endpoint to check case does not exist for uprn in question: "
@@ -897,11 +888,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("The response status: " + status);
   }
 
-  @When("Get\\/Case API returns a {int} error because there is no case found")
-  public void get_Case_API_returns_a_error_because_there_is_no_case_found(Integer int1) {
+  @When("Get\\/Case API returns a {string} error because there is no case found")
+  public void getCaseAPIReturnsAErrorBecauseThereIsNoCaseFound(String statusStr) {
+    int returnStatus = Integer.parseInt(statusStr);
     assertEquals(
-        "THE CASE SHOULD NOT EXIST - the mock case service endpoint should give a response code of 404",
-        "404 Not Found",
+        "THE CASE SHOULD NOT EXIST - the mock case service endpoint should give a response code of "
+            + returnStatus,
+        "404 Not Found:",
         status);
   }
 
@@ -995,13 +988,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         clazzName,
         timeout);
 
-    newAddressReportedEvent =
-        (NewAddressReportedEvent)
-            rabbit.getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
+    NewAddressReportedEvent newAddressReportedEvent = (NewAddressReportedEvent)
+        rabbit.getMessage(queueName, NewAddressReportedEvent.class, RABBIT_TIMEOUT);
 
     assertNotNull(newAddressReportedEvent);
 
-    newAddressReportedHeader = newAddressReportedEvent.getEvent();
+    Header newAddressReportedHeader = newAddressReportedEvent.getEvent();
     assertNotNull(newAddressReportedHeader);
     assertEquals("NEW_ADDRESS_REPORTED", newAddressReportedHeader.getType().toString());
     assertEquals("CONTACT_CENTRE_API", newAddressReportedHeader.getSource().toString());
@@ -1009,20 +1001,20 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(newAddressReportedHeader.getDateTime());
     assertNotNull(newAddressReportedHeader.getTransactionId());
 
-    newAddressReportedPayload = newAddressReportedEvent.getPayload();
+    NewAddressPayload newAddressReportedPayload = newAddressReportedEvent.getPayload();
     assertNotNull(newAddressReportedPayload);
 
-    newAddress = newAddressReportedPayload.getNewAddress();
+    NewAddress newAddress = newAddressReportedPayload.getNewAddress();
     assertNull(newAddress.getSourceCaseId());
 
-    collectionCase = newAddress.getCollectionCase();
+    CollectionCaseNewAddress collectionCase = newAddress.getCollectionCase();
     assertNotNull(collectionCase.getId());
     assertNull(collectionCase.getCaseType());
     assertEquals("CENSUS", collectionCase.getSurvey());
     assertNull(collectionCase.getFieldCoordinatorId());
     assertNull(collectionCase.getFieldOfficerId());
 
-    address = collectionCase.getAddress();
+    Address address = collectionCase.getAddress();
     assertEquals("1 West Grove Road", address.getAddressLine1());
     assertEquals("", address.getAddressLine2());
     assertEquals("", address.getAddressLine3());
@@ -1120,7 +1112,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
-    int i = 0;
     boolean addressExists = false;
     String addressToFind =
         "Public Telephone 13M From 11 Nine Acres On Unnamed Road, "
@@ -1129,15 +1120,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     int indexFound = 500;
     log.info(
         "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
-    while ((i < addressesFound.size()) && (addressExists == false)) {
+    for (int i=0; i< addressesFound.size(); i++) {
       addressFound = addressesFound.get(i).getFormattedAddress();
-
       if (addressFound.equals(addressToFind)) {
         log.with(addressFound).info("This is the address that was found in AIMS");
         addressExists = true;
         indexFound = i;
+        break;
       }
-      i++;
     }
     assertEquals(
         "The address query response does not contain the correct address",
@@ -1147,9 +1137,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     uprnStr = addressesFound.get(indexFound).getUprn();
     String addressTypeFound = addressesFound.get(indexFound).getAddressType();
     log.with(addressTypeFound).info("The addressType of the address found");
-    assertFalse(addressTypeFound.equals("CE"));
-    assertFalse(addressTypeFound.equals("HH"));
-    assertFalse(addressTypeFound.equals("SPG"));
+    assertNotEquals("CE", addressTypeFound);
+    assertNotEquals("HH", addressTypeFound);
+    assertNotEquals("SPG", addressTypeFound);
   }
 
   @Then("the CC SVC must also return a {string} error")
