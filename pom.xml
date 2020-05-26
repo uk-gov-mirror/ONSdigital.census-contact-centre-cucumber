@@ -147,10 +147,11 @@
 			<version>0.0.32</version>
 		</dependency>
 
+		<!-- Always use latest dependency in order to update classes from the SWAGGER_CURRENT.yml -->
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration</groupId>
 			<artifactId>contactcentreserviceapi</artifactId>
-			<version>0.0.93-SNAPSHOT</version>
+			<version>0.0.97</version>
 		</dependency>
 
 		<dependency>
