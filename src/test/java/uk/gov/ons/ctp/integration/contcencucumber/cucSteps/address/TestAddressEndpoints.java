@@ -31,6 +31,7 @@ public class TestAddressEndpoints extends TestBase {
   private String postcode = "";
   private String addressSearchString = "";
   private String addressEndpointUrl;
+  private String aimsEndpointBody;
 
   @Given("I have a valid Postcode {string}")
   public void i_have_a_valid_Postcode(final String postcode) {

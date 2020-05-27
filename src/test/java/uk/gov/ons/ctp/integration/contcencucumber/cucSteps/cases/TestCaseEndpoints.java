@@ -882,10 +882,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("The response status: " + status);
   }
 
-  @When("Get\\/Case API returns a {int} error because there is no case found")
-  public void get_Case_API_returns_a_error_because_there_is_no_case_found(Integer int1) {
+  @When("Get\\/Case API returns a {string} error because there is no case found")
+  public void getCaseAPIReturnsAErrorBecauseThereIsNoCaseFound(String statusStr) {
+    int returnStatus = Integer.parseInt(statusStr);
     assertEquals(
-        "THE CASE SHOULD NOT EXIST - the mock case service endpoint should give a response code of 404",
+        "THE CASE SHOULD NOT EXIST - the mock case service endpoint should give a response code of "
+            + returnStatus,
         "404 Not Found",
         status);
   }
@@ -1079,5 +1081,94 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(launchedEvent.getPayload().getResponse().getQuestionnaireId());
     assertNotNull(launchedEvent.getPayload().getResponse().getCaseId());
     assertEquals(agentId, launchedEvent.getPayload().getResponse().getAgentId());
+  }
+
+  @Given("the CC agent has selected an address that is not of addressType CE, HH, or SPG")
+  public void the_CC_agent_has_selected_an_address_that_is_not_of_addressType_CE_HH_or_SPG() {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("addresses")
+            .queryParam("input", "Public Telephone 13M From 11 Nine Acres");
+
+    ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
+        getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<AddressQueryResponseDTO>() {});
+
+    log.with(addressQueryResponse).info("The address query response here");
+
+    AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
+
+    List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
+
+    boolean addressExists = false;
+    String addressToFind =
+        "Public Telephone 13M From 11 Nine Acres On Unnamed Road, "
+            + "Steep Marsh Bungalows, Steep, Petersfield, GU32 2BW";
+    String addressFound = "";
+    int indexFound = 500;
+    log.info(
+        "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
+    for (int i = 0; i < addressesFound.size(); i++) {
+      addressFound = addressesFound.get(i).getFormattedAddress();
+      if (addressFound.equals(addressToFind)) {
+        log.with(addressFound).info("This is the address that was found in AIMS");
+        addressExists = true;
+        indexFound = i;
+        break;
+      }
+    }
+    assertEquals(
+        "The address query response does not contain the correct address",
+        addressToFind,
+        addressFound);
+
+    uprnStr = addressesFound.get(indexFound).getUprn();
+    String addressTypeFound = addressesFound.get(indexFound).getAddressType();
+    log.with(addressTypeFound).info("The addressType of the address found");
+    assertNotEquals("CE", addressTypeFound);
+    assertNotEquals("HH", addressTypeFound);
+    assertNotEquals("SPG", addressTypeFound);
+  }
+
+  @Then("the CC SVC must also return a {string} error")
+  public void the_CC_SVC_must_also_return_a_error(String expectedErr) {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprnStr);
+    ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+
+    log.info(
+        "As the case does not exist in the case service the endpoint {}, like the AIMS endpoint, should also throw a 404 error.",
+        ccUprnEndpointUrl);
+
+    status = "";
+
+    try {
+      getRestTemplate()
+          .exchange(
+              builder.build().encode().toUri(),
+              HttpMethod.GET,
+              null,
+              new ParameterizedTypeReference<List<CaseDTO>>() {});
+    } catch (RestClientException e) {
+      log.with(e.getMessage())
+          .info("catching the error returned by the getCaseByUprn cc service endpoint");
+      status = e.getMessage().substring(0, 13);
+    }
+
+    log.info("The response status: " + status);
+
+    assertEquals(
+        "THE CASE SHOULD NOT EXIST - the contact centre service endpoint should give a response code of 404",
+        expectedErr,
+        status);
   }
 }
