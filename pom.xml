@@ -144,7 +144,7 @@
 		<dependency>
 			<groupId>uk.gov.ons.ctp.integration.common</groupId>
 			<artifactId>event-publisher</artifactId>
-			<version>0.0.32</version>
+			<version>0.0.33</version>
 		</dependency>
 
 		<!-- Always use latest dependency in order to update classes from the SWAGGER_CURRENT.yml -->

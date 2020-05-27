@@ -1021,7 +1021,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNull(address.getLatitude());
     assertNull(address.getLongitude());
     assertEquals(uprnStr, address.getUprn());
-    assertNull(address.getArid());
   }
 
   @And("an empty queue exists for sending SurveyLaunched events")
