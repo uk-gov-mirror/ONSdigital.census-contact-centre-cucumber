@@ -1112,7 +1112,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
-    boolean addressExists = false;
     String addressToFind =
         "Public Telephone 13M From 11 Nine Acres On Unnamed Road, "
             + "Steep Marsh Bungalows, Steep, Petersfield, GU32 2BW";
@@ -1124,7 +1123,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       addressFound = addressesFound.get(i).getFormattedAddress();
       if (addressFound.equals(addressToFind)) {
         log.with(addressFound).info("This is the address that was found in AIMS");
-        addressExists = true;
         indexFound = i;
         break;
       }
