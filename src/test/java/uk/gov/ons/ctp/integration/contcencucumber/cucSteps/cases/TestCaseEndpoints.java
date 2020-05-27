@@ -1128,7 +1128,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         addressFound);
 
     uprnStr = addressesFound.get(indexFound).getUprn();
-    String addressTypeFound = addressesFound.get(indexFound).getAddressType();
+    String addressTypeFound = addressesFound.get(indexFound).getAddressType().name();
     log.with(addressTypeFound).info("The addressType of the address found");
     assertNotEquals("CE", addressTypeFound);
     assertNotEquals("HH", addressTypeFound);
@@ -1143,7 +1143,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
-    ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+    final String ccUprnEndpointUrl = builder.build().encode().toUri().toString();
 
     log.info(
         "As the case does not exist in the case service the endpoint {}, like the AIMS endpoint, should also throw a 404 error.",
