@@ -28,6 +28,8 @@ import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.ResponseDTO;
 import java.net.URI;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -802,7 +804,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     modifyCaseRequestDTO.setTownName("Winchester");
     modifyCaseRequestDTO.setRegion(ModifyCaseRequestDTO.RegionEnum.E);
     modifyCaseRequestDTO.setPostcode("SO22 4HJ");
-    modifyCaseRequestDTO.setDateTime(getDateAsString());
+    modifyCaseRequestDTO.setDateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
+    ;
 
     HttpEntity<ModifyCaseRequestDTO> requestEntity = new HttpEntity<>(modifyCaseRequestDTO);
 
