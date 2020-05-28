@@ -3,6 +3,9 @@ package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.RefusalRequestDTO.RegionEnum;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -29,7 +32,6 @@ public final class RefusalFixture {
   public static final String A_UPRN_STR = "1234";
 
   public static RefusalRequestDTO createRequest(String caseId, String agentId, ReasonEnum reason) {
-    Date dateTime = new Date();
 
     RefusalRequestDTO refusal = new RefusalRequestDTO();
     refusal
@@ -48,7 +50,7 @@ public final class RefusalFixture {
         .uprn(A_UPRN_STR)
         .region(A_REGION)
         .reason(reason)
-        .dateTime(SpringIntegrationTest.getDateAsString());
+        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
 
     return refusal;
   }

@@ -42,11 +42,4 @@ public class SpringIntegrationTest {
   protected RestTemplate getRestTemplate(final String username, final String password) {
     return new RestTemplateBuilder().basicAuthentication(username, password).build();
   }
-
-  public static String getDateAsString() {
-    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-    Date today = Calendar.getInstance().getTime();
-    return sdf.format(today);
-  }
 }
