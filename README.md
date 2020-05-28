@@ -129,3 +129,70 @@ Now you can run cccuc in the terminal using this command:
 mvn clean install
 ```
 
+From this version on, the cucumber tests will rely on swagger-current.yml in order to create the required DTOs.
+The swagger-current.yml is held in the contactcentreserviceapi project and is bundled in with the jar when maven builds that project.
+from contactcentreserviceapi...
+
+    <resources>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>swagger-current.yml</include>
+        </includes>
+      </resource>
+    </resources>
+```
+```
+When maven builds this project, it unpacks the swagger-file from the contact-centre-service-api dependency
+and puts it in the root folder of the target directory...
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.2</version>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeGroupIds>uk.gov.ons.ctp.integration</includeGroupIds>
+							<includeArtifactIds>contactcentreserviceapi</includeArtifactIds>
+							<excludeTransitive>true</excludeTransitive>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<includes>swagger-current.yml</includes>
+							<excludes>**/*.class</excludes>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+```
+```
+Then creates DTO classes from the swagger and puts them into the target folder so that they are never included in GIT
+
+			<!-- https://mvnrepository.com/artifact/io.swagger.codegen.v3/swagger-codegen-maven-plugin -->
+			<plugin>
+				<groupId>io.swagger.codegen.v3</groupId>
+				<artifactId>swagger-codegen-maven-plugin</artifactId>
+				<version>3.0.19</version>
+				<executions>
+					<execution>
+						<id>generate-swagger</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.build.directory}/swagger-current.yml</inputSpec>
+							<language>java</language>
+							<configOptions>
+								<sourceFolder>src/gen/java/main</sourceFolder>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
