@@ -140,7 +140,8 @@
       <version>0.0.33</version>
     </dependency>
 
-    <!-- Always use latest dependency in order to update classes from the SWAGGER_CURRENT.yml -->
+    <!-- Always use latest dependency in order to update classes from the
+      SWAGGER_CURRENT.yml -->
     <dependency>
       <groupId>uk.gov.ons.ctp.integration</groupId>
       <artifactId>contactcentreserviceapi</artifactId>
@@ -213,12 +214,20 @@
   </dependencies>
 
   <build>
-    <plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.1.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
         <executions>
           <execution>
             <id>unpack</id>
@@ -253,6 +262,7 @@
               <goal>generate</goal>
             </goals>
             <configuration>
+              <ignoreFileOverride>${project.basedir}/src/test/resources/swagger-codegen-ignore</ignoreFileOverride>
               <inputSpec>${project.build.directory}/swagger-current.yml</inputSpec>
               <language>java</language>
               <configOptions>
@@ -280,11 +290,32 @@
           <includes>
             <include>**/RunCucumberTest*.java</include>
           </includes>
-          <!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude> </excludes> -->
+          <!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude>
+            </excludes> -->
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/swagger/src/gen/java/main</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
+
     <resources>
       <resource>
         <directory>src/test/resources</directory>

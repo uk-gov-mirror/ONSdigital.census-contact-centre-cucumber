@@ -63,8 +63,9 @@ It also uses Scenario Outlines to utilize tabulated data in tests
     Given I have a valid case from my search UPRN
     When I Search fulfilments
     Then the correct fulfilments are returned for my case <fulfilments>
->
-A new travis.yml contains a script which runs the maven build, populates the local maven repo and copies the maven 
+```
+
+A new travis.yml contains a script which runs the maven build, populates the local maven repo and copies the maven
 settings.xml file. Tests are skipped as this would run the cucumber.
 
 ```
@@ -72,7 +73,7 @@ script:
   - travis_wait mvn install -DskipTests -Dmaven.repo.local=local-maven-repo/repository
   - cp $HOME/.m2/settings.xml m2
 ```
->
+
 A smokeTests.feature has now been added. The smoke tests will run before the other tests during a normal run. However, the smoke tests are tagged with @smoke so that, if preferred, they can be run separately from the other tests as follows:
 
 ```
@@ -84,12 +85,12 @@ The advantage of running the smoke tests separately is that, if they find an err
 
 Make sure that your local IP address is whitelisted for access to AI e.g. try accessing this link: [https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true](https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true)
 
-Run rabbitmq locally e.g. go into the census-rh-service repo, in the terminal, and enter this command: 
+Run rabbitmq locally e.g. go into the census-rh-service repo, in the terminal, and enter this command:
 
 ```
 docker-compose up -d
 ```
-Run the following command to make sure that you have permission to access Firestore (no error occurs otherwise - it just freezes and fails): 
+Run the following command to make sure that you have permission to access Firestore (no error occurs otherwise - it just freezes and fails):
 
 ```
 gcloud auth application-default login
@@ -118,12 +119,12 @@ NB. You can test access to whitelodge AI using this link: [https://whitelodge-ai
 
 Run the contact centre service locally (either using eclipse or mvn spring-boot:run)
 
-In the cccuc repo, in the terminal, set the GOOGLE\_CLOUD\_PROJECT environment variable to the same value as for the CCSVC above: 
+In the cccuc repo, in the terminal, set the GOOGLE\_CLOUD\_PROJECT environment variable to the same value as for the CCSVC above:
 
 ```
 export GOOGLE_CLOUD_PROJECT=<name of your project>
 ```
-Now you can run cccuc in the terminal using this command: 
+Now you can run cccuc in the terminal using this command:
 
 ```
 mvn clean install
@@ -133,6 +134,7 @@ From this version on, the cucumber tests will rely on swagger-current.yml in ord
 The swagger-current.yml is held in the contactcentreserviceapi project and is bundled in with the jar when maven builds that project.
 from contactcentreserviceapi...
 
+```
     <resources>
       <resource>
         <directory>${project.basedir}</directory>
@@ -142,10 +144,10 @@ from contactcentreserviceapi...
       </resource>
     </resources>
 ```
-```
+
 When maven builds this project, it unpacks the swagger-file from the contact-centre-service-api dependency
 and puts it in the root folder of the target directory...
-
+```
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -171,9 +173,9 @@ and puts it in the root folder of the target directory...
 				</executions>
 			</plugin>
 ```
-```
-Then creates DTO classes from the swagger and puts them into the target folder so that they are never included in GIT
 
+Then creates DTO classes from the swagger and puts them into the target folder so that they are never included in GIT
+```
 			<!-- https://mvnrepository.com/artifact/io.swagger.codegen.v3/swagger-codegen-maven-plugin -->
 			<plugin>
 				<groupId>io.swagger.codegen.v3</groupId>
@@ -196,3 +198,18 @@ Then creates DTO classes from the swagger and puts them into the target folder s
 					</execution>
 				</executions>
 			</plugin>
+```
+
+## Notes for importing this project into eclipse
+
+Eclipse does not recognise the maven lifecycle operations for generating code from swagger, and thus a few extra steps are worth doing to have a clean project:
+
+1. It is important that a maven **mvn clean compile** is performed to ensure the generated source is created in the target directory, before trying to cleanup the project in eclipse.
+2. Import this project into eclipse as a maven project.
+3. In the project properties **Java Build Path** , choose the **Source** tab and select the source entry for:
+``census-contract-centre-cucumber/target/generated-sources/swagger/src/gen/java/main``.  Then toggle the **Ignore optional compile problems** to YES.
+4. Configure the Eclipse **lifecycle-mapping-metadata.xml** to ignore the 2 errors highlighted in the **pom.xml** . The easiest way to do this is to select a "quick fix" (CMD-1 on MacOS) at each of the 2 error points in the **pom.xml**, and select the option to fix for all projects (at the time of writing this is the bottom option in the drop-down).
+5. You may have to refresh maven on the project to clean up errors and warnings.
+
+
+
