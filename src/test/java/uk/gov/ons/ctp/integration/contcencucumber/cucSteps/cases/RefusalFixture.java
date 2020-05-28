@@ -5,13 +5,10 @@ import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.RefusalRequestDTO.RegionEnum;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import uk.gov.ons.ctp.common.event.model.AddressCompact;
 import uk.gov.ons.ctp.common.event.model.Contact;
-import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RefusalFixture {
