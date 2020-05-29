@@ -1,206 +1,329 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>census-contact-centre-cucumber</groupId>
-	<artifactId>census-contact-centre-cucumber</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+  <groupId>census-contact-centre-cucumber</groupId>
+  <artifactId>census-contact-centre-cucumber</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
-	<parent>
-		<groupId>uk.gov.ons.ctp.integration</groupId>
-		<artifactId>census-int-common-config</artifactId>
-		<version>0.0.15</version>
-	</parent>
+  <parent>
+    <groupId>uk.gov.ons.ctp.integration</groupId>
+    <artifactId>census-int-common-config</artifactId>
+    <version>0.0.15</version>
+  </parent>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.google.cloud</groupId>
-				<artifactId>libraries-bom</artifactId>
-				<version>3.5.0</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>libraries-bom</artifactId>
+        <version>3.5.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-	<dependencies>
+  <dependencies>
 
-		<dependency>
-			<groupId>com.google.cloud</groupId>
-			<artifactId>google-cloud-firestore</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-firestore</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java</artifactId>
-			<version>4.4.0</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>4.4.0</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-junit</artifactId>
-			<version>4.4.0</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-junit</artifactId>
+      <version>4.4.0</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-spring</artifactId>
-			<version>4.4.0</version>
-		</dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-spring</artifactId>
+      <version>4.4.0</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20180130</version>
-		</dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20180130</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-		</dependency>
+    <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>com.godaddy</groupId>
-			<artifactId>logging</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>com.godaddy</groupId>
+      <artifactId>logging</artifactId>
+    </dependency>
 
-		<!-- Spring dependencies -->
+    <!-- Spring dependencies -->
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-test-autoconfigure</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test-autoconfigure</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>compile</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>compile</scope>
+    </dependency>
 
-		<!-- SPRING END -->
+    <!-- SPRING END -->
 
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>javax.inject</artifactId>
-			<version>1</version>
-		</dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
 
-		<!-- ONS libraries -->
+    <!-- ONS libraries -->
 
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>cucumber-common</artifactId>
-			<version>0.0.15</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>uk.gov.ons.ctp.integration.common</groupId>
+      <artifactId>cucumber-common</artifactId>
+      <version>0.0.15</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>event-publisher</artifactId>
-			<version>0.0.33</version>
-		</dependency>
+    <dependency>
+      <groupId>uk.gov.ons.ctp.integration.common</groupId>
+      <artifactId>event-publisher</artifactId>
+      <version>0.0.33</version>
+    </dependency>
 
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration</groupId>
-			<artifactId>contactcentreserviceapi</artifactId>
-			<version>0.0.100</version>
-		</dependency>
+    <!-- Always use latest dependency in order to update classes from the
+      SWAGGER_CURRENT.yml -->
+    <dependency>
+      <groupId>uk.gov.ons.ctp.integration</groupId>
+      <artifactId>contactcentreserviceapi</artifactId>
+      <version>0.0.100</version>
+    </dependency>
 
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>census-int-case-api-client</artifactId>
-			<version>0.0.13</version>
-		</dependency>
+    <dependency>
+      <groupId>uk.gov.ons.ctp.integration.common</groupId>
+      <artifactId>census-int-case-api-client</artifactId>
+      <version>0.0.13</version>
+    </dependency>
 
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>product-reference</artifactId>
-			<version>1.0.6</version>
-		</dependency>
+    <dependency>
+      <groupId>uk.gov.ons.ctp.integration.common</groupId>
+      <artifactId>product-reference</artifactId>
+      <version>1.0.6</version>
+    </dependency>
 
-		<dependency>
-			<groupId>uk.gov.ons.ctp.integration.common</groupId>
-			<artifactId>eq-launcher</artifactId>
-			<version>0.0.25</version>
-		</dependency>
+    <dependency>
+      <groupId>uk.gov.ons.ctp.integration.common</groupId>
+      <artifactId>eq-launcher</artifactId>
+      <version>0.0.25</version>
+    </dependency>
 
-		<!-- ONS END -->
+    <!-- ONS END -->
 
-	</dependencies>
+    <!-- SWAGGER RELATED DEPENDENCIES -->
 
-	<build>
-		<plugins>
+    <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>2.1.2</version>
+    </dependency>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
-					<testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
-					<includes>
-						<include>**/RunCucumberTest*.java</include>
-					</includes>
-					<!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude> </excludes> -->
-				</configuration>
-			</plugin>
+    <!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
+    <dependency>
+      <groupId>com.squareup.okhttp</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>2.7.5</version>
+    </dependency>
 
-		</plugins>
-		<resources>
-			<resource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/application-test.yml</include>
-				</includes>
-			</resource>
-		</resources>
-	</build>
+    <!-- https://mvnrepository.com/artifact/org.threeten/threetenbp -->
+    <dependency>
+      <groupId>org.threeten</groupId>
+      <artifactId>threetenbp</artifactId>
+      <version>1.4.4</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.squareup.okhttp/logging-interceptor -->
+    <dependency>
+      <groupId>com.squareup.okhttp</groupId>
+      <artifactId>logging-interceptor</artifactId>
+      <version>2.7.5</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/io.gsonfire/gson-fire -->
+    <dependency>
+      <groupId>io.gsonfire</groupId>
+      <artifactId>gson-fire</artifactId>
+      <version>1.9.0-alpha2</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+
+    <!-- End of SWAGGER dependencies -->
+
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.1.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>uk.gov.ons.ctp.integration</includeGroupIds>
+              <includeArtifactIds>contactcentreserviceapi</includeArtifactIds>
+              <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <includes>swagger-current.yml</includes>
+              <excludes>**/*.class</excludes>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- https://mvnrepository.com/artifact/io.swagger.codegen.v3/swagger-codegen-maven-plugin -->
+      <plugin>
+        <groupId>io.swagger.codegen.v3</groupId>
+        <artifactId>swagger-codegen-maven-plugin</artifactId>
+        <version>3.0.19</version>
+        <executions>
+          <execution>
+            <id>generate-swagger</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <ignoreFileOverride>${project.basedir}/src/test/resources/swagger-codegen-ignore</ignoreFileOverride>
+              <inputSpec>${project.build.directory}/swagger-current.yml</inputSpec>
+              <language>java</language>
+              <configOptions>
+                <sourceFolder>src/gen/java/main</sourceFolder>
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
+          <testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
+          <includes>
+            <include>**/RunCucumberTest*.java</include>
+          </includes>
+          <!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude>
+            </excludes> -->
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/swagger/src/gen/java/main</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <resources>
+      <resource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/application-test.yml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 </project>

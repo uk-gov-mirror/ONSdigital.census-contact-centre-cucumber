@@ -10,6 +10,11 @@ import com.godaddy.logging.LoggerFactory;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import io.swagger.client.model.AddressDTO;
+import io.swagger.client.model.AddressDTO.AddressTypeEnum;
+import io.swagger.client.model.AddressDTO.EstabTypeEnum;
+import io.swagger.client.model.AddressDTO.RegionEnum;
+import io.swagger.client.model.AddressQueryResponseDTO;
 import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -17,8 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressDTO;
-import uk.gov.ons.ctp.integration.contactcentresvc.representation.AddressQueryResponseDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestBase;
 
 public class TestAddressEndpoints extends TestBase {
@@ -28,7 +31,6 @@ public class TestAddressEndpoints extends TestBase {
   private String postcode = "";
   private String addressSearchString = "";
   private String addressEndpointUrl;
-  private String aimsEndpointBody;
 
   @Given("I have a valid Postcode {string}")
   public void i_have_a_valid_Postcode(final String postcode) {
@@ -158,7 +160,7 @@ public class TestAddressEndpoints extends TestBase {
 
     ResponseEntity<String> aimsEndpointResponse =
         getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
-    aimsEndpointBody = aimsEndpointResponse.getBody();
+    String aimsEndpointBody = aimsEndpointResponse.getBody();
     log.with(aimsEndpointBody).info("The response body");
     log.with(aimsEndpointResponse.getStatusCode()).info("The response status");
     assertEquals(
@@ -200,6 +202,7 @@ public class TestAddressEndpoints extends TestBase {
 
     AddressQueryResponseDTO addressQueryBody = addressQueryResponse.getBody();
 
+    assert addressQueryBody != null;
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
     AddressDTO addressFound = null;
@@ -217,15 +220,15 @@ public class TestAddressEndpoints extends TestBase {
         "1 West Grove Road, Exeter, EX2 4LU",
         addressFound.getFormattedAddress());
 
-    String regionCode = addressFound.getRegion();
+    RegionEnum regionCode = addressFound.getRegion();
     log.with(regionCode).info("This is the region code that was found in AIMS");
     assertNotNull(regionCode);
 
-    String addressType = addressFound.getAddressType();
+    AddressTypeEnum addressType = addressFound.getAddressType();
     log.with(addressType).info("This is the address type that was found in AIMS");
     assertNotNull(addressType);
 
-    String estabType = addressFound.getEstabType();
+    EstabTypeEnum estabType = addressFound.getEstabType();
     log.with(estabType).info("This is the establishment type that was found in AIMS");
     assertNotNull(estabType);
   }
