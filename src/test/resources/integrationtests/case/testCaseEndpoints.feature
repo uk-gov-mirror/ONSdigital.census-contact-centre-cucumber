@@ -13,7 +13,7 @@ Feature: Test Contact centre Case Endpoints
     And the establishment UPRN is <estabUprn>
     And the secure establishment is set to <secure>
 
-    Examples: 
+    Examples:
       | caseId                                 | uprn       | caseEvents | noCaseEvents | estabUprn      | secure  |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | 1347459999 | "true"     |            2 | "334111111111" | "true"  |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ac" | 1347459999 | "true"     |            1 | ""             | "false" |
@@ -26,7 +26,7 @@ Feature: Test Contact centre Case Endpoints
     When I Search for cases By case ID
     Then An error is thrown and no case is returned <httpError>
 
-    Examples: 
+    Examples:
       | caseId                                 | httpError |
       | "40074ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "500"     |
       | "40174ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "500"     |
@@ -38,7 +38,7 @@ Feature: Test Contact centre Case Endpoints
     When I Search cases By UPRN
     Then the correct cases for my UPRN are returned <case_ids>
 
-    Examples: 
+    Examples:
       | uprn         | case_ids                                                                                                         |
       | "1347459999" | "3305e937-6fb1-4ce1-9d4c-077f147789ab,3305e937-6fb1-4ce1-9d4c-077f147789ac,03f58cb5-9af4-4d40-9d60-c124c5bddf09" |
 
@@ -47,7 +47,7 @@ Feature: Test Contact centre Case Endpoints
     When I Search cases By invalid UPRN
     Then no cases for my UPRN are returned <httpError>
 
-    Examples: 
+    Examples:
       | uprn         | httpError |
       | "1347459998" | "404"     |
       | "abcdefghik" | "400"     |
@@ -59,7 +59,7 @@ Feature: Test Contact centre Case Endpoints
     When I Refuse a case
     Then the call succeeded and responded with the supplied case ID
 
-    Examples: 
+    Examples:
       | caseId                                 |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ac" |
@@ -75,7 +75,7 @@ Feature: Test Contact centre Case Endpoints
     Then the call succeeded and responded with the supplied case ID
     And a Refusal event is sent with type <type>
 
-    Examples: 
+    Examples:
       | caseId                                 | reason          | type                    |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | "HARD"          | "HARD_REFUSAL"          |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | "EXTRAORDINARY" | "EXTRAORDINARY_REFUSAL" |
@@ -87,7 +87,7 @@ Feature: Test Contact centre Case Endpoints
     When I Refuse a case
     Then An error is thrown and no case is returned <httpError>
 
-    Examples: 
+    Examples:
       | caseId                                 | reason | httpError |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | ""     | "400"     |
 
@@ -98,7 +98,7 @@ Feature: Test Contact centre Case Endpoints
     When I Refuse a case
     Then An error is thrown and no case is returned <httpError>
 
-    Examples: 
+    Examples:
       | caseId                                 | agentId  | httpError |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | ""       | "400"     |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | "ABC"    | "400"     |
@@ -110,7 +110,7 @@ Feature: Test Contact centre Case Endpoints
     When I Refuse a case
     Then An error is thrown and no case is returned <httpError>
 
-    Examples: 
+    Examples:
       | caseId                                 | httpError |
       | "NOTKNOWN"                             | "400"     |
       | "XX474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "400"     |
@@ -120,10 +120,10 @@ Feature: Test Contact centre Case Endpoints
     Given the CC advisor has provided a valid UPRN <uprn>
     Then the Case endpoint returns a case associated with UPRN <uprn>
     Given an empty queue exists for sending AddressNotValid events
-    When CC Advisor selects the <status>
-    Then an AddressNotValid event is emitted to RM, which contains the <status>, or no event is sent if the status is UNCHANGED
+    When CC Advisor selects the address status change <status>
+    Then an AddressNotValid event is emitted to RM, which contains the <status> change
 
-    Examples: 
+    Examples:
       | uprn         | status                    |
       | "1347459995" | "DERELICT"                |
       | "1347459995" | "DEMOLISHED"              |
@@ -131,9 +131,8 @@ Feature: Test Contact centre Case Endpoints
       | "1347459995" | "UNDER_CONSTRUCTION"      |
       | "1347459995" | "SPLIT_ADDRESS"           |
       | "1347459995" | "MERGED"                  |
-      | "1347459995" | "UNCHANGED"               |
-      | "1347459995" | "PROPERTY_IS_A_HOUSEHOLD" |
-      | "1347459995" | "PROPERTY_IS_A_CE"        |
+      | "1347459995" | "DUPLICATE"               |
+      | "1347459995" | "DOES_NOT_EXIST"          |
 
   Scenario: [CR-T148] Publish a new address event to RM
     Given the CC agent has confirmed the respondent address

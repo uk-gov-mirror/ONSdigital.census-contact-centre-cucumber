@@ -20,10 +20,9 @@ import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
 import io.swagger.client.model.CaseDTO.AllowedDeliveryChannelsEnum;
+import io.swagger.client.model.CaseDTO.EstabTypeEnum;
 import io.swagger.client.model.FulfilmentDTO;
-import io.swagger.client.model.ModifyCaseRequestDTO;
-import io.swagger.client.model.ModifyCaseRequestDTO.EstabTypeEnum;
-import io.swagger.client.model.ModifyCaseRequestDTO.StatusEnum;
+import io.swagger.client.model.InvalidateCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.ResponseDTO;
@@ -105,7 +104,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String queueName;
   private List<CaseDTO> listOfCasesWithUprn;
   private URI caseForUprnUrl;
-  private URI modifyCaseUrl;
+  private URI invalidateCaseUrl;
   private AddressNotValidEvent addressNotValidEvent;
   private String uprnStr;
   private String status = "";
@@ -714,105 +713,81 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     rabbit.flushQueue(queueName);
   }
 
-  @When("CC Advisor selects the {string}")
+  @When("CC Advisor selects the address status change {string}")
   public void cc_Advisor_selects_the(String statusSelected) {
     try {
-      log.with(caseId)
-          .info("Now putting a ModifyCaseRequestDTO on the modifyCase endpoint for this case id..");
-      ResponseEntity<ResponseDTO> modifyCaseResponse = requestModifyCase(caseId, statusSelected);
-      HttpStatus contactCentreStatus = modifyCaseResponse.getStatusCode();
+      log.with(caseId).info("Calling invalidate endpoint");
+      ResponseEntity<ResponseDTO> response = invalidateCase(caseId, statusSelected);
+      HttpStatus contactCentreStatus = response.getStatusCode();
       log.with(contactCentreStatus)
-          .info("REQUEST MODIFY CASE: The response from " + modifyCaseUrl.toString());
+          .info("INVALIDATE CASE: The response from " + invalidateCaseUrl.toString());
       assertEquals(HttpStatus.OK, contactCentreStatus);
     } catch (Exception e) {
-      fail(
-          "REQUEST MODIFY CASE HAS FAILED - the contact centre does not give a response code of 200");
+      fail("INVALIDATE CASE FAILED: " + e.getMessage());
     }
   }
 
-  @Then(
-      "an AddressNotValid event is emitted to RM, which contains the {string}, or no event is sent if the status is UNCHANGED")
-  public void
-      an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_or_no_event_is_sent_if_the_status_is_UNCHANGED(
-          String expectedReason) throws CTPException {
+  @Then("an AddressNotValid event is emitted to RM, which contains the {string} change")
+  public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_change(
+      String expectedReason) throws CTPException {
     log.info(
         "Check that an ADDRESS_NOT_VALID event has now been put on the empty queue, named {}, ready to be picked up by RM",
         queueName);
 
-    String clazzName = "AddressNotValid.class";
     String timeout = "2000ms";
 
     log.info(
         "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
         queueName,
-        clazzName,
+        "AddressNotValid.class",
         timeout);
 
     addressNotValidEvent =
         rabbit.getMessage(
             queueName, AddressNotValidEvent.class, TimeoutParser.parseTimeoutString(timeout));
 
-    if (expectedReason.equals("UNCHANGED")) {
-      assertNull(addressNotValidEvent);
-    } else {
-      assertNotNull(addressNotValidEvent);
-      Header addressNotValidHeader = addressNotValidEvent.getEvent();
-      assertNotNull(addressNotValidHeader);
-      AddressNotValidPayload addressNotValidPayload = addressNotValidEvent.getPayload();
-      assertNotNull(addressNotValidPayload);
+    assertNotNull(addressNotValidEvent);
+    Header addressNotValidHeader = addressNotValidEvent.getEvent();
+    assertNotNull(addressNotValidHeader);
+    AddressNotValidPayload addressNotValidPayload = addressNotValidEvent.getPayload();
+    assertNotNull(addressNotValidPayload);
 
-      EventType expectedType = EventType.ADDRESS_NOT_VALID;
-      Source expectedSource = Source.CONTACT_CENTRE_API;
-      Channel expectedChannel = Channel.CC;
-      String expectedCollectionCaseId = "3305e937-6fb1-4ce1-9d4c-077f147789aa";
+    EventType expectedType = EventType.ADDRESS_NOT_VALID;
+    Source expectedSource = Source.CONTACT_CENTRE_API;
+    Channel expectedChannel = Channel.CC;
+    UUID expectedCollectionCaseId = UUID.fromString("3305e937-6fb1-4ce1-9d4c-077f147789aa");
 
-      assertEquals(expectedType, addressNotValidHeader.getType());
-      assertEquals(expectedSource, addressNotValidHeader.getSource());
-      assertEquals(expectedChannel, addressNotValidHeader.getChannel());
-      assertNotNull(addressNotValidHeader.getDateTime());
-      assertNotNull(addressNotValidHeader.getTransactionId());
+    assertEquals(expectedType, addressNotValidHeader.getType());
+    assertEquals(expectedSource, addressNotValidHeader.getSource());
+    assertEquals(expectedChannel, addressNotValidHeader.getChannel());
+    assertNotNull(addressNotValidHeader.getDateTime());
+    assertNotNull(addressNotValidHeader.getTransactionId());
 
-      AddressNotValid addressNotValid = addressNotValidPayload.getInvalidAddress();
-      assertEquals(expectedReason, addressNotValid.getReason());
-      assertEquals(
-          expectedCollectionCaseId, addressNotValid.getCollectionCase().getId().toString());
-    }
+    AddressNotValid addressNotValid = addressNotValidPayload.getInvalidAddress();
+    assertEquals(expectedReason, addressNotValid.getReason());
+    assertEquals(expectedCollectionCaseId, addressNotValid.getCollectionCase().getId());
   }
 
-  private ResponseEntity<ResponseDTO> requestModifyCase(String caseId, String statusSelected) {
+  private ResponseEntity<ResponseDTO> invalidateCase(String caseId, String statusSelected) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
             .pathSegment("cases")
-            .pathSegment(caseId);
+            .pathSegment(caseId)
+            .pathSegment("invalidate");
 
-    ResponseEntity<ResponseDTO> requestModifyCaseResponse;
-    modifyCaseUrl = builder.build().encode().toUri();
+    invalidateCaseUrl = builder.build().encode().toUri();
 
-    log.with(modifyCaseUrl).info("The url for requesting the postal fulfilment");
+    log.with(invalidateCaseUrl).info("The url for requesting the postal fulfilment");
 
-    ModifyCaseRequestDTO modifyCaseRequestDTO = new ModifyCaseRequestDTO();
+    InvalidateCaseRequestDTO dto = new InvalidateCaseRequestDTO();
+    dto.caseId(UUID.fromString(caseId))
+        .status(InvalidateCaseRequestDTO.StatusEnum.valueOf(statusSelected))
+        .notes("Two houses have been knocked into one.")
+        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
 
-    modifyCaseRequestDTO
-        .caseId(UUID.fromString(caseId))
-        .estabType(EstabTypeEnum.HOUSEHOLD)
-        .status(StatusEnum.valueOf(statusSelected))
-        .notes("Two houses have been knocked into one.");
-    modifyCaseRequestDTO.setAddressLine1("Brathay");
-    modifyCaseRequestDTO.setAddressLine2("2A Priors Way");
-    modifyCaseRequestDTO.setAddressLine3("Olivers");
-    modifyCaseRequestDTO.setTownName("Winchester");
-    modifyCaseRequestDTO.setRegion(ModifyCaseRequestDTO.RegionEnum.E);
-    modifyCaseRequestDTO.setPostcode("SO22 4HJ");
-    modifyCaseRequestDTO.setDateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
-    ;
-
-    HttpEntity<ModifyCaseRequestDTO> requestEntity = new HttpEntity<>(modifyCaseRequestDTO);
-
-    requestModifyCaseResponse =
-        getRestTemplate().exchange(modifyCaseUrl, HttpMethod.PUT, requestEntity, ResponseDTO.class);
-
-    return requestModifyCaseResponse;
+    return getRestTemplate()
+        .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
   }
 
   @Given("the CC agent has confirmed the respondent address")
@@ -1040,8 +1015,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @When("CC Advisor selects the survey launch")
   public void cc_Advisor_selects_the_launch() {
     try {
-      log.with(caseId)
-          .info("Now putting a ModifyCaseRequestDTO on the modifyCase endpoint for this case id..");
+      log.with(caseId).info("Calling survey launch endpoint");
       final String response = requestSurveyLaunch();
       log.info("SURVEY LAUNCH: The response from " + telephoneEndpointUrl);
       assertNotNull("SURVEY LAUNCH failure", response);
