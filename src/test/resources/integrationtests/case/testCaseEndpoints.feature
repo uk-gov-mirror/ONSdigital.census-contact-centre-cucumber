@@ -115,6 +115,7 @@ Feature: Test Contact centre Case Endpoints
       | "NOTKNOWN"                             | "400"     |
       | "XX474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "400"     |
 
+	@InvalidateCase
   @SetUp
   Scenario Outline: [CR-T357] Invalid Address
     Given the CC advisor has provided a valid UPRN <uprn>

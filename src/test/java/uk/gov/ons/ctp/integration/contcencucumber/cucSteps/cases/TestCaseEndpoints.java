@@ -104,7 +104,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String queueName;
   private List<CaseDTO> listOfCasesWithUprn;
   private URI caseForUprnUrl;
-  private URI invalidateCaseUrl;
   private AddressNotValidEvent addressNotValidEvent;
   private String uprnStr;
   private String status = "";
@@ -715,16 +714,30 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("CC Advisor selects the address status change {string}")
   public void cc_Advisor_selects_the(String statusSelected) {
-    try {
-      log.with(caseId).info("Calling invalidate endpoint");
-      ResponseEntity<ResponseDTO> response = invalidateCase(caseId, statusSelected);
-      HttpStatus contactCentreStatus = response.getStatusCode();
-      log.with(contactCentreStatus)
-          .info("INVALIDATE CASE: The response from " + invalidateCaseUrl.toString());
-      assertEquals(HttpStatus.OK, contactCentreStatus);
-    } catch (Exception e) {
-      fail("INVALIDATE CASE FAILED: " + e.getMessage());
-    }
+    log.with(caseId).info("Calling invalidate endpoint");
+
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId)
+            .pathSegment("invalidate");
+
+    URI invalidateCaseUrl = builder.build().encode().toUri();
+
+    InvalidateCaseRequestDTO dto = new InvalidateCaseRequestDTO();
+    dto.caseId(UUID.fromString(caseId))
+        .status(InvalidateCaseRequestDTO.StatusEnum.valueOf(statusSelected))
+        .notes("Two houses have been knocked into one.")
+        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
+
+    ResponseEntity<ResponseDTO> response =
+        getRestTemplate()
+            .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
+
+    HttpStatus contactCentreStatus = response.getStatusCode();
+    log.with(contactCentreStatus).info("INVALIDATE CASE Response");
+    assertEquals(HttpStatus.OK, contactCentreStatus);
   }
 
   @Then("an AddressNotValid event is emitted to RM, which contains the {string} change")
@@ -766,28 +779,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     AddressNotValid addressNotValid = addressNotValidPayload.getInvalidAddress();
     assertEquals(expectedReason, addressNotValid.getReason());
     assertEquals(expectedCollectionCaseId, addressNotValid.getCollectionCase().getId());
-  }
-
-  private ResponseEntity<ResponseDTO> invalidateCase(String caseId, String statusSelected) {
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment(caseId)
-            .pathSegment("invalidate");
-
-    invalidateCaseUrl = builder.build().encode().toUri();
-
-    log.with(invalidateCaseUrl).info("The url for requesting the postal fulfilment");
-
-    InvalidateCaseRequestDTO dto = new InvalidateCaseRequestDTO();
-    dto.caseId(UUID.fromString(caseId))
-        .status(InvalidateCaseRequestDTO.StatusEnum.valueOf(statusSelected))
-        .notes("Two houses have been knocked into one.")
-        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
-
-    return getRestTemplate()
-        .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
   }
 
   @Given("the CC agent has confirmed the respondent address")
