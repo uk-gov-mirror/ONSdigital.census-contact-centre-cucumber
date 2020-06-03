@@ -72,8 +72,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String productCodeSelected;
   private Exception fulfillmentException;
 
-  @Autowired
-  private ProductService productService;
+  @Autowired private ProductService productService;
 
   private static final String RABBIT_EXCHANGE = "events";
 
@@ -111,8 +110,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
                   null,
-                  new ParameterizedTypeReference<List<FulfilmentDTO>>() {
-                  });
+                  new ParameterizedTypeReference<List<FulfilmentDTO>>() {});
       fulfilmentDTOList = fulfilmentResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
       fail(httpClientErrorException.getMessage());
@@ -208,8 +206,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
                   null,
-                  new ParameterizedTypeReference<List<CaseDTO>>() {
-                  });
+                  new ParameterizedTypeReference<List<CaseDTO>>() {});
       caseDTOList = caseResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
       fail(httpClientErrorException.getMessage());
@@ -371,8 +368,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Then(
       "the Case endpoint returns a case, associated with UPRN {string}, which has caseType {string} and addressLevel {string} and handDelivery {string}")
   public void
-  the_Case_endpoint_returns_a_case_associated_with_UPRN_which_has_caseType_and_addressLevel_and_handDelivery(
-      String strUprn, String strCaseType, String strAddressLevel, String strHandDelivery) {
+      the_Case_endpoint_returns_a_case_associated_with_UPRN_which_has_caseType_and_addressLevel_and_handDelivery(
+          String strUprn, String strCaseType, String strAddressLevel, String strHandDelivery) {
     caseId = listOfCasesWithUprn.get(0).getId().toString();
     log.with(caseId).debug("The case id returned by getCasesWithUprn endpoint");
 
@@ -396,8 +393,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given(
       "a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
   public void
-  a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
-      String individual, String region) throws CTPException {
+      a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
+          String individual, String region) throws CTPException {
     try {
       ResponseEntity<List<Product>> productsResponse = getProducts("HH", region, individual);
       listOfProducts = productsResponse.getBody();
@@ -419,8 +416,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given(
       "a list of available fulfilment product codes is presented for a caseType = {string} where individual flag = {string} and region = {string}")
   public void
-  a_list_of_available_fulfilment_product_codes_is_presented_for_a_caseType_where_individual_flag_and_region(
-      String caseType, String individual, String region) {
+      a_list_of_available_fulfilment_product_codes_is_presented_for_a_caseType_where_individual_flag_and_region(
+          String caseType, String individual, String region) {
     try {
       ResponseEntity<List<Product>> productsResponse = getProducts(caseType, region, individual);
       listOfProducts = productsResponse.getBody();
@@ -453,12 +450,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @When("CC Advisor selects the product code for productGroup {string} deliveryChannel {string}")
   public void ccAdvisorSelectsTheProductCodeForProductGroupDeliveryChannel(
       String strProductGroup, String strDeliveryChannel) {
-    productCodeSelected = getSelectedProductCodeFromListOfProducts(strProductGroup,
-        strDeliveryChannel);
+    productCodeSelected =
+        getSelectedProductCodeFromListOfProducts(strProductGroup, strDeliveryChannel);
   }
 
-  private String getSelectedProductCodeFromListOfProducts(final String strProductGroup,
-      final String strDeliveryChannel) throws PendingException {
+  private String getSelectedProductCodeFromListOfProducts(
+      final String strProductGroup, final String strDeliveryChannel) throws PendingException {
     String prodCodeSelected = null;
     for (Product p : listOfProducts) {
       String productGroup = p.getProductGroup().toString().toUpperCase();
@@ -506,7 +503,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           HttpStatus.OK,
           contactCentreStatus);
     } catch (Exception e) {
-      log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred. Case ID: " + caseId);
+      log.error(
+          "REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred. Case ID: " + caseId);
       log.error(e.getMessage());
       fail();
     }
@@ -515,22 +513,24 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @And("Requests a fulfillment for the case and title {string} forename {string} surname {string}")
   public void requestsAFulfillmentForTheCaseAndTitleForenameSurname(
       String title, String forename, String surname) {
-      fulfillmentException = null;
-      log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
-      requestFulfilmentByPost(caseId, productCodeSelected, title, forename, surname);
+    fulfillmentException = null;
+    log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
+    requestFulfilmentByPost(caseId, productCodeSelected, title, forename, surname);
   }
 
   @Then("an exception is thrown stating {string}")
   public void anExceptionIsThrownStating(String expectedExceptionMessage) {
-    assertTrue("Exception must contain message: " + expectedExceptionMessage, fulfillmentException.getMessage().contains(expectedExceptionMessage));
+    assertTrue(
+        "Exception must contain message: " + expectedExceptionMessage,
+        fulfillmentException.getMessage().contains(expectedExceptionMessage));
   }
 
   @Then(
       "a fulfilment request event is emitted to RM for UPRN = {string} addressType = {string} individual = {string} and region = {string}")
   public void
-  a_fulfilment_request_event_is_emitted_to_RM_for_UPRN_addressType_individual_and_region(
-      String expectedUprn, String expectedAddressType, String individual, String expectedRegion)
-      throws CTPException {
+      a_fulfilment_request_event_is_emitted_to_RM_for_UPRN_addressType_individual_and_region(
+          String expectedUprn, String expectedAddressType, String individual, String expectedRegion)
+          throws CTPException {
     log.info(
         "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
             + queueName
@@ -636,8 +636,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
                   caseForUprnUrl,
                   HttpMethod.GET,
                   null,
-                  new ParameterizedTypeReference<List<CaseDTO>>() {
-                  });
+                  new ParameterizedTypeReference<List<CaseDTO>>() {});
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
           "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
@@ -666,8 +665,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
                   productsUrl,
                   HttpMethod.GET,
                   null,
-                  new ParameterizedTypeReference<List<Product>>() {
-                  });
+                  new ParameterizedTypeReference<List<Product>>() {});
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
           "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
@@ -680,15 +678,20 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     return requestFulfilmentByPost(caseId, productCode, "Mrs", "Joanna", "Bloggs");
   }
 
-  private ResponseEntity<ResponseDTO> requestFulfilmentByPost(final String caseId,
-      final String productCode, final String title, final String forename, final String surname) {
-    final PostalFulfilmentRequestDTO postalFulfilmentRequest = new PostalFulfilmentRequestDTO()
-        .caseId(UUID.fromString(caseId))
-        .title(title)
-        .forename(forename)
-        .surname(surname)
-        .fulfilmentCode(productCode)
-        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
+  private ResponseEntity<ResponseDTO> requestFulfilmentByPost(
+      final String caseId,
+      final String productCode,
+      final String title,
+      final String forename,
+      final String surname) {
+    final PostalFulfilmentRequestDTO postalFulfilmentRequest =
+        new PostalFulfilmentRequestDTO()
+            .caseId(UUID.fromString(caseId))
+            .title(title)
+            .forename(forename)
+            .surname(surname)
+            .fulfilmentCode(productCode)
+            .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
     return requestFulfilmentByPost(postalFulfilmentRequest);
   }
 
@@ -717,7 +720,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       log.debug(
           "A HttpClientErrorException has occurred when trying to post to fulfilmentRequestByPost endpoint in contact centre: "
               + httpClientErrorException.getMessage());
-     fulfillmentException = httpClientErrorException;
+      fulfillmentException = httpClientErrorException;
     }
     return requestFulfilmentByPostResponse;
   }
