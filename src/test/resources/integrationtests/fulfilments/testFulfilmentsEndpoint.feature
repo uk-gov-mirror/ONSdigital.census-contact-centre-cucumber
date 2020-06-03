@@ -116,6 +116,7 @@ Feature: Test Contact centre Fulfilments Endpoints
 
     Examples:
       | uprn         | case_type | title | forename | surname |
+      | 1347459993   | CE        |       |          |         |
       | 1347459993   | CE        |   Mr  |          |         |
       | 1347459993   | CE        |       |   A      |         |
       | 1347459993   | CE        |       |          |   J     |
