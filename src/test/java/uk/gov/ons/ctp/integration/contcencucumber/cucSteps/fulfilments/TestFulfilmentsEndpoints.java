@@ -10,6 +10,7 @@ import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import cucumber.api.PendingException;
 import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -67,14 +68,11 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private RabbitHelper rabbit;
   private String queueName;
   private FulfilmentRequestedEvent fulfilmentRequestedEvent;
-  private Header fulfilmentRequestedHeader;
-  private FulfilmentPayload fulfilmentPayload;
   private String caseId;
   private String productCodeSelected;
+  private Exception fulfillmentException;
 
   @Autowired private ProductService productService;
-  private URI fulfilmentByPostUrl;
-  private URI fulfilmentBySMSUrl;
 
   private static final String RABBIT_EXCHANGE = "events";
 
@@ -449,21 +447,27 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     rabbit.flushQueue(queueName);
   }
 
-  @When("CC Advisor selects the product code for productGroup {string}, deliveryChannel {string}")
-  public void cc_Advisor_selects_the_product_code_for_productGroup_deliveryChannel(
+  @When("CC Advisor selects the product code for productGroup {string} deliveryChannel {string}")
+  public void ccAdvisorSelectsTheProductCodeForProductGroupDeliveryChannel(
       String strProductGroup, String strDeliveryChannel) {
-    productCodeSelected = null;
+    productCodeSelected =
+        getSelectedProductCodeFromListOfProducts(strProductGroup, strDeliveryChannel);
+  }
+
+  private String getSelectedProductCodeFromListOfProducts(
+      final String strProductGroup, final String strDeliveryChannel) throws PendingException {
+    String prodCodeSelected = null;
     for (Product p : listOfProducts) {
       String productGroup = p.getProductGroup().toString().toUpperCase();
       String deliveryChannel = p.getDeliveryChannel().toString().toUpperCase();
       if (productGroup.equals(strProductGroup)
           && deliveryChannel.equals(strDeliveryChannel)
           && p.getFulfilmentCode() != null) {
-        productCodeSelected = p.getFulfilmentCode();
+        prodCodeSelected = p.getFulfilmentCode();
       }
     }
-    log.info("The product code selected is: " + productCodeSelected);
-    if (productCodeSelected == null) {
+    log.info("The product code selected is: " + prodCodeSelected);
+    if (prodCodeSelected == null) {
       throw new PendingException(
           "The Product Reference Service contains no products that match this combination of productGroup ("
               + strProductGroup
@@ -471,7 +475,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
               + strDeliveryChannel
               + ")");
     }
+    return prodCodeSelected;
+  }
 
+  @And("Requests a fulfillment for the case and delivery channel {string}")
+  public void requestsAFulfillmentForTheCaseAndDeliveryChannel(final String strDeliveryChannel) {
+    fulfillmentException = null;
     try {
       log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
       ResponseEntity<ResponseDTO> fulfilmentRequestResponse;
@@ -480,6 +489,12 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       } else {
         fulfilmentRequestResponse = requestFulfilmentByPost(caseId, productCodeSelected);
       }
+
+      if (fulfillmentException != null) {
+        throw fulfillmentException;
+      }
+      assertNotNull("Fulfillment Response is NULL", fulfilmentRequestResponse);
+
       HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
       log.with(contactCentreStatus)
           .info("REQUEST FULFILMENT: The response from " + productsUrl.toString());
@@ -488,11 +503,26 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           HttpStatus.OK,
           contactCentreStatus);
     } catch (Exception e) {
-      log.error("REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred.");
+      log.error(
+          "REQUEST FULFILMENT HAS FAILED: An unexpected error has occurred. Case ID: " + caseId);
       log.error(e.getMessage());
       fail();
-      System.exit(0);
     }
+  }
+
+  @And("Requests a fulfillment for the case and title {string} forename {string} surname {string}")
+  public void requestsAFulfillmentForTheCaseAndTitleForenameSurname(
+      String title, String forename, String surname) {
+    fulfillmentException = null;
+    log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
+    requestFulfilmentByPost(caseId, productCodeSelected, title, forename, surname);
+  }
+
+  @Then("an exception is thrown stating {string}")
+  public void anExceptionIsThrownStating(String expectedExceptionMessage) {
+    assertTrue(
+        "Exception must contain message: " + expectedExceptionMessage,
+        fulfillmentException.getMessage().contains(expectedExceptionMessage));
   }
 
   @Then(
@@ -526,9 +556,9 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
                 TimeoutParser.parseTimeoutString(timeout));
 
     assertNotNull(fulfilmentRequestedEvent);
-    fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
+    Header fulfilmentRequestedHeader = fulfilmentRequestedEvent.getEvent();
     assertNotNull(fulfilmentRequestedHeader);
-    fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
+    FulfilmentPayload fulfilmentPayload = fulfilmentRequestedEvent.getPayload();
     assertNotNull(fulfilmentPayload);
 
     String expectedType = "FULFILMENT_REQUESTED";
@@ -645,27 +675,40 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   private ResponseEntity<ResponseDTO> requestFulfilmentByPost(String caseId, String productCode) {
+    return requestFulfilmentByPost(caseId, productCode, "Mrs", "Joanna", "Bloggs");
+  }
+
+  private ResponseEntity<ResponseDTO> requestFulfilmentByPost(
+      final String caseId,
+      final String productCode,
+      final String title,
+      final String forename,
+      final String surname) {
+    final PostalFulfilmentRequestDTO postalFulfilmentRequest =
+        new PostalFulfilmentRequestDTO()
+            .caseId(UUID.fromString(caseId))
+            .title(title)
+            .forename(forename)
+            .surname(surname)
+            .fulfilmentCode(productCode)
+            .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
+    return requestFulfilmentByPost(postalFulfilmentRequest);
+  }
+
+  private ResponseEntity<ResponseDTO> requestFulfilmentByPost(
+      final PostalFulfilmentRequestDTO postalFulfilmentRequest) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
             .pathSegment("cases")
-            .pathSegment(caseId)
+            .pathSegment(postalFulfilmentRequest.getCaseId().toString())
             .pathSegment("fulfilment")
             .pathSegment("post");
 
     ResponseEntity<ResponseDTO> requestFulfilmentByPostResponse = null;
-    fulfilmentByPostUrl = builder.build().encode().toUri();
+    URI fulfilmentByPostUrl = builder.build().encode().toUri();
 
     log.with(fulfilmentByPostUrl).info("The url for requesting the postal fulfilment");
-
-    PostalFulfilmentRequestDTO postalFulfilmentRequest = new PostalFulfilmentRequestDTO();
-    postalFulfilmentRequest.setCaseId(UUID.fromString(caseId));
-    postalFulfilmentRequest.setTitle("Mrs");
-    postalFulfilmentRequest.setForename("Joanna");
-    postalFulfilmentRequest.setSurname("Bloggs");
-    postalFulfilmentRequest.setFulfilmentCode(productCode);
-    postalFulfilmentRequest.setDateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
-
     HttpEntity<PostalFulfilmentRequestDTO> requestEntity =
         new HttpEntity<>(postalFulfilmentRequest);
 
@@ -677,6 +720,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       log.debug(
           "A HttpClientErrorException has occurred when trying to post to fulfilmentRequestByPost endpoint in contact centre: "
               + httpClientErrorException.getMessage());
+      fulfillmentException = httpClientErrorException;
     }
     return requestFulfilmentByPostResponse;
   }
@@ -691,7 +735,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .pathSegment("sms");
 
     ResponseEntity<ResponseDTO> requestFulfilmentBySMSResponse = null;
-    fulfilmentBySMSUrl = builder.build().encode().toUri();
+    URI fulfilmentBySMSUrl = builder.build().encode().toUri();
 
     log.with(fulfilmentBySMSUrl).info("The url for requesting the SMS fulfilment");
 
