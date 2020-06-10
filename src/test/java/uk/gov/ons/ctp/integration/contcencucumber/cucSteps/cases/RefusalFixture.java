@@ -15,6 +15,7 @@ public final class RefusalFixture {
 
   public static final ReasonEnum A_REASON = ReasonEnum.HARD;
   public static final String AN_AGENT_ID = "123";
+  public static final String A_CALL_ID = "292-CALLME";
   public static final String SOME_NOTES = "Description of refusal";
   public static final String A_TITLE = "Mr";
   public static final String A_FORENAME = "Steve";
@@ -34,6 +35,7 @@ public final class RefusalFixture {
     refusal
         .caseId(caseId)
         .agentId(agentId)
+        .callId(A_CALL_ID)
         .notes(SOME_NOTES)
         .title(A_TITLE)
         .forename(A_FORENAME)
