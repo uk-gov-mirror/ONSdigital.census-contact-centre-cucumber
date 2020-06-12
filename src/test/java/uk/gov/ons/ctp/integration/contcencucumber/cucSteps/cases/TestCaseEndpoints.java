@@ -542,6 +542,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(RefusalFixture.compactAddress(), details.getAddress());
     assertEquals(RefusalFixture.contact(), details.getContact());
     assertEquals(RefusalFixture.SOME_NOTES, details.getReport());
+    assertEquals(RefusalFixture.A_CALL_ID, details.getCallId());
     assertEquals(agentId, details.getAgentId());
     assertEquals(UUID.fromString(caseId), details.getCollectionCase().getId());
   }
@@ -575,7 +576,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @And("I supply the Refusal information")
   public void i_supply_the_Refusal_information() {
-    this.refusalDTO = createRefusalRequest();
+    this.refusalDTO = RefusalFixture.createRequest(caseId, agentId, reason);
   }
 
   @Then("the call succeeded and responded with the supplied case ID")
@@ -642,10 +643,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     telephoneEndpointUrl = builder.build().encode().toUri().toString();
     log.info("Using the following endpoint to launch EQ: " + telephoneEndpointUrl);
     return getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
-  }
-
-  private RefusalRequestDTO createRefusalRequest() {
-    return RefusalFixture.createRequest(caseId, agentId, reason);
   }
 
   @Given("the CC advisor has provided a valid UPRN {string}")

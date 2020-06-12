@@ -53,6 +53,7 @@ Feature: Test Contact centre Case Endpoints
       | "abcdefghik" | "400"     |
       | "1111111111" | "404"     |
 
+  @ValidRefusalIsAccepted
   Scenario Outline: I want to verify that a valid Refusal is accepted
     Given I have a valid case ID <caseId>
     And I supply the Refusal information
@@ -66,7 +67,7 @@ Feature: Test Contact centre Case Endpoints
       | "UnKnown"                              |
       | "UNKNOWN"                              |
 
-  @Refusal
+  @RefusalReasonAcceptedAndEventPosted
   Scenario Outline: I want to verify that a valid reason for Refusal is accepted and event posted
     Given I have a valid case ID <caseId>
     And an empty queue exists for sending Refusal events
