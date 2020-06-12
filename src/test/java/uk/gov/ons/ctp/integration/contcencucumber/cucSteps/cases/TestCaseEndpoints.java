@@ -7,25 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import io.swagger.client.model.AddressDTO;
-import io.swagger.client.model.AddressQueryResponseDTO;
-import io.swagger.client.model.CaseDTO;
-import io.swagger.client.model.CaseDTO.AllowedDeliveryChannelsEnum;
-import io.swagger.client.model.CaseDTO.EstabTypeEnum;
-import io.swagger.client.model.FulfilmentDTO;
-import io.swagger.client.model.InvalidateCaseRequestDTO;
-import io.swagger.client.model.RefusalRequestDTO;
-import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
-import io.swagger.client.model.ResponseDTO;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -51,6 +32,24 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import io.swagger.client.model.AddressDTO;
+import io.swagger.client.model.AddressQueryResponseDTO;
+import io.swagger.client.model.CaseDTO;
+import io.swagger.client.model.DeliveryChannel;
+import io.swagger.client.model.EstabType;
+import io.swagger.client.model.FulfilmentDTO;
+import io.swagger.client.model.InvalidateCaseRequestDTO;
+import io.swagger.client.model.RefusalRequestDTO;
+import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
+import io.swagger.client.model.ResponseDTO;
 import uk.gov.ons.ctp.common.domain.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
@@ -892,9 +891,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("HH", response.getAddressType().name());
     assertFalse(response.isSecureEstablishment());
     assertEquals(
-        Arrays.asList(AllowedDeliveryChannelsEnum.POST, AllowedDeliveryChannelsEnum.SMS),
+        Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
         response.getAllowedDeliveryChannels());
-    assertEquals(EstabTypeEnum.HOUSEHOLD.name(), response.getEstabType().name());
+    assertEquals(EstabType.HOUSEHOLD.name(), response.getEstabType().name());
     assertEquals("Household", response.getEstabDescription());
     assertNotNull(response.getCreatedDateTime());
     assertEquals("1 West Grove Road", response.getAddressLine1());
@@ -974,7 +973,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     CollectionCaseNewAddress collectionCase = newAddress.getCollectionCase();
     assertNotNull(collectionCase.getId());
-    assertNull(collectionCase.getCaseType());
+    assertEquals("HH", collectionCase.getCaseType());
     assertEquals("CENSUS", collectionCase.getSurvey());
     assertNull(collectionCase.getFieldCoordinatorId());
     assertNull(collectionCase.getFieldOfficerId());

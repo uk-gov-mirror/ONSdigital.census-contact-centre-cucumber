@@ -4,17 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import io.swagger.client.model.AddressDTO;
-import io.swagger.client.model.AddressDTO.AddressTypeEnum;
-import io.swagger.client.model.AddressDTO.EstabTypeEnum;
-import io.swagger.client.model.AddressDTO.RegionEnum;
-import io.swagger.client.model.AddressQueryResponseDTO;
 import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -22,6 +11,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import io.swagger.client.model.AddressDTO;
+import io.swagger.client.model.AddressDTO.AddressTypeEnum;
+import io.swagger.client.model.AddressDTO.RegionEnum;
+import io.swagger.client.model.AddressQueryResponseDTO;
+import io.swagger.client.model.EstabType;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestBase;
 
 public class TestAddressEndpoints extends TestBase {
@@ -228,7 +227,7 @@ public class TestAddressEndpoints extends TestBase {
     log.with(addressType).info("This is the address type that was found in AIMS");
     assertNotNull(addressType);
 
-    EstabTypeEnum estabType = addressFound.getEstabType();
+    EstabType estabType = addressFound.getEstabType();
     log.with(estabType).info("This is the establishment type that was found in AIMS");
     assertNotNull(estabType);
   }
