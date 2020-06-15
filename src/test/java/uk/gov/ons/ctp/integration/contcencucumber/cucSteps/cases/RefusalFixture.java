@@ -1,10 +1,10 @@
 package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.Region;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import uk.gov.ons.ctp.common.event.model.AddressCompact;
