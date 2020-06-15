@@ -6,7 +6,7 @@
 
   <groupId>census-contact-centre-cucumber</groupId>
   <artifactId>census-contact-centre-cucumber</artifactId>
-  <version>1.0.0-SNAPSHOT-CR957</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <parent>
