@@ -17,9 +17,10 @@ import cucumber.api.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
+import io.swagger.client.model.CaseType;
 import io.swagger.client.model.FulfilmentDTO;
-import io.swagger.client.model.FulfilmentDTO.CaseTypesEnum;
 import io.swagger.client.model.PostalFulfilmentRequestDTO;
+import io.swagger.client.model.Region;
 import io.swagger.client.model.ResponseDTO;
 import io.swagger.client.model.SMSFulfilmentRequestDTO;
 import java.net.URI;
@@ -135,13 +136,13 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
               fulfilmentContainsCaseType(fulfilment, caseType));
           assertTrue(
               "Fulfilment should be of correct region",
-              fulfilment.getRegions().contains(FulfilmentDTO.RegionsEnum.valueOf(region)));
+              fulfilment.getRegions().contains(Region.valueOf(region)));
         });
   }
 
   private boolean fulfilmentContainsCaseType(final FulfilmentDTO dto, final String caseType) {
     boolean containsCaseType = false;
-    for (CaseTypesEnum caseType1 : dto.getCaseTypes()) {
+    for (CaseType caseType1 : dto.getCaseTypes()) {
       if (caseType1.name().equalsIgnoreCase(caseType)) {
         containsCaseType = true;
       }
@@ -361,7 +362,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         UniquePropertyReferenceNumber.create(listOfCasesWithUprn.get(0).getUprn()));
     assertEquals(
         "The caseType found is not the expected one",
-        CaseDTO.CaseTypeEnum.valueOf(strCaseType),
+        CaseType.valueOf(strCaseType),
         listOfCasesWithUprn.get(0).getCaseType());
   }
 

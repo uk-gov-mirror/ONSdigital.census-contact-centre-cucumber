@@ -19,8 +19,8 @@ import cucumber.api.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
-import io.swagger.client.model.CaseDTO.AllowedDeliveryChannelsEnum;
-import io.swagger.client.model.CaseDTO.EstabTypeEnum;
+import io.swagger.client.model.DeliveryChannel;
+import io.swagger.client.model.EstabType;
 import io.swagger.client.model.FulfilmentDTO;
 import io.swagger.client.model.InvalidateCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
@@ -889,9 +889,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("HH", response.getAddressType().name());
     assertFalse(response.isSecureEstablishment());
     assertEquals(
-        Arrays.asList(AllowedDeliveryChannelsEnum.POST, AllowedDeliveryChannelsEnum.SMS),
+        Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
         response.getAllowedDeliveryChannels());
-    assertEquals(EstabTypeEnum.HOUSEHOLD.name(), response.getEstabType().name());
+    assertEquals(EstabType.HOUSEHOLD.name(), response.getEstabType().name());
     assertEquals("Household", response.getEstabDescription());
     assertNotNull(response.getCreatedDateTime());
     assertEquals("1 West Grove Road", response.getAddressLine1());
@@ -971,7 +971,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     CollectionCaseNewAddress collectionCase = newAddress.getCollectionCase();
     assertNotNull(collectionCase.getId());
-    assertNull(collectionCase.getCaseType());
+    assertEquals("HH", collectionCase.getCaseType());
     assertEquals("CENSUS", collectionCase.getSurvey());
     assertNull(collectionCase.getFieldCoordinatorId());
     assertNull(collectionCase.getFieldOfficerId());

@@ -2,7 +2,7 @@ package uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases;
 
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
-import io.swagger.client.model.RefusalRequestDTO.RegionEnum;
+import io.swagger.client.model.Region;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import lombok.AccessLevel;
@@ -26,7 +26,7 @@ public final class RefusalFixture {
   public static final String AN_ADDR_LINE_3 = "Oldham";
   public static final String A_TOWN = "Manchester";
   public static final String A_POSTCODE = "OL3 5DJ";
-  public static final RegionEnum A_REGION = RegionEnum.E;
+  public static final Region A_REGION = Region.E;
   public static final String A_UPRN_STR = "1234";
 
   public static RefusalRequestDTO createRequest(String caseId, String agentId, ReasonEnum reason) {

@@ -12,9 +12,9 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressDTO.AddressTypeEnum;
-import io.swagger.client.model.AddressDTO.EstabTypeEnum;
 import io.swagger.client.model.AddressDTO.RegionEnum;
 import io.swagger.client.model.AddressQueryResponseDTO;
+import io.swagger.client.model.EstabType;
 import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -228,7 +228,7 @@ public class TestAddressEndpoints extends TestBase {
     log.with(addressType).info("This is the address type that was found in AIMS");
     assertNotNull(addressType);
 
-    EstabTypeEnum estabType = addressFound.getEstabType();
+    EstabType estabType = addressFound.getEstabType();
     log.with(estabType).info("This is the establishment type that was found in AIMS");
     assertNotNull(estabType);
   }
