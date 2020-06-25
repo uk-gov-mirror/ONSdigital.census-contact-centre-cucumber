@@ -1,7 +1,7 @@
 casedata:
   cases: '[
   {
-    "caseRef": "987655",
+    "caseRef": "987655008",
     "arid": "2344266239",
     "estabArid": "AABBCC",
     "estabType": "ET",
@@ -43,7 +43,7 @@ casedata:
     "surveyType": "CENSUS"
   },
   {
-    "caseRef": "987654",
+    "caseRef": "987654001",
     "arid": "2344266233",
     "estabArid": "AABBCC",
     "estabType": "ET",
@@ -85,7 +85,7 @@ casedata:
     "surveyType": "CENSUS"
   },
            {
-             "caseRef": "987654",
+             "caseRef": "987654001",
              "arid": "2344266233",
              "estabArid": "AABBCC",
              "estabType": "ET",
@@ -127,7 +127,7 @@ casedata:
              "surveyType": "CENSUS"
            },
           {
-            "caseRef": "987655",
+            "caseRef": "987655008",
             "arid": "2344266239",
             "estabArid": "AABBCC",
             "estabType": "ET",
@@ -169,7 +169,7 @@ casedata:
             "surveyType": "CENSUS"
           },
           {
-             "caseRef": "987654",
+             "caseRef": "987654001",
              "arid": "2344266233",
              "estabArid": "AABBCC",
              "estabType": "ET",
@@ -203,7 +203,7 @@ casedata:
                 "createdDateTime": "2019-04-14T13:45:26.564+01:00"
               }
               ],
-             "id": "3305e937-6fb1-4ce1-9d4c-077f147789dd",
+             "id": "e18a9509-adfe-4276-9f8e-08a2728fd31b",
              "caseType": "HI",
              "region": "E",
              "state": "ACTIONABLE",
@@ -211,7 +211,7 @@ casedata:
              "surveyType": "CENSUS"
            },
            {
-        "caseRef": "123123",
+        "caseRef": "123123002",
         "arid": "2344266233",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -254,7 +254,7 @@ casedata:
         "handDelivery": false
         },
         {
-        "caseRef": "223123",
+        "caseRef": "223123001",
         "arid": "2344266233",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -297,7 +297,7 @@ casedata:
         "handDelivery": false
            },
            {
-        "caseRef": "223123",
+        "caseRef": "223123001",
         "arid": "2344266233",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -340,7 +340,7 @@ casedata:
         "handDelivery": false
         },
        {
-        "caseRef": "223123",
+        "caseRef": "223123001",
         "arid": "2344266233",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -383,7 +383,7 @@ casedata:
         "handDelivery": false
       },
       {
-        "caseRef": "983655",
+        "caseRef": "983655002",
         "arid": "2344266239",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -426,7 +426,7 @@ casedata:
         "allowedDeliveryChannels": ["SMS"]
       },
       {
-        "caseRef": "982655",
+        "caseRef": "982655003",
         "arid": "2344266239",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -469,7 +469,7 @@ casedata:
         "allowedDeliveryChannels": ["SMS"]
       },
       {
-        "caseRef": "982655",
+        "caseRef": "982655003",
         "arid": "2344266239",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -512,7 +512,7 @@ casedata:
         "allowedDeliveryChannels": ["SMS"]
       },
       {
-        "caseRef": "982655",
+        "caseRef": "982655003",
         "arid": "2344266239",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -555,7 +555,7 @@ casedata:
         "allowedDeliveryChannels": ["SMS"]
       },
       {
-        "caseRef": "982655",
+        "caseRef": "982655003",
         "arid": "2344266239",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -598,7 +598,7 @@ casedata:
         "allowedDeliveryChannels": ["SMS"]
       },
       {
-        "caseRef": "982655",
+        "caseRef": "982655003",
         "arid": "2344266239",
         "estabArid": "AABBCC",
         "estabType": "ET",
@@ -641,7 +641,7 @@ casedata:
         "allowedDeliveryChannels": ["SMS"]
       },
         {
-        "caseRef": "223123",
+        "caseRef": "223123001",
         "arid": "2344266233",
         "estabArid": "AABBCC",
         "estabType": "ET",
