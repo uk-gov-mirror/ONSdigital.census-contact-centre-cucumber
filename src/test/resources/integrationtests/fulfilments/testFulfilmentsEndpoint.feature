@@ -165,13 +165,13 @@ Feature: Test Contact centre Fulfilments Endpoints
 
   @SetUp
   Scenario: [CR-T313] PENDING - I want to request an UAC for a CE Individual Respondent in NI via Post
-    Given the CC advisor has provided a valid UPRN "1347459993"
-    Then the Case endpoint returns a case, associated with UPRN "1347459993", which has caseType "CE"
+    Given the CC advisor has provided a valid UPRN "1347459997"
+    Then the Case endpoint returns a case, associated with UPRN "1347459997", which has caseType "CE"
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
     And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459993" addressType = "CE" individual = "true" and region = "N"
+    Then a fulfilment request event is emitted to RM for UPRN = "1347459997" addressType = "CE" individual = "true" and region = "N"
 
   @SetUp
   Scenario: [CR-T316] PENDING - I want to request an UAC for a CE Manager in NI via Post
