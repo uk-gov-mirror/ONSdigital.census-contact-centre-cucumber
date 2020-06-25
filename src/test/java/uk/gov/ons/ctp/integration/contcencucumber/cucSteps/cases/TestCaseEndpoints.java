@@ -403,8 +403,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info(
         "Create a substring that removes the first part of the telephoneEndpointBody to leave just the EQ token value");
 
-    hhEqToken1 = telephoneEndpointBody1.substring(37);
-    hhEqToken2 = telephoneEndpointBody2.substring(37);
+    hhEqToken1 = telephoneEndpointBody1.replaceAll("^.*token=", "");
+    hhEqToken2 = telephoneEndpointBody2.replaceAll("^.*token=", "");
 
     log.info("The first EQ token is: " + hhEqToken1);
     log.info("The second EQ token is: " + hhEqToken2);
