@@ -640,7 +640,7 @@ casedata:
         "surveyType": "CENSUS",
         "allowedDeliveryChannels": ["SMS"]
       },
-        {
+      {
         "caseRef": "223123",
         "arid": "2344266233",
         "estabArid": "AABBCC",
@@ -682,5 +682,48 @@ casedata:
         "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
         "surveyType": "CENSUS",
         "handDelivery": false
-        }
+      },
+      {
+        "caseRef": "223123",
+        "arid": "2344266233",
+        "estabArid": "AABBCC",
+        "estabType": "ET",
+        "uprn": "1347459997",
+        "createdDateTime": "2019-04-14T13:45:26.564+01:00",
+        "addressLine1": "Cairnmartin Court",
+        "addressLine2": "250 Ballygomartin Road",
+        "addressLine3": "",
+        "townName": "Belfast",
+        "postcode": "BT13 3NG",
+        "organisationName": "ON",
+        "addressLevel": "E",
+        "abpCode": "AACC",
+        "latitude": "41.40338",
+        "longitude": "2.17403",
+        "oa": "EE22",
+        "lsoa": "x1",
+        "msoa": "x2",
+        "lad": "H1",
+        "caseEvents": [
+            {
+                "id": "101",
+                "eventType": "CASE_UPDATED",
+                "description": "Initial creation of case",
+                "createdDateTime": "2019-04-14T13:45:26.564+01:00"
+            },
+            {
+                "id": "102",
+                "eventType": null,
+                "description": "Create Household Visit",
+                "createdDateTime": "2019-04-14T13:45:26.564+01:00"
+            }
+        ],
+        "id": "cb46a66a-494f-45ea-ba46-8186069bbb6f",
+        "caseType": "CE",
+        "addressType": "CE",
+        "region": "N",
+        "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
+        "surveyType": "CENSUS",
+        "handDelivery": false
+      }
      ]'
