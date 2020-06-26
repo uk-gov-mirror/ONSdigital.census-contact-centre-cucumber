@@ -72,13 +72,13 @@ import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
-import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
+import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 import uk.gov.ons.ctp.integration.contcencucumber.main.repository.impl.CaseDataRepositoryImpl;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
-public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
+public class TestCaseEndpoints extends SpringIntegrationTest {
 
   @Autowired private CaseDataRepositoryImpl dataRepo;
 

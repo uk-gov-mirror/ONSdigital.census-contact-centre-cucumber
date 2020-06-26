@@ -22,9 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestBase;
+import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 
-public class TestAddressEndpoints extends TestBase {
+public class TestAddressEndpoints extends SpringIntegrationTest {
 
   private static final Logger log = LoggerFactory.getLogger(TestAddressEndpoints.class);
   private AddressQueryResponseDTO addressQueryResponseDTO;

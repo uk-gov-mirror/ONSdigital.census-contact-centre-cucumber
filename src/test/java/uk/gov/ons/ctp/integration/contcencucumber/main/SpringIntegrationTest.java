@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.integration.contcencucumber.main;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +18,8 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
       SpringIntegrationTest.class,
       ProductService.class,
       CaseDataRepository.class,
-      CloudDataStore.class
+      CloudDataStore.class,
+      AppConfig.class
     },
     loader = SpringBootContextLoader.class,
     initializers = ConfigFileApplicationContextInitializer.class)
@@ -31,11 +33,29 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 })
 public class SpringIntegrationTest {
 
-  protected RestTemplate getAuthenticationFreeRestTemplate() {
-    return new RestTemplateBuilder().build();
+  @Value("${contact-centre.host}")
+  protected String ccBaseUrl;
+
+  @Value("${contact-centre.port}")
+  protected String ccBasePort;
+
+  @Value("${contact-centre.username}")
+  private String ccUsername;
+
+  @Value("${contact-centre.password}")
+  private String ccPassword;
+
+  @Value("${mock-case-service.host}")
+  protected String mcsBaseUrl;
+
+  @Value("${mock-case-service.port}")
+  protected String mcsBasePort;
+
+  protected RestTemplate getRestTemplate() {
+    return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
   }
 
-  protected RestTemplate getRestTemplate(final String username, final String password) {
-    return new RestTemplateBuilder().basicAuthentication(username, password).build();
+  protected RestTemplate getAuthenticationFreeRestTemplate() {
+    return new RestTemplateBuilder().build();
   }
 }
