@@ -1,4 +1,4 @@
-package uk.gov.ons.ctp.integration.contcencucumber.main;
+package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
 
 import static org.junit.Assert.fail;
 
@@ -13,20 +13,31 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
-import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.YamlPropertySourceFactory;
+import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 
-@Configuration
+@Component
 @EnableConfigurationProperties
 @PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:cases.yml")
 @ConfigurationProperties("casedata")
-public class AppConfig {
+public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
+
+  @Value("${contact-centre.host}")
+  protected String ccBaseUrl;
+
+  @Value("${contact-centre.port}")
+  protected String ccBasePort;
+
+  @Value("${contact-centre.username}")
+  private String ccUsername;
+
+  @Value("${contact-centre.password}")
+  private String ccPassword;
 
   @Value("${mock-case-service.host}")
   protected String mcsBaseUrl;
@@ -34,7 +45,7 @@ public class AppConfig {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  private static final Logger log = LoggerFactory.getLogger(AppConfig.class);
+  private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiAndPostCasesBase.class);
 
   public void setCases(final String cases) throws IOException {
     log.info("Resetting Mock Case API Data");
@@ -67,6 +78,10 @@ public class AppConfig {
     }
   }
 
+  protected RestTemplate getRestTemplate() {
+    return getRestTemplate(ccUsername, ccPassword);
+  }
+
   private void resetData() {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
@@ -81,9 +96,5 @@ public class AppConfig {
     } catch (HttpClientErrorException ex) {
       fail("Unable to RESET Mock case api service: ");
     }
-  }
-
-  protected RestTemplate getAuthenticationFreeRestTemplate() {
-    return new RestTemplateBuilder().build();
   }
 }

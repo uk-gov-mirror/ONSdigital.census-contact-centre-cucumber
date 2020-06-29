@@ -50,10 +50,10 @@ import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
-import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
+import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
-public class TestFulfilmentsEndpoints extends SpringIntegrationTest {
+public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private List<FulfilmentDTO> fulfilmentDTOList;
   private AddressQueryResponseDTO addressQueryResponseDTO;
