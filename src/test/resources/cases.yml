@@ -40,7 +40,8 @@ casedata:
     "region": "W",
     "state": "ACTIONABLE",
     "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
-    "surveyType": "CENSUS"
+    "surveyType": "CENSUS",
+    "handDelivery": true
   },
   {
     "caseRef": "987654001",
@@ -82,7 +83,8 @@ casedata:
     "region": "E",
     "state": "ACTIONABLE",
     "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
-    "surveyType": "CENSUS"
+    "surveyType": "CENSUS",
+    "handDelivery": false
   },
            {
              "caseRef": "987654001",
@@ -124,7 +126,8 @@ casedata:
              "region": "E",
              "state": "ACTIONABLE",
              "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
-             "surveyType": "CENSUS"
+             "surveyType": "CENSUS",
+             "handDelivery": true
            },
           {
             "caseRef": "987655008",
@@ -166,7 +169,8 @@ casedata:
             "region": "E",
             "state": "ACTIONABLE",
             "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
-            "surveyType": "CENSUS"
+            "surveyType": "CENSUS",
+            "handDelivery": false
           },
           {
              "caseRef": "987654001",
@@ -208,7 +212,8 @@ casedata:
              "region": "E",
              "state": "ACTIONABLE",
              "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
-             "surveyType": "CENSUS"
+             "surveyType": "CENSUS",
+             "handDelivery": true
            },
            {
         "caseRef": "123123002",
@@ -294,7 +299,7 @@ casedata:
         "region": "W",
         "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
         "surveyType": "CENSUS",
-        "handDelivery": false
+        "handDelivery": true
            },
            {
         "caseRef": "223123001",
@@ -380,7 +385,7 @@ casedata:
         "region": "N",
         "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
         "surveyType": "CENSUS",
-        "handDelivery": false
+        "handDelivery": true
       },
       {
         "caseRef": "983655002",
@@ -423,7 +428,7 @@ casedata:
         "state": "ACTIONABLE",
         "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
         "surveyType": "CENSUS",
-        "allowedDeliveryChannels": ["SMS"]
+        "handDelivery": false
       },
       {
         "caseRef": "982655003",
@@ -466,7 +471,7 @@ casedata:
         "state": "ACTIONABLE",
         "collectionExerciseId": "3305e937-6fb3-4ce1-9d4c-077f147789de",
         "surveyType": "CENSUS",
-        "allowedDeliveryChannels": ["SMS"]
+        "handDelivery": true
       },
       {
         "caseRef": "982655003",
@@ -509,7 +514,7 @@ casedata:
         "state": "ACTIONABLE",
         "collectionExerciseId": "3305e937-6fb3-4ce1-9d4c-077f147789de",
         "surveyType": "CENSUS",
-        "allowedDeliveryChannels": ["SMS"]
+        "handDelivery": false
       },
       {
         "caseRef": "982655003",
@@ -552,7 +557,7 @@ casedata:
         "state": "ACTIONABLE",
         "collectionExerciseId": "3305e937-6fb3-4ce1-9d4c-077f147789de",
         "surveyType": "CENSUS",
-        "allowedDeliveryChannels": ["SMS"]
+        "handDelivery": true
       },
       {
         "caseRef": "982655003",
@@ -595,7 +600,7 @@ casedata:
         "state": "ACTIONABLE",
         "collectionExerciseId": "3305e937-6fb3-4ce1-9d4c-077f147789de",
         "surveyType": "CENSUS",
-        "allowedDeliveryChannels": ["SMS"]
+        "handDelivery": false
       },
       {
         "caseRef": "982655003",
@@ -638,7 +643,7 @@ casedata:
         "state": "ACTIONABLE",
         "collectionExerciseId": "3305e937-6fb3-4ce1-9d4c-077f147789de",
         "surveyType": "CENSUS",
-        "allowedDeliveryChannels": ["SMS"]
+        "handDelivery": true
       },
       {
         "caseRef": "223123001",
@@ -724,6 +729,6 @@ casedata:
         "region": "N",
         "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
         "surveyType": "CENSUS",
-        "handDelivery": false
+        "handDelivery": true
       }
      ]'
