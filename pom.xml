@@ -6,7 +6,7 @@
 
   <groupId>census-contact-centre-cucumber</groupId>
   <artifactId>census-contact-centre-cucumber</artifactId>
-  <version>1.0.0-SNAPSHOT-CR997</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <parent>
@@ -130,14 +130,14 @@
     <dependency>
       <groupId>uk.gov.ons.ctp.integration.common</groupId>
       <artifactId>cucumber-common</artifactId>
-      <version>0.0.19-SNAPSHOT-CR997</version>
+      <version>0.0.19</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>uk.gov.ons.ctp.integration.common</groupId>
       <artifactId>event-publisher</artifactId>
-      <version>0.0.39-SNAPSHOT-CR997</version>
+      <version>0.0.39</version>
     </dependency>
     
     <!-- Always use latest dependency in order to update classes from the
@@ -151,7 +151,7 @@
     <dependency>
       <groupId>uk.gov.ons.ctp.integration.common</groupId>
       <artifactId>census-int-case-api-client</artifactId>
-      <version>0.0.17-SNAPSHOT-CR997</version>
+      <version>0.0.17</version>
     </dependency>
 
     <dependency>
@@ -163,7 +163,7 @@
     <dependency>
       <groupId>uk.gov.ons.ctp.integration.common</groupId>
       <artifactId>eq-launcher</artifactId>
-      <version>0.0.27-SNAPSHOT-CR997</version>
+      <version>0.0.27</version>
     </dependency>
 
     <!-- ONS END -->
