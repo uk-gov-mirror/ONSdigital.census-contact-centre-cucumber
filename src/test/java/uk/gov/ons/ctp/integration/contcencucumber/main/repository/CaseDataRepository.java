@@ -21,9 +21,7 @@ public interface CaseDataRepository {
   /**
    * Delete a case from Firestore
    *
-   * @param schema
-   * @param key
-   * @return true if successful, otherwise false
+   * @param key of case to delete
    * @throws CTPException
    */
   void deleteCachedCase(String key) throws CTPException;
