@@ -698,6 +698,19 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         expectedUprn, UniquePropertyReferenceNumber.create(listOfCasesWithUprn.get(0).getUprn()));
   }
 
+  @Given("the Case endpoint returns a CE case associated with UPRN {string}")
+  public void the_Case_endpoint_returns_a_CE_case_associated_with_UPRN(String strUprn) {
+    CaseDTO caze = listOfCasesWithUprn.get(0);
+    caseId = caze.getId().toString();
+    log.with(caseId).info("The case id returned by getCasesWithUprn endpoint");
+
+    assertEquals("CE", caze.getCaseType().name());
+
+    UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
+    assertEquals(
+        expectedUprn, UniquePropertyReferenceNumber.create(listOfCasesWithUprn.get(0).getUprn()));
+  }
+
   @Given("an empty queue exists for sending AddressNotValid events")
   public void an_empty_queue_exists_for_sending_AddressNotValid_events() throws CTPException {
     String eventTypeAsString = "ADDRESS_NOT_VALID";
