@@ -129,7 +129,7 @@ Feature: Test Contact centre Case Endpoints
       | uprn         | status               |
       | "1347459995" | "DERELICT"           |
       | "1347459995" | "DEMOLISHED"         |
-      | "1347459987" | "NON_RESIDENTIAL"    |
+      | "1347459995" | "NON_RESIDENTIAL"    |
       | "1347459995" | "UNDER_CONSTRUCTION" |
       | "1347459995" | "SPLIT_ADDRESS"      |
       | "1347459995" | "MERGED"             |

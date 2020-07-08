@@ -779,6 +779,16 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
+  @Then("a {string} error is returned along with the expected message")
+  public void a_error_is_returned_along_with_the_expected_message(String expectedError) {
+    String expectedMessage =
+        "All CE addresses will be validated by a Field Officer. It is not necessary to submit this Invalidation request.";
+    String errorCaught = this.exception.getMessage();
+    log.with(errorCaught).info("Error message");
+    assertTrue(errorCaught.trim().contains(expectedError));
+    assertTrue(errorCaught.trim().contains(expectedMessage));
+  }
+
   @Then("an AddressNotValid event is emitted to RM, which contains the {string} change")
   public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_change(
       String expectedReason) throws CTPException {
