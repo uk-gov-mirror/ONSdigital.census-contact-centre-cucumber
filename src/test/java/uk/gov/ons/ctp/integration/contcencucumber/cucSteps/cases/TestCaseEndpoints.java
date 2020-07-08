@@ -750,6 +750,35 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(HttpStatus.OK, contactCentreStatus);
   }
 
+  @When("CC Advisor selects the CE address status change {string}")
+  public void cc_Advisor_selects_the_CE_address_status_change(String statusSelected) {
+    log.with(caseId).info("Calling invalidate endpoint");
+
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId)
+            .pathSegment("invalidate");
+
+    URI invalidateCaseUrl = builder.build().encode().toUri();
+
+    InvalidateCaseRequestDTO dto = new InvalidateCaseRequestDTO();
+    dto.caseId(UUID.fromString(caseId))
+        .status(InvalidateCaseRequestDTO.StatusEnum.valueOf(statusSelected))
+        .notes("Two houses have been knocked into one.")
+        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
+
+    try {
+      getRestTemplate().postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.info(
+          "We expect to catch a 400 Bad Request error here because the request, "
+              + "which is not allowed, was to invalidate a case of type CE.");
+      this.exception = httpClientErrorException;
+    }
+  }
+
   @Then("an AddressNotValid event is emitted to RM, which contains the {string} change")
   public void an_AddressNotValid_event_is_emitted_to_RM_which_contains_the_change(
       String expectedReason) throws CTPException {
