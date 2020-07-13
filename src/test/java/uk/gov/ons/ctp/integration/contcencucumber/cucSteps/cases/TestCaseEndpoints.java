@@ -900,7 +900,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("EX2 4LU", response.getPostcode());
     assertEquals(100040239948L, Long.parseLong(response.getUprn()));
     assertNull(response.getEstabUprn());
-    assertNull(response.getCaseEvents());
+    assertNotNull(response.getCaseEvents());
+    assertEquals(0, response.getCaseEvents().size());
 
     Optional<CachedCase> cachedCase =
         dataRepo.readCachedCaseByUPRN(UniquePropertyReferenceNumber.create(response.getUprn()));
