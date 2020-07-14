@@ -136,8 +136,8 @@ Feature: Test Contact centre Case Endpoints
       | "1347459995" | "DUPLICATE"          |
       | "1347459995" | "DOES_NOT_EXIST"     |
 
-  @TestCaseEndpointsT1002 @SetUp
-  Scenario Outline: [CR-T1002] CE Address Is Not Set Invalid
+  @TestCaseEndpointsT379 @SetUp
+  Scenario Outline: [CR-T379] No Invalid Address Event for CE
     Given the CC advisor has provided a valid UPRN "1347459987"
     And the Case endpoint returns a CE case associated with UPRN "1347459987"
     When CC Advisor selects the CE address status change <status>
