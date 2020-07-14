@@ -212,4 +212,3 @@ Eclipse does not recognise the maven lifecycle operations for generating code fr
 5. You may have to refresh maven on the project to clean up errors and warnings.
 
 
-
