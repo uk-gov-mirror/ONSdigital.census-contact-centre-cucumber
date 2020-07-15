@@ -141,7 +141,7 @@ Feature: Test Contact centre Case Endpoints
     Given the CC advisor has provided a valid UPRN "1347459987"
     And the Case endpoint returns a CE case associated with UPRN "1347459987"
     When CC Advisor selects the CE address status change <status>
-    Then a "400 Bad Request" error is returned along with the expected message
+    Then a "400 Bad Request" error is returned along with the message about CE addresses
 
     Examples: 
       | status               |

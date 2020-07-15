@@ -744,8 +744,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  @Then("a {string} error is returned along with the expected message")
-  public void a_error_is_returned_along_with_the_expected_message(String expectedError) {
+  @Then("a {string} error is returned along with the message about CE addresses")
+  public void a_error_is_returned_along_with_the_message_about_CE_addresses(String expectedError) {
     String expectedMessage =
         "All CE addresses will be validated by a Field Officer. It is not necessary to submit this Invalidation request.";
     String errorCaught = this.exception.getMessage();
