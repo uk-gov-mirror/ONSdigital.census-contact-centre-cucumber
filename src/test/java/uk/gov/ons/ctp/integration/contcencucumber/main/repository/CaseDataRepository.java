@@ -1,6 +1,6 @@
 package uk.gov.ons.ctp.integration.contcencucumber.main.repository;
 
-import java.util.Optional;
+import java.util.List;
 import uk.gov.ons.ctp.common.domain.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
@@ -9,13 +9,13 @@ import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 public interface CaseDataRepository {
 
   /**
-   * Read a Case for an address by Unique Property Reference Number
+   * Get all Cached cases for an address by Unique Property Reference Number.
    *
-   * @param uprn of case to read
-   * @return Optional containing case for UPRN if available
-   * @throws CTPException error reading case
+   * @param uprn UPRN of the case to read
+   * @return list of cached cases found that match the given UPRN
+   * @throws CTPException on error
    */
-  Optional<CachedCase> readCachedCaseByUPRN(final UniquePropertyReferenceNumber uprn)
+  List<CachedCase> readCachedCasesByUprn(final UniquePropertyReferenceNumber uprn)
       throws CTPException;
 
   /**

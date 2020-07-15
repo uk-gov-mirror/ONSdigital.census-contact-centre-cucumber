@@ -50,6 +50,7 @@ import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
+import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
@@ -58,7 +59,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private List<FulfilmentDTO> fulfilmentDTOList;
   private AddressQueryResponseDTO addressQueryResponseDTO;
   private String addressSearchString;
-  private String uprn;
+  private String uprnStr;
   private List<CaseDTO> caseDTOList;
   private CaseDTO caseDTO;
   private String requestChannel = "";
@@ -187,8 +188,17 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "i_have_a_valid_UPRN_from_my_found_address - filtered address list must not be empty: expected UPRN "
               + expectedUPRN);
     } else {
-      this.uprn = addressList.get(0).getUprn();
-      assertEquals("Should have returned the correct UPRN", expectedUPRN, this.uprn);
+      this.uprnStr = addressList.get(0).getUprn();
+      assertEquals("Should have returned the correct UPRN", expectedUPRN, this.uprnStr);
+    }
+  }
+
+  @And("cached cases for the UPRN do not already exist")
+  public void cachedCasesDoNotAlreadyExist() throws CTPException {
+    UniquePropertyReferenceNumber uprn = UniquePropertyReferenceNumber.create(uprnStr);
+    List<CachedCase> cachedCases = dataRepo.readCachedCasesByUprn(uprn);
+    for (CachedCase cc : cachedCases) {
+      dataRepo.deleteCachedCase(cc.getId());
     }
   }
 
@@ -199,7 +209,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .port(ccBasePort)
             .pathSegment("cases")
             .pathSegment("uprn")
-            .pathSegment(uprn);
+            .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
           getRestTemplate()
@@ -227,13 +237,13 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       try {
         caseDTOList.forEach(
             caseDetails -> {
-              assertEquals("Cases must have the correct UPRN", uprn, caseDetails.getUprn());
+              assertEquals("Cases must have the correct UPRN", uprnStr, caseDetails.getUprn());
               assertTrue(
                   "Cases must have the correct ID" + caseIds,
                   caseIdList.contains(caseDetails.getId().toString()));
             });
       } catch (NullPointerException npe) {
-        fail("Null pointer exception on case list for UPRN: " + uprn);
+        fail("Null pointer exception on case list for UPRN: " + uprnStr);
       }
     }
   }

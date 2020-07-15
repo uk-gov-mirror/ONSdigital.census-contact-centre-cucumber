@@ -34,11 +34,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -73,21 +71,17 @@ import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
-import uk.gov.ons.ctp.integration.contcencucumber.main.repository.impl.CaseDataRepositoryImpl;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
 public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
-
-  @Autowired private CaseDataRepositoryImpl dataRepo;
-
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
   private static final long RABBIT_TIMEOUT = 2000L;
 
   private String caseId;
-  private String uprn;
+  // private String uprn;
   private RefusalRequestDTO refusalDTO;
   private ResponseDTO responseDTO;
   private ReasonEnum reason = RefusalFixture.A_REASON;
@@ -263,7 +257,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("I have a valid UPRN {string}")
   public void i_have_a_valid_UPRN(String uprn) {
-    this.uprn = uprn;
+    this.uprnStr = uprn;
   }
 
   @When("I Search cases By UPRN")
@@ -273,7 +267,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .port(ccBasePort)
             .pathSegment("cases")
             .pathSegment("uprn")
-            .pathSegment(uprn);
+            .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
           getRestTemplate()
@@ -300,7 +294,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("I have an invalid UPRN {string}")
   public void i_have_an_invalid_UPRN(String uprn) {
-    this.uprn = uprn;
+    this.uprnStr = uprn;
   }
 
   @When("I Search cases By invalid UPRN")
@@ -311,7 +305,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .port(ccBasePort)
             .pathSegment("cases")
             .pathSegment("uprn")
-            .pathSegment(uprn);
+            .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
           getRestTemplate()
@@ -903,24 +897,18 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(response.getCaseEvents());
     assertEquals(0, response.getCaseEvents().size());
 
-    Optional<CachedCase> cachedCase =
-        dataRepo.readCachedCaseByUPRN(UniquePropertyReferenceNumber.create(response.getUprn()));
-    log.with(cachedCase).info("The fake case that has been created in Firestore");
-    assertTrue(cachedCase.isPresent());
+    List<CachedCase> cachedCases =
+        dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(response.getUprn()));
+    assertFalse(cachedCases.isEmpty());
+    log.with(cachedCases).info("The fake case that has been created in Firestore");
   }
 
-  @Given("the fake case does not already exist in Firestore")
-  public void the_fake_case_does_not_already_exist_in_Firestore() throws CTPException {
-
-    log.info(
-        "Make sure that the case does not already exist in Firestore otherwise a NEW_ADDRESS_REPORTED event will not get created");
+  @And("cached cases for the UPRN do not already exist")
+  public void cachedCasesDoNotAlreadyExist() throws CTPException {
     UniquePropertyReferenceNumber uprn = UniquePropertyReferenceNumber.create(uprnStr);
-    Optional<CachedCase> cachedCase = dataRepo.readCachedCaseByUPRN(uprn);
-    log.with("uprn", uprnStr).info("The uprn of the case we're looking for");
-    if (cachedCase.isPresent()) {
-      log.with("uprn", uprnStr)
-          .info("The case already exists in Firestore so we need to delete it for the test..");
-      dataRepo.deleteCachedCase(cachedCase.get().getId());
+    List<CachedCase> cachedCases = dataRepo.readCachedCasesByUprn(uprn);
+    for (CachedCase cc : cachedCases) {
+      dataRepo.deleteCachedCase(cc.getId());
     }
   }
 

@@ -31,11 +31,13 @@ Feature: Test Contact centre Fulfilments Endpoints
       | "SPG"    | "N"    | "false"    |
       | "SPG"    | "W"    | "false"    |
 
+	@FulfilmentsEndToEnd
   Scenario Outline: I want to verify that Fulfilments work end to end
     Given I have a valid address search String <address>
     When I Search Addresses By Address Search String
     Then A list of addresses for my search is returned containing the address I require
     Given I have a valid UPRN from my found address <uprn>
+    And cached cases for the UPRN do not already exist
     When I Search cases By UPRN
     Then the correct cases for my UPRN are returned <case_ids>
     Given I have a valid case from my search UPRN
