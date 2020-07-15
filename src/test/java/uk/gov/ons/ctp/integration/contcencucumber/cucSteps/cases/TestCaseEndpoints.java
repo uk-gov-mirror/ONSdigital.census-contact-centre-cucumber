@@ -541,8 +541,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(type, details.getType());
     log.info("Verifying refusal event details");
     assertEquals(RefusalFixture.compactAddress(), details.getAddress());
-    assertEquals(RefusalFixture.contact(), details.getContact());
-    assertEquals(RefusalFixture.SOME_NOTES, details.getReport());
+    assertEquals(RefusalFixture.contactCompact(), details.getContact());
     assertEquals(RefusalFixture.A_CALL_ID, details.getCallId());
     assertEquals(agentId, details.getAgentId());
     assertEquals(UUID.fromString(caseId), details.getCollectionCase().getId());

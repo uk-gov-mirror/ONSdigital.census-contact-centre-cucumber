@@ -4,7 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
+import java.util.List;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.util.UriComponentsBuilder;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import cucumber.api.java.en.Given;
@@ -15,13 +21,6 @@ import io.swagger.client.model.AddressDTO.AddressTypeEnum;
 import io.swagger.client.model.AddressDTO.RegionEnum;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.EstabType;
-import java.util.List;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestBase;
 
 public class TestAddressEndpoints extends TestBase {
