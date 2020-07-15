@@ -35,6 +35,7 @@ Feature: Test Contact centre Case Endpoints
 
   Scenario Outline: [CR-T136] I want to verify that the case search by case UPRN works
     Given I have a valid UPRN <uprn>
+    And cached cases for the UPRN do not already exist
     When I Search cases By UPRN
     Then the correct cases for my UPRN are returned <case_ids>
 
@@ -137,12 +138,13 @@ Feature: Test Contact centre Case Endpoints
       | "1347459995" | "DUPLICATE"               |
       | "1347459995" | "DOES_NOT_EXIST"          |
 
+	@CaseTestT148
   Scenario: [CR-T148] Publish a new address event to RM
     Given the CC agent has confirmed the respondent address
     And the case service does not have any case created for the address in question
     And Get/Case API returns a "404" error because there is no case found
     And an empty queue exists for sending NewAddressReported events
-    And the fake case does not already exist in Firestore
+    And cached cases for the UPRN do not already exist
     Given CC SVC creates a fake Case with the address details from AIMS
     Then the CC SVC must publish a new address event to RM with the fake CaseID
 
