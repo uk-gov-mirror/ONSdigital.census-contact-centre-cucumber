@@ -699,16 +699,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @Given("the Case endpoint returns a CE case associated with UPRN {string}")
-  public void the_Case_endpoint_returns_a_CE_case_associated_with_UPRN(String strUprn) {
+  public void the_Case_endpoint_returns_a_CE_case_associated_with_UPRN(String expectedUprn) {
     CaseDTO caze = listOfCasesWithUprn.get(0);
     caseId = caze.getId().toString();
     log.with(caseId).info("The case id returned by getCasesWithUprn endpoint");
 
     assertEquals("CE", caze.getCaseType().name());
-
-    UniquePropertyReferenceNumber expectedUprn = new UniquePropertyReferenceNumber(strUprn);
-    assertEquals(
-        expectedUprn, UniquePropertyReferenceNumber.create(listOfCasesWithUprn.get(0).getUprn()));
+    assertEquals(expectedUprn, caze.getUprn());
   }
 
   @Given("an empty queue exists for sending AddressNotValid events")
@@ -773,8 +770,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       getRestTemplate().postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
     } catch (HttpClientErrorException httpClientErrorException) {
       log.info(
-          "We expect to catch a 400 Bad Request error here because the request, "
-              + "which is not allowed, was to invalidate a case of type CE.");
+          "We expect to catch a 400 Bad Request error here because the request "
+              + "would have otherwise invalidated a case of type CE.");
       this.exception = httpClientErrorException;
     }
   }
