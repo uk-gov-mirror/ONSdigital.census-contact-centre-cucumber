@@ -723,25 +723,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void cc_Advisor_selects_the(String statusSelected) {
     log.with(caseId).info("Calling invalidate endpoint");
 
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment(caseId)
-            .pathSegment("invalidate");
-
-    URI invalidateCaseUrl = builder.build().encode().toUri();
-
-    InvalidateCaseRequestDTO dto = new InvalidateCaseRequestDTO();
-    dto.caseId(UUID.fromString(caseId))
-        .status(InvalidateCaseRequestDTO.StatusEnum.valueOf(statusSelected))
-        .notes("Two houses have been knocked into one.")
-        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
-
-    ResponseEntity<ResponseDTO> response =
-        getRestTemplate()
-            .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
-
+    ResponseEntity<ResponseDTO> response = callInvalidateEndpoint(statusSelected);
     HttpStatus contactCentreStatus = response.getStatusCode();
     log.with(contactCentreStatus).info("INVALIDATE CASE Response");
     assertEquals(HttpStatus.OK, contactCentreStatus);
@@ -751,23 +733,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void cc_Advisor_selects_the_CE_address_status_change(String statusSelected) {
     log.with(caseId).info("Calling invalidate endpoint");
 
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment(caseId)
-            .pathSegment("invalidate");
-
-    URI invalidateCaseUrl = builder.build().encode().toUri();
-
-    InvalidateCaseRequestDTO dto = new InvalidateCaseRequestDTO();
-    dto.caseId(UUID.fromString(caseId))
-        .status(InvalidateCaseRequestDTO.StatusEnum.valueOf(statusSelected))
-        .notes("Two houses have been knocked into one.")
-        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
-
     try {
-      getRestTemplate().postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
+      callInvalidateEndpoint(statusSelected);
+      fail();
     } catch (HttpClientErrorException httpClientErrorException) {
       log.info(
           "We expect to catch a 400 Bad Request error here because the request "
@@ -782,8 +750,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "All CE addresses will be validated by a Field Officer. It is not necessary to submit this Invalidation request.";
     String errorCaught = this.exception.getMessage();
     log.with(errorCaught).info("Error message");
-    assertTrue(errorCaught.trim().contains(expectedError));
-    assertTrue(errorCaught.trim().contains(expectedMessage));
+    assertTrue(errorCaught.contains(expectedError));
+    assertTrue(errorCaught.contains(expectedMessage));
   }
 
   @Then("an AddressNotValid event is emitted to RM, which contains the {string} change")
@@ -1183,5 +1151,27 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "THE CASE SHOULD NOT EXIST - the contact centre service endpoint should give a response code of 404",
         expectedErr,
         status);
+  }
+
+  private ResponseEntity<ResponseDTO> callInvalidateEndpoint(String statusSelected) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId)
+            .pathSegment("invalidate");
+
+    URI invalidateCaseUrl = builder.build().encode().toUri();
+
+    InvalidateCaseRequestDTO dto = new InvalidateCaseRequestDTO();
+    dto.caseId(UUID.fromString(caseId))
+        .status(InvalidateCaseRequestDTO.StatusEnum.valueOf(statusSelected))
+        .notes("Two houses have been knocked into one.")
+        .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
+
+    ResponseEntity<ResponseDTO> response =
+        getRestTemplate()
+            .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
+    return response;
   }
 }
