@@ -81,7 +81,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private static final long RABBIT_TIMEOUT = 2000L;
 
   private String caseId;
-  // private String uprn;
   private RefusalRequestDTO refusalDTO;
   private ResponseDTO responseDTO;
   private ReasonEnum reason = RefusalFixture.A_REASON;
