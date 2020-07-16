@@ -211,4 +211,3 @@ Eclipse does not recognise the maven lifecycle operations for generating code fr
 4. Configure the Eclipse **lifecycle-mapping-metadata.xml** to ignore the 2 errors highlighted in the **pom.xml** . The easiest way to do this is to select a "quick fix" (CMD-1 on MacOS) at each of the 2 error points in the **pom.xml**, and select the option to fix for all projects (at the time of writing this is the bottom option in the drop-down).
 5. You may have to refresh maven on the project to clean up errors and warnings.
 
-
