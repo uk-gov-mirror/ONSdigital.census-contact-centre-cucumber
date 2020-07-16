@@ -130,8 +130,8 @@
     <dependency>
       <groupId>uk.gov.ons.ctp.integration.common</groupId>
       <artifactId>cucumber-common</artifactId>
-      <version>0.0.19</version>
-      <scope>test</scope>
+      <version>0.0.21-SNAPSHOT</version>
+     <scope>test</scope>
     </dependency>
 
     <!-- Always use latest dependency in order to update classes from the
