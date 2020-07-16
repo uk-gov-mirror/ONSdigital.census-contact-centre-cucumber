@@ -8,7 +8,7 @@ import java.time.ZoneId;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import uk.gov.ons.ctp.common.event.model.AddressCompact;
-import uk.gov.ons.ctp.common.event.model.Contact;
+import uk.gov.ons.ctp.common.event.model.ContactCompact;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RefusalFixture {
@@ -36,11 +36,9 @@ public final class RefusalFixture {
         .caseId(caseId)
         .agentId(agentId)
         .callId(A_CALL_ID)
-        .notes(SOME_NOTES)
         .title(A_TITLE)
         .forename(A_FORENAME)
         .surname(A_SURNAME)
-        .telNo(A_TEL_NO)
         .addressLine1(AN_ADDR_LINE_1)
         .addressLine2(AN_ADDR_LINE_2)
         .addressLine3(AN_ADDR_LINE_3)
@@ -49,6 +47,7 @@ public final class RefusalFixture {
         .uprn(A_UPRN_STR)
         .region(A_REGION)
         .reason(reason)
+        .isHouseholder(true)
         .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
 
     return refusal;
@@ -68,12 +67,11 @@ public final class RefusalFixture {
   }
 
   // to match details in the request DTO
-  public static Contact contact() {
-    Contact contact = new Contact();
-    contact.setTitle(A_TITLE);
-    contact.setForename(A_FORENAME);
-    contact.setSurname(A_SURNAME);
-    contact.setTelNo(A_TEL_NO);
-    return contact;
+  public static ContactCompact contactCompact() {
+    ContactCompact contactCompact = new ContactCompact();
+    contactCompact.setTitle(A_TITLE);
+    contactCompact.setForename(A_FORENAME);
+    contactCompact.setSurname(A_SURNAME);
+    return contactCompact;
   }
 }
