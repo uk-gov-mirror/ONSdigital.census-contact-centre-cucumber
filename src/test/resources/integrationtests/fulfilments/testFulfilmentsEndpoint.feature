@@ -56,8 +56,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459995" addressType = "HH" individual = "false" and region = "N"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "HH" and individual = "false"
 
   @SetUp
   Scenario: [CR-T292] I want to request an UAC for a HI Respondent in Wales via Post
@@ -66,8 +66,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459992" addressType = "HH" individual = "true" and region = "W"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "HH" and individual = "true"
 
   @SetUp
   Scenario: [CR-T301] I want to request a Welsh Paper Questionnaire for a CE Individual Respondent in Wales
@@ -76,8 +76,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459993" addressType = "CE" individual = "true" and region = "W"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "true"
 
   @SetUp
   Scenario: [CR-T334] I want to request an UAC for a SPG Respondent in Wales via Post
@@ -86,8 +86,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "false" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459996" addressType = "SPG" individual = "false" and region = "W"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "SPG" and individual = "false"
 
   @SetUp
   Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] I want to request a Paper Questionnaire for SMS delivery channel
@@ -96,8 +96,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "<case_type>" where individual flag = "<individual>" and region = "<region>"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "<delivery_channel>"
-    And Requests a fulfillment for the case and delivery channel "<delivery_channel>"
-    Then a fulfilment request event is emitted to RM for UPRN = "<uprn>" addressType = "<delivery_channel>" individual = "<individual>" and region = "<region>"
+    And Requests a fulfilment for the case and delivery channel "<delivery_channel>"
+    Then a fulfilment request event is emitted to RM for addressType = "<delivery_channel>" and individual = "<individual>"
 
     Examples:
       | uprn         | case_type | region | delivery_channel | individual |
@@ -113,7 +113,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "<case_type>" where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
-    And Requests a fulfillment for the case and title "<title>" forename "<forename>" surname "<surname>"
+    And Requests a fulfilment for the case and title "<title>" forename "<forename>" surname "<surname>"
     Then an exception is thrown stating "The fulfilment is for an individual so none of the following fields can be empty: 'title', 'forename' and 'surname'"
 
     Examples:
@@ -135,8 +135,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "<case_type>" where individual flag = "<individual>" and region = "<region>"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "<delivery_channel>"
-    And Requests a fulfillment for the case and delivery channel "<delivery_channel>"
-    Then a fulfilment request event is emitted to RM for UPRN = "<uprn>" addressType = "<delivery_channel>" individual = "<individual>" and region = "<region>"
+    And Requests a fulfilment for the case and delivery channel "<delivery_channel>"
+    Then a fulfilment request event is emitted to RM for addressType = "<delivery_channel>" and individual = "<individual>"
 
     Examples:
       | uprn         | case_type | region | delivery_channel | individual |
@@ -152,18 +152,18 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459993" addressType = "CE" individual = "true" and region = "W"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "true" 
 
   @SetUp
-  Scenario: [CR-T304] PENDING - I want to request a welsh Paper Questionnaire for a CE Manager in Wales
+  Scenario: [CR-T304] PENDING - I want to request a Welsh Paper Questionnaire for a CE Manager in Wales
     Given the CC advisor has provided a valid UPRN "1347459993"
     Then the Case endpoint returns a case, associated with UPRN "1347459993", which has caseType "CE"
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "false" and region = "W"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459993" addressType = "CE" individual = "false" and region = "W"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "false"
 
   @SetUp
   Scenario: [CR-T313] PENDING - I want to request an UAC for a CE Individual Respondent in NI via Post
@@ -172,8 +172,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459997" addressType = "CE" individual = "true" and region = "N"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "true"
 
   @SetUp
   Scenario: [CR-T316] PENDING - I want to request an UAC for a CE Manager in NI via Post
@@ -182,8 +182,8 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "false" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459993" addressType = "CE" individual = "false" and region = "N"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "false"
 
   @SetUp
   Scenario: [CR-T323] PENDING - I want to request a Paper Questionnaire for a SPG Individual Respondent in NI
@@ -192,6 +192,6 @@ Feature: Test Contact centre Fulfilments Endpoints
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
-    And Requests a fulfillment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for UPRN = "1347459994" addressType = "SPG" individual = "true" and region = "N"
+    And Requests a fulfilment for the case and delivery channel "POST"
+    Then a fulfilment request event is emitted to RM for addressType = "SPG" and individual = "true"
 

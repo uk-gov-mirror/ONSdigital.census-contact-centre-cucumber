@@ -42,7 +42,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.domain.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
-import uk.gov.ons.ctp.common.event.model.Address;
 import uk.gov.ons.ctp.common.event.model.FulfilmentPayload;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequest;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequestedEvent;
@@ -540,8 +539,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
       "a fulfilment request event is emitted to RM for UPRN = {string} addressType = {string} individual = {string} and region = {string}")
   public void
       a_fulfilment_request_event_is_emitted_to_RM_for_UPRN_addressType_individual_and_region(
-          String expectedUprn, String expectedAddressType, String individual, String expectedRegion)
-          throws CTPException {
+          String expectedAddressType, String individual) throws CTPException {
     log.info(
         "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
             + queueName
@@ -602,31 +600,14 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "The FulfilmentRequested event contains an incorrect value of 'caseId'",
         expectedCaseId,
         fulfilmentRequest.getCaseId());
-    Address address = fulfilmentRequest.getAddress();
     // SPG and CE indiv product requests do not need an indiv id creating (see CaseServiceImpl, line
     // 435
 
-    assertEquals(
-        "The FulfilmentRequested event contains an incorrect value of 'uprn'",
-        expectedUprn,
-        address.getUprn());
-    if (expectedAddressType.equalsIgnoreCase("SMS")) {
-      assertNull("SMS Address type should be NULL", address.getAddressType());
+    if (individual.equals("true") && expectedAddressType.equals("HH")) {
+      assertNotNull(fulfilmentRequest.getIndividualCaseId());
     } else {
-      if (individual.equals("true") && address.getAddressType().equals("HH")) {
-        assertNotNull(fulfilmentRequest.getIndividualCaseId());
-      } else {
-        assertNull(fulfilmentRequest.getIndividualCaseId());
-      }
-      assertEquals(
-          "The FulfilmentRequested event contains an incorrect value of 'addressType'",
-          expectedAddressType,
-          address.getAddressType());
+      assertNull(fulfilmentRequest.getIndividualCaseId());
     }
-    assertEquals(
-        "The FulfilmentRequested event contains an incorrect value of 'region'",
-        expectedRegion,
-        address.getRegion());
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
