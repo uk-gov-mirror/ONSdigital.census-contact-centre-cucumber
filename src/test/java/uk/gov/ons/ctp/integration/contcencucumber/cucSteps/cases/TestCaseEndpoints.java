@@ -110,7 +110,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     addressNotValidEvent = null;
   }
 
-  @Before
+  @Before("@SetUpT134")
   public void setUpT134() {
     List<String> cachedCaseIds = new ArrayList<>();
     cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ab");
@@ -120,8 +120,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       try {
         dataRepo.deleteCachedCase(id);
       } catch (CTPException e) {
-        // If no case with that id is found in Firestore then catch the exception
-        e.printStackTrace();
+        // If no case with that id is found in Firestore then catch the exception and just log it
+        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
       }
     }
   }
