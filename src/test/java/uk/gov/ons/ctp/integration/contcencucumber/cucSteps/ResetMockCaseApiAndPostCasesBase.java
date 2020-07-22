@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
-import uk.gov.ons.ctp.integration.contcencucumber.main.repository.impl.CaseDataRepositoryImpl;
+import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataRepository;
 
 @Component
 @EnableConfigurationProperties
@@ -47,7 +47,7 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  @Autowired protected CaseDataRepositoryImpl dataRepo;
+  @Autowired protected CaseDataRepository dataRepo;
 
   private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiAndPostCasesBase.class);
 
