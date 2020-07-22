@@ -15,24 +15,7 @@
     <version>0.0.15</version>
   </parent>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.google.cloud</groupId>
-        <artifactId>libraries-bom</artifactId>
-        <version>3.5.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
-
-    <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-firestore</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -130,8 +113,8 @@
     <dependency>
       <groupId>uk.gov.ons.ctp.integration.common</groupId>
       <artifactId>cucumber-common</artifactId>
-      <version>0.0.19</version>
-      <scope>test</scope>
+      <version>0.0.21</version>
+     <scope>test</scope>
     </dependency>
 
     <!-- Always use latest dependency in order to update classes from the
