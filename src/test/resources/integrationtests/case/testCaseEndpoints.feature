@@ -5,6 +5,7 @@
 Feature: Test Contact centre Case Endpoints
   I want to verify that all endpoints in CC-SERVICE work correctly
 
+  @TestCaseEndpointsT134 @SetUpT134
   Scenario Outline: [CR-T134] I want to verify that the case search by case ID works
     Given I have a valid case ID <caseId>
     When I Search cases By case ID <caseEvents>

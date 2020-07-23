@@ -110,6 +110,22 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     addressNotValidEvent = null;
   }
 
+  @Before("@SetUpT134")
+  public void setUpT134() {
+    List<String> cachedCaseIds = new ArrayList<>();
+    cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ab");
+    cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ac");
+    cachedCaseIds.add("03f58cb5-9af4-4d40-9d60-c124c5bddf09");
+    for (String id : cachedCaseIds) {
+      try {
+        dataRepo.deleteCachedCase(id);
+      } catch (CTPException e) {
+        // If no case with that id is found in Firestore then catch the exception and just log it
+        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
+      }
+    }
+  }
+
   @Given("I am about to do a smoke test by going to a contact centre endpoint")
   public void i_am_about_to_do_a_smoke_test_by_going_to_a_contact_centre_endpoint() {
     log.info("About to check that the Contact Centre service is running...");
