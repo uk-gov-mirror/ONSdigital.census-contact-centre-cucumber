@@ -208,7 +208,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_correct_number_of_events_are_returned(
       String showCaseEvents, Integer expectedCaseEvents) {
     if (!Boolean.parseBoolean(showCaseEvents)) {
-      assertNull("Events must be null", caseDTO.getCaseEvents());
+      assertTrue("Should be no case events", caseDTO.getCaseEvents().isEmpty());
     } else {
       assertEquals(
           "Must have the correct number of case events",
