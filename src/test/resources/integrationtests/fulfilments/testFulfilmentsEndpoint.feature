@@ -3,6 +3,7 @@
 #Feature: Test Contact centre Fulfilments Endpoints
 #Scenario: Get fulfilments for various cases
 ## (Comments)
+@CC
 Feature: Test Contact centre Fulfilments Endpoints
   I want to verify that all endpoints in CC-SERVICE fulfilments work correctly
 

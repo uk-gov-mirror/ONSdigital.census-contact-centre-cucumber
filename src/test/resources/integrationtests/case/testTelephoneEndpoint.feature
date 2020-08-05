@@ -4,6 +4,7 @@
 #Scenario: Launch EQ for a household caseType with the Individual = false
 #Scenario: Launch EQ for a household caseType with the Individual = true
 ## (Comments)
+@CC
 Feature: Test Contact Centre Telephone Capture Endpoint
 
 

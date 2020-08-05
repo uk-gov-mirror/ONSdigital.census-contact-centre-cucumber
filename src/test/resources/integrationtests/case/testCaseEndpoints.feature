@@ -5,7 +5,7 @@
 Feature: Test Contact centre Case Endpoints
   I want to verify that all endpoints in CC-SERVICE work correctly
 
-  @TestCaseEndpointsT134 @SetUpT134
+  @CC @TestCaseEndpointsT134 @SetUpT134
   Scenario Outline: [CR-T134] I want to verify that the case search by case ID works
     Given I have a valid case ID <caseId>
     When I Search cases By case ID <caseEvents>
@@ -22,6 +22,7 @@ Feature: Test Contact centre Case Endpoints
       | "3305e937-6fb1-4ce1-9d4c-077f147789ac" | 1347459999 | "false"    |            0 | ""             | "false" |
       | "03f58cb5-9af4-4d40-9d60-c124c5bddf09" | 1347459999 | "true"     |            0 | ""             | "false" |
 
+  @CC
   Scenario Outline: [CR-T135] I want to verify that the case search by invalid case ID works
     Given I have an invalid case ID <caseId>
     When I Search for cases By case ID
@@ -34,6 +35,7 @@ Feature: Test Contact centre Case Endpoints
       | "40474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "404"     |
       | "50074ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "500"     |
 
+  @CC @AD
   Scenario Outline: [CR-T136] I want to verify that the case search by case UPRN works
     Given I have a valid UPRN <uprn>
     And cached cases for the UPRN do not already exist
@@ -44,6 +46,7 @@ Feature: Test Contact centre Case Endpoints
       | uprn         | case_ids                                                                                                         |
       | "1347459999" | "3305e937-6fb1-4ce1-9d4c-077f147789ab,3305e937-6fb1-4ce1-9d4c-077f147789ac,03f58cb5-9af4-4d40-9d60-c124c5bddf09" |
 
+  @CC @AD
   Scenario Outline: [CR-T137] I want to verify that the case search by invalid case UPRN works
     Given I have an invalid UPRN <uprn>
     When I Search cases By invalid UPRN
@@ -55,7 +58,7 @@ Feature: Test Contact centre Case Endpoints
       | "abcdefghik" | "400"     |
       | "1111111111" | "404"     |
 
-  @ValidRefusalIsAccepted
+  @CC @ValidRefusalIsAccepted
   Scenario Outline: I want to verify that a valid Refusal is accepted
     Given I have a valid case ID <caseId>
     And I supply the Refusal information
@@ -69,7 +72,7 @@ Feature: Test Contact centre Case Endpoints
       | "UnKnown"                              |
       | "UNKNOWN"                              |
 
-  @RefusalReasonAcceptedAndEventPosted
+  @CC @RefusalReasonAcceptedAndEventPosted
   Scenario Outline: I want to verify that a valid reason for Refusal is accepted and event posted
     Given I have a valid case ID <caseId>
     And an empty queue exists for sending Refusal events
@@ -84,6 +87,7 @@ Feature: Test Contact centre Case Endpoints
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | "HARD"          | "HARD_REFUSAL"          |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | "EXTRAORDINARY" | "EXTRAORDINARY_REFUSAL" |
 
+  @CC
   Scenario Outline: I want to verify that a Refusal without a reason is rejected
     Given I have a valid case ID <caseId>
     And I supply a <reason> reason for Refusal
@@ -95,6 +99,7 @@ Feature: Test Contact centre Case Endpoints
       | caseId                                 | reason | httpError |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | ""     | "400"     |
 
+  @CC
   Scenario Outline: I want to verify that a Refusal without a valid agentId is rejected
     Given I have a valid case ID <caseId>
     And I supply an <agentId> agentId for Refusal
@@ -106,6 +111,7 @@ Feature: Test Contact centre Case Endpoints
       | caseId                                 | agentId       | httpError |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | ""            | "400"     |
 
+  @CC
   Scenario Outline: I want to verify that an invalid Case ID for Refusal is rejected
     Given I have an invalid case ID <caseId>
     And I supply the Refusal information
@@ -117,7 +123,7 @@ Feature: Test Contact centre Case Endpoints
       | "NOTKNOWN"                             | "400"     |
       | "XX474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "400"     |
 
-  @InvalidateCase @SetUp
+  @CC @InvalidateCase @SetUp
   Scenario Outline: [CR-T357] Invalid Address
     Given the CC advisor has provided a valid UPRN <uprn>
     Then the Case endpoint returns a case associated with UPRN <uprn>
@@ -136,7 +142,7 @@ Feature: Test Contact centre Case Endpoints
       | "1347459995" | "DUPLICATE"          |
       | "1347459995" | "DOES_NOT_EXIST"     |
 
-  @TestCaseEndpointsT379 @SetUp
+  @CC @TestCaseEndpointsT379 @SetUp
   Scenario Outline: [CR-T379] No Invalid Address Event for CE
     Given the CC advisor has provided a valid UPRN "1347459987"
     And the Case endpoint returns a CE case associated with UPRN "1347459987"
@@ -154,7 +160,7 @@ Feature: Test Contact centre Case Endpoints
       | "DUPLICATE"          |
       | "DOES_NOT_EXIST"     |
 
-  @CaseTestT148
+  @CC @AD @CaseTestT148
   Scenario: [CR-T148] Publish a new address event to RM
     Given the CC agent has confirmed the respondent address
     And the case service does not have any case created for the address in question
@@ -164,8 +170,28 @@ Feature: Test Contact centre Case Endpoints
     Given CC SVC creates a fake Case with the address details from AIMS
     Then the CC SVC must publish a new address event to RM with the fake CaseID
 
+  @CC @AD
   Scenario: [CR-T377] AddressType Not Applicable
     Given the CC agent has selected an address that is not of addressType CE, HH, or SPG
     And the case service does not have any case created for the address in question
     When Get/Case API returns a "404" error because there is no case found
     Then the CC SVC must also return a "404 Not Found" error
+
+  @AD @CR-T383
+  Scenario Outline: [CR-T383]  AD advisor wants to get a new UAC for the respondent
+    Given the AD advisor has the <caseId> for a case with <caseType>, <region> and <addressLevel>
+    And the AD advisor requests a new UAC for <caseId> <individual>  
+    Then the AD advisor receives a <httpResponse> with new UAC and QID if successful
+
+    Examples:
+      | caseId                                  | individual   | caseType  | region | addressLevel | httpResponse |  
+      | "03f58cb5-9af4-4d40-9d60-c124c5bddfff"  | "false"      | "HH"      | "W"    | "E"          | 200          |
+      | "3305e937-6fb1-4ce1-9d4c-077f147789bb"  | "true"       | "HH"      | "E"    | "E"          | 200          |
+      | "3305e937-6fb1-4ce1-9d4c-077f147789aa"  | "false"      | "HH"      | "N"    | "E"          | 200          |
+      | "3305e937-6fb3-4ce1-9d4c-077f147789de"  | "false"      | "CE"      | "E"    | "E"          | 200          |
+      | "cb46a66a-494f-45ea-ba46-8186069bbb6f"  | "true"       | "CE"      | "N"    | "E"          | 200          |
+      | "cb46a66a-494f-45ea-ba46-8186069bbb6f"  | "false"      | "CE"      | "N"    | "E"          | 400          |
+      | "3305e937-6fb1-4ce1-9d4c-077f147722aa"  | "false"      | "CE"      | "W"    | "U"          | 400          |    
+      | "3305e937-6fb1-4ce1-9d4c-077f147789dd"  | "true"       | "HI"      | "E"    | "E"          | 400          |
+      | "3305e937-6fb1-4ce1-9d4c-770f147711aa"  | "false"      | "SPG"     | "W"    | "E"          | 200          |
+      | "3305e937-6fb1-4ce1-9d4c-077f147733aa"  | "true"       | "SPG"     | "N"    | "U"          | 200          |

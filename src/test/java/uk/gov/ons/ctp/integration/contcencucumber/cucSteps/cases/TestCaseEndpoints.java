@@ -26,11 +26,17 @@ import io.swagger.client.model.InvalidateCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.ResponseDTO;
+import io.swagger.client.model.UACResponseDTO;
+
 import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +51,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -69,6 +76,7 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
+import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
@@ -79,10 +87,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
   private static final long RABBIT_TIMEOUT = 2000L;
+  private static final SimpleDateFormat SIMPLE_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
   private String caseId;
   private RefusalRequestDTO refusalDTO;
   private ResponseDTO responseDTO;
+  private ResponseEntity<?> responseEntity;
+  private long timeBeforeInvocation;
+  private long timeAfterInvocation;
   private ReasonEnum reason = RefusalFixture.A_REASON;
   private String agentId = RefusalFixture.AN_AGENT_ID;
   private CaseDTO caseDTO;
@@ -1176,4 +1188,65 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
     return response;
   }
+
+  @Given("the AD advisor has the {string} for a case with {string}, {string} and {string}")
+  public void checkCaseAttributes(final String caseId, final String caseType, final String region, final String addressLevel) {
+    CaseContainerDTO caze = getCase(caseId);
+    assertEquals(caseType, caze.getCaseType());
+    assertEquals(region, caze.getRegion());
+    assertEquals(addressLevel, caze.getAddressLevel());
+  }
+
+  @Given("the AD advisor requests a new UAC for {string} {string}")
+  public void getNewUAC(final String caseId, final String individual) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId)
+            .pathSegment("uac")
+            .queryParam("individual", individual)
+            .queryParam("adLocationId", "11111");
+
+    URI newUACURL = builder.build().encode().toUri();
+    try {
+      timeBeforeInvocation = System.currentTimeMillis();
+      this.responseEntity = getRestTemplate().getForEntity(newUACURL, UACResponseDTO.class);
+    } catch (HttpStatusCodeException statusException) {
+      this.exception = statusException;
+    } finally {
+      timeAfterInvocation = System.currentTimeMillis();
+    }
+  }
+  
+  @Then("the AD advisor receives a {int} with new UAC and QID if successful")
+  public void checkUACResponse(int httpStatus) {
+    checkStatus(httpStatus);
+    if (httpStatus < 400) {
+      UACResponseDTO result = ((UACResponseDTO)this.responseEntity.getBody());
+      assertTrue(StringUtils.isNotBlank(result.getId()));
+      assertTrue(StringUtils.isNotBlank(result.getUac()));
+      try {
+        verifyTimeInExpectedRange(timeBeforeInvocation, timeAfterInvocation, SIMPLE_DATE_FORMATTER.parse(result.getDateTime()));
+      } catch (ParseException ex) {
+        fail();
+      }
+    }
+  }
+
+  private void checkStatus(int httpStatus) {
+    HttpStatus status = HttpStatus.valueOf(httpStatus);
+    if (httpStatus < 400) {
+      assertEquals(status, this.responseEntity.getStatusCode());
+    } else {
+      assertEquals(status, ((HttpStatusCodeException) this.exception).getStatusCode());
+    }
+  }
+
+  private void verifyTimeInExpectedRange(long minAllowed, long maxAllowed, Date dateTime) {
+    long actualInMillis = dateTime.getTime();
+    assertTrue(actualInMillis + " not after " + minAllowed, actualInMillis >= minAllowed);
+    assertTrue(actualInMillis + " not before " + maxAllowed, actualInMillis <= maxAllowed);
+  }
+
 }

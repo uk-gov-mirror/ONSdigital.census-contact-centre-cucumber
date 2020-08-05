@@ -314,7 +314,7 @@ casedata:
         "townName": "Brecon",
         "postcode": "G1 2AB",
         "organisationName": "ON",
-        "addressLevel": "E",
+        "addressLevel": "U",
         "abpCode": "AACC",
         "latitude": "41.40338",
         "longitude": "2.17403",

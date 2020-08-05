@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -49,6 +50,8 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
 
   @Autowired protected CaseDataRepository dataRepo;
 
+  private List<CaseContainerDTO> caseList;
+
   private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiAndPostCasesBase.class);
 
   public void setCases(final String cases) throws IOException {
@@ -56,7 +59,7 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
     resetData();
 
     final ObjectMapper objectMapper = new ObjectMapper();
-    final List<CaseContainerDTO> caseList =
+    caseList =
         objectMapper.readValue(cases, new TypeReference<List<CaseContainerDTO>>() {});
     postCasesToMockService(caseList);
   }
@@ -100,5 +103,9 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
     } catch (HttpClientErrorException ex) {
       fail("Unable to RESET Mock case api service: ");
     }
+  }
+
+  protected CaseContainerDTO getCase(String caseId) {
+    return caseList.stream().filter(c -> c.getId().toString().equals(caseId)).findFirst().orElse(null);
   }
 }
