@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.ons.ctp.common.event.model.AddressCompact;
 import uk.gov.ons.ctp.common.event.model.ContactCompact;
 
@@ -34,7 +35,7 @@ public final class RefusalFixture {
     RefusalRequestDTO refusal = new RefusalRequestDTO();
     refusal
         .caseId(caseId)
-        .agentId(agentId)
+        .agentId(StringUtils.isBlank(agentId) ? null : Integer.valueOf(agentId))
         .callId(A_CALL_ID)
         .title(A_TITLE)
         .forename(A_FORENAME)
