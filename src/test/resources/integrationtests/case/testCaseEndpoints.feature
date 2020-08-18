@@ -1,9 +1,9 @@
 #Author: andrew.johnys@ext.ons.gov.uk
-#Keywords Summary : CC CONTACT CENTRE SERVICE
-#Feature: Test Contact centre Case Endpoints
+#Keywords Summary : CONTACT CENTRE, ASSISTED DIGITAL SERVICE
+#Feature: Test Contact Centre, Assisted Digital case endpoints
 ## (Comments)
-Feature: Test Contact centre Case Endpoints
-  I want to verify that all endpoints in CC-SERVICE work correctly
+Feature: Test Contact Centre, Assisted Digital case endpoints
+  I want to verify that all endpoints in CC/AD service work correctly
 
   @CC @TestCaseEndpointsT134 @SetUpT134
   Scenario Outline: [CR-T134] I want to verify that the case search by case ID works
@@ -162,13 +162,13 @@ Feature: Test Contact centre Case Endpoints
 
   @CC @AD @CaseTestT148
   Scenario: [CR-T148] Publish a new address event to RM
-    Given the CC agent has confirmed the respondent address
+    Given the agent has confirmed the respondent address
     And the case service does not have any case created for the address in question
     And Get/Case API returns a "404" error because there is no case found
     And an empty queue exists for sending NewAddressReported events
     And cached cases for the UPRN do not already exist
-    Given CC SVC creates a fake Case with the address details from AIMS
-    Then the CC SVC must publish a new address event to RM with the fake CaseID
+    Given the service creates a fake Case with the address details from AIMS
+    Then the service must publish a new address event to RM with the fake CaseID
 
   @CC @AD
   Scenario: [CR-T377] AddressType Not Applicable
