@@ -11,7 +11,6 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
-
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -138,11 +137,11 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @After("@smoke")
-  public void failedEnvironment(Scenario scenario ) {   
+  public void failedEnvironment(Scenario scenario) {
     if (scenario.isFailed()) {
       System.exit(0);
     }
-  } 
+  }
 
   @Given("I am about to do a smoke test by going to an endpoint")
   public void i_am_about_to_do_a_smoke_test_by_going_to_an_endpoint() {
@@ -577,10 +576,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertTrue("Response ID must match case ID", caseId.equalsIgnoreCase(responseDTO.getId()));
   }
 
-  private void checkServiceHealthy (String baseUrl, String port, String message) {
-    log.with("baseUrl", baseUrl)
-       .with("port", port)
-       .info("Checking service is running");
+  private void checkServiceHealthy(String baseUrl, String port, String message) {
+    log.with("baseUrl", baseUrl).with("port", port).info("Checking service is running");
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(baseUrl).port(port).pathSegment("info");
     URI url = builder.build().encode().toUri();
@@ -588,18 +585,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     RestTemplate restTemplate = getAuthenticationFreeRestTemplate();
 
     try {
-      HttpStatus svcResponse =
-        restTemplate.getForEntity(url, String.class).getStatusCode();
-      log.with(svcResponse).info("Smoke Test: " +url.toString());
-      assertEquals(
-          message + svcResponse.toString(),
-          HttpStatus.OK,
-          svcResponse);
+      HttpStatus svcResponse = restTemplate.getForEntity(url, String.class).getStatusCode();
+      log.with(svcResponse).info("Smoke Test: " + url.toString());
+      assertEquals(message + svcResponse.toString(), HttpStatus.OK, svcResponse);
     } catch (Exception e) {
-      String error = message +e.getMessage();
+      String error = message + e.getMessage();
       log.error(error);
       fail(error);
-    }  
+    }
   }
 
   private ResponseEntity<String> getEqToken(String caseId, boolean isIndividual) {
@@ -847,7 +840,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @When("the service creates a fake Case with the address details from AIMS")
-  public void the_service_creates_a_fake_Case_with_the_address_details_from_AIMS() throws CTPException {
+  public void the_service_creates_a_fake_Case_with_the_address_details_from_AIMS()
+      throws CTPException {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
