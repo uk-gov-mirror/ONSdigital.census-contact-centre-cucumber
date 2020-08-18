@@ -1,9 +1,9 @@
-# census-contact-centre-cucumber
-Cucumber integration tests for Census Contact Centre Service
+# Census Contact Centre and Assisted Digital Cucumber
+Cucumber integration tests for service responding to contact centre and assisted digital requests. 
 
 
-This project tests the functionality of the Contact Centre Service
-It currently tests the Address and case endpoints.
+This project tests the functionality of the services deployed for contact centre and assisted digital requests.
+It currently tests the address and case endpoints.
 It uses Spring Boot to create a restTemplate - mapping Json Objects to POJOs
 It also uses Scenario Outlines to utilize tabulated data in tests
 ```
@@ -106,6 +106,7 @@ export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_PORT=443
 export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_USERNAME=rhuser
 export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_PASSWORD=<password>
 export GOOGLE_CLOUD_PROJECT=<name of your project>
+export CUCUMBER_OPTIONS="--tags @CC" 
 ```
 Obviously replace <password> with the rhuser password. The CCCUC tests should then pass when run locally against the CCSVC.
 And replace <name of your project> with something like census-rh-ellacook1
@@ -128,6 +129,12 @@ Now you can run cccuc in the terminal using this command:
 
 ```
 mvn clean install
+```
+
+To run the cucumber tests against a service running locally as an Assisted Digital deployment, that is with the "channel" property set to "AD" exposing the Assisted Digital endpoints, set the CUCUMBER_OPTION environment variable tags option to @AD:
+
+```
+export CUCUMBER_OPTIONS="--tags @AD"
 ```
 
 From this version on, the cucumber tests will rely on swagger-current.yml in order to create the required DTOs.
