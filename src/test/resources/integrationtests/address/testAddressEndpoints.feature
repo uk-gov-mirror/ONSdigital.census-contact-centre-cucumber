@@ -3,6 +3,7 @@
 #Feature: Test Contact centre Address Endpoints
 #Scenario: Get a list of addresses by valid postcode
 ## (Comments)
+@CC @AD
 Feature: Test Contact centre Address Endpoints
   I want to verify that all address endpoints in CC-SERVICE work correctly
 

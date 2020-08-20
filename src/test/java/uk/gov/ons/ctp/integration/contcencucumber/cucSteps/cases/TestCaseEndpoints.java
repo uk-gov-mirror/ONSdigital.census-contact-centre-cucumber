@@ -11,6 +11,8 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+import cucumber.api.Scenario;
+import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -21,16 +23,19 @@ import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
 import io.swagger.client.model.DeliveryChannel;
 import io.swagger.client.model.EstabType;
-import io.swagger.client.model.FulfilmentDTO;
 import io.swagger.client.model.InvalidateCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.ResponseDTO;
+import io.swagger.client.model.UACResponseDTO;
 import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +50,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -69,6 +75,7 @@ import uk.gov.ons.ctp.common.event.model.RespondentRefusalPayload;
 import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
+import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
@@ -79,17 +86,20 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
   private static final long RABBIT_TIMEOUT = 2000L;
+  private static final SimpleDateFormat SIMPLE_DATE_FORMATTER =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
   private String caseId;
   private RefusalRequestDTO refusalDTO;
   private ResponseDTO responseDTO;
+  private ResponseEntity<?> responseEntity;
+  private long timeBeforeInvocation;
+  private long timeAfterInvocation;
   private ReasonEnum reason = RefusalFixture.A_REASON;
   private String agentId = RefusalFixture.AN_AGENT_ID;
   private CaseDTO caseDTO;
   private List<CaseDTO> caseDTOList;
   private Exception exception;
-  private String ccSmokeTestUrl;
-  private String mockCaseSvcSmokeTestUrl;
   private String telephoneEndpointUrl;
   private String telephoneEndpointBody1;
   private String telephoneEndpointBody2;
@@ -110,32 +120,37 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     addressNotValidEvent = null;
   }
 
-  @Given("I am about to do a smoke test by going to a contact centre endpoint")
-  public void i_am_about_to_do_a_smoke_test_by_going_to_a_contact_centre_endpoint() {
+  @Before("@SetUpT134")
+  public void setUpT134() {
+    List<String> cachedCaseIds = new ArrayList<>();
+    cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ab");
+    cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ac");
+    cachedCaseIds.add("03f58cb5-9af4-4d40-9d60-c124c5bddf09");
+    for (String id : cachedCaseIds) {
+      try {
+        dataRepo.deleteCachedCase(id);
+      } catch (CTPException e) {
+        // If no case with that id is found in Firestore then catch the exception and just log it
+        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
+      }
+    }
+  }
+
+  @After("@smoke")
+  public void failedEnvironment(Scenario scenario) {
+    if (scenario.isFailed()) {
+      System.exit(0);
+    }
+  }
+
+  @Given("I am about to do a smoke test by going to an endpoint")
+  public void i_am_about_to_do_a_smoke_test_by_going_to_an_endpoint() {
     log.info("About to check that the Contact Centre service is running...");
   }
 
-  @Then("I do the smoke test and receive a response of OK from the contact centre service")
-  public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_contact_centre_service() {
-    try {
-      HttpStatus contactCentreStatus = checkContactCentreRunning();
-      log.with(contactCentreStatus).info("Smoke Test: The response from " + ccSmokeTestUrl);
-      assertEquals(
-          "THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
-          HttpStatus.OK,
-          contactCentreStatus);
-    } catch (ResourceAccessException e) {
-      log.error(
-          "THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    } catch (Exception e) {
-      log.error("THE CONTACT CENTRE SERVICE MAY NOT BE RUNNING: An unexpected has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    }
+  @Then("I do the smoke test and receive a response of OK from the service")
+  public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_service() {
+    checkServiceHealthy(ccBaseUrl, ccBasePort, "THE SERVICE MAY NOT BE RUNNING ");
   }
 
   @Given("I am about to do a smoke test by going to a mock case api endpoint")
@@ -145,25 +160,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Then("I do the smoke test and receive a response of OK from the mock case api service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
-    try {
-      HttpStatus mockCaseApiStatus = checkMockCaseApiRunning();
-      log.with(mockCaseApiStatus).info("Smoke Test: The response from " + mockCaseSvcSmokeTestUrl);
-      assertEquals(
-          "THE MOCK CASE API SERVICE MAY NOT BE RUNNING - it does not give a response code of 200",
-          HttpStatus.OK,
-          mockCaseApiStatus);
-    } catch (ResourceAccessException e) {
-      log.error(
-          "THE MOCK CASE API SERVICE MAY NOT BE RUNNING: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    } catch (Exception e) {
-      log.error("THE MOCK CASE API SERVICE MAY NOT BE RUNNING: An unexpected has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    }
+    checkServiceHealthy(mcsBaseUrl, mcsBasePort, "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
   }
 
   @Given("I have a valid case ID {string}")
@@ -192,7 +189,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_correct_number_of_events_are_returned(
       String showCaseEvents, Integer expectedCaseEvents) {
     if (!Boolean.parseBoolean(showCaseEvents)) {
-      assertNull("Events must be null", caseDTO.getCaseEvents());
+      assertTrue("Should be no case events", caseDTO.getCaseEvents().isEmpty());
     } else {
       assertEquals(
           "Must have the correct number of case events",
@@ -579,48 +576,23 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertTrue("Response ID must match case ID", caseId.equalsIgnoreCase(responseDTO.getId()));
   }
 
-  private HttpStatus checkContactCentreRunning() {
-    log.info("Entering checkContactCentreRunning method");
+  private void checkServiceHealthy(String baseUrl, String port, String message) {
+    log.with("baseUrl", baseUrl).with("port", port).info("Checking service is running");
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("fulfilments");
-
-    ccSmokeTestUrl = builder.build().encode().toUri().toString();
-
-    log.info(
-        "Using the following endpoint to check that the contact centre service is running: "
-            + ccSmokeTestUrl);
-
-    ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse =
-        getRestTemplate()
-            .exchange(
-                builder.build().encode().toUri(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<FulfilmentDTO>>() {});
-
-    return fulfilmentResponse.getStatusCode();
-  }
-
-  private HttpStatus checkMockCaseApiRunning() {
-    log.info("Entering checkMockCaseApiRunning method");
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
-            .port(mcsBasePort)
-            .pathSegment("cases")
-            .pathSegment("info");
+        UriComponentsBuilder.fromHttpUrl(baseUrl).port(port).pathSegment("info");
+    URI url = builder.build().encode().toUri();
 
     RestTemplate restTemplate = getAuthenticationFreeRestTemplate();
 
-    mockCaseSvcSmokeTestUrl = builder.build().encode().toUri().toString();
-
-    log.info(
-        "Using the following endpoint to check that the mock case api service is running: "
-            + mockCaseSvcSmokeTestUrl);
-
-    ResponseEntity<String> mockCaseApiResponse =
-        restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
-
-    return mockCaseApiResponse.getStatusCode();
+    try {
+      HttpStatus svcResponse = restTemplate.getForEntity(url, String.class).getStatusCode();
+      log.with(svcResponse).info("Smoke Test: " + url.toString());
+      assertEquals(message + svcResponse.toString(), HttpStatus.OK, svcResponse);
+    } catch (Exception e) {
+      String error = message + e.getMessage();
+      log.error(error);
+      fail(error);
+    }
   }
 
   private ResponseEntity<String> getEqToken(String caseId, boolean isIndividual) {
@@ -787,8 +759,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(expectedCollectionCaseId, addressNotValid.getCollectionCase().getId());
   }
 
-  @Given("the CC agent has confirmed the respondent address")
-  public void the_CC_agent_has_confirmed_the_respondent_address() {
+  @Given("the agent has confirmed the respondent address")
+  public void the_agent_has_confirmed_the_respondent_address() {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
@@ -867,8 +839,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         status);
   }
 
-  @When("CC SVC creates a fake Case with the address details from AIMS")
-  public void cc_SVC_creates_a_fake_Case_with_the_address_details_from_AIMS() throws CTPException {
+  @When("the service creates a fake Case with the address details from AIMS")
+  public void the_service_creates_a_fake_Case_with_the_address_details_from_AIMS()
+      throws CTPException {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
@@ -938,8 +911,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     rabbit.flushQueue(queueName);
   }
 
-  @Then("the CC SVC must publish a new address event to RM with the fake CaseID")
-  public void the_CC_SVC_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID()
+  @Then("the service must publish a new address event to RM with the fake CaseID")
+  public void the_service_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID()
       throws CTPException {
     log.info(
         "Check that a NEW_ADDRESS_REPORTED event has now been put on the empty queue, named {}, ready to be picked up by RM",
@@ -963,7 +936,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(newAddressReportedHeader);
     assertEquals("NEW_ADDRESS_REPORTED", newAddressReportedHeader.getType().toString());
     assertEquals("CONTACT_CENTRE_API", newAddressReportedHeader.getSource().toString());
-    assertEquals("CC", newAddressReportedHeader.getChannel().toString());
+    String channel = newAddressReportedHeader.getChannel().toString();
+    assertTrue("AD".equals(channel) || "CC".equals(channel));
     assertNotNull(newAddressReportedHeader.getDateTime());
     assertNotNull(newAddressReportedHeader.getTransactionId());
 
@@ -1159,5 +1133,69 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         getRestTemplate()
             .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
     return response;
+  }
+
+  @Given("the AD advisor has the {string} for a case with {string}, {string} and {string}")
+  public void checkCaseAttributes(
+      final String caseId, final String caseType, final String region, final String addressLevel) {
+    CaseContainerDTO caze = getCase(caseId);
+    assertEquals(caseType, caze.getCaseType());
+    assertEquals(region, caze.getRegion());
+    assertEquals(addressLevel, caze.getAddressLevel());
+  }
+
+  @Given("the AD advisor requests a new UAC for {string} {string}")
+  public void getNewUAC(final String caseId, final String individual) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId)
+            .pathSegment("uac")
+            .queryParam("individual", individual)
+            .queryParam("adLocationId", "11111");
+
+    URI newUACURL = builder.build().encode().toUri();
+    try {
+      timeBeforeInvocation = System.currentTimeMillis();
+      this.responseEntity = getRestTemplate().getForEntity(newUACURL, UACResponseDTO.class);
+    } catch (HttpStatusCodeException statusException) {
+      this.exception = statusException;
+    } finally {
+      timeAfterInvocation = System.currentTimeMillis();
+    }
+  }
+
+  @Then("the AD advisor receives a {int} with new UAC and QID if successful")
+  public void checkUACResponse(int httpStatus) {
+    checkStatus(httpStatus);
+    if (httpStatus < 400) {
+      UACResponseDTO result = ((UACResponseDTO) this.responseEntity.getBody());
+      assertTrue(StringUtils.isNotBlank(result.getId()));
+      assertTrue(StringUtils.isNotBlank(result.getUac()));
+      try {
+        verifyTimeInExpectedRange(
+            timeBeforeInvocation,
+            timeAfterInvocation,
+            SIMPLE_DATE_FORMATTER.parse(result.getDateTime()));
+      } catch (ParseException ex) {
+        fail();
+      }
+    }
+  }
+
+  private void checkStatus(int httpStatus) {
+    HttpStatus status = HttpStatus.valueOf(httpStatus);
+    if (httpStatus < 400) {
+      assertEquals(status, this.responseEntity.getStatusCode());
+    } else {
+      assertEquals(status, ((HttpStatusCodeException) this.exception).getStatusCode());
+    }
+  }
+
+  private void verifyTimeInExpectedRange(long minAllowed, long maxAllowed, Date dateTime) {
+    long actualInMillis = dateTime.getTime();
+    assertTrue(actualInMillis + " not after " + minAllowed, actualInMillis >= minAllowed);
+    assertTrue(actualInMillis + " not before " + maxAllowed, actualInMillis <= maxAllowed);
   }
 }
