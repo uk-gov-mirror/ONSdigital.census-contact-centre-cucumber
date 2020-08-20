@@ -1,9 +1,6 @@
 # Census Contact Centre and Assisted Digital Cucumber
 Cucumber integration tests for service responding to contact centre and assisted digital requests. 
 
-This project tests the functionality of the Contact Centre Service
-It currently tests the Address and case endpoints.
-
 This project tests the functionality of the services deployed for contact centre and assisted digital requests.
 It currently tests the address and case endpoints.
 It uses Spring Boot to create a restTemplate - mapping Json Objects to POJOs

@@ -69,8 +69,6 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
       | caseId                                 |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ac" |
-      | "UnKnown"                              |
-      | "UNKNOWN"                              |
 
   @CC @RefusalReasonAcceptedAndEventPosted
   Scenario Outline: I want to verify that a valid reason for Refusal is accepted and event posted
