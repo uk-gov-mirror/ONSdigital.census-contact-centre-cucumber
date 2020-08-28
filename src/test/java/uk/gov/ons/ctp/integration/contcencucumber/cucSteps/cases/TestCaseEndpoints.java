@@ -27,8 +27,8 @@ import io.swagger.client.model.EstabType;
 import io.swagger.client.model.InvalidateCaseRequestDTO;
 import io.swagger.client.model.NewCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
-import io.swagger.client.model.Region;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
+import io.swagger.client.model.Region;
 import io.swagger.client.model.ResponseDTO;
 import io.swagger.client.model.UACResponseDTO;
 import java.net.URI;
@@ -1186,17 +1186,16 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       }
     }
   }
-  
+
   @Given("that a new cached case has been created for a new address but is not yet in RM")
   public void createNewCachedCase() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases");
-    
-    NewCaseRequestDTO newCaseRequest = createNewCaseRequestDTO();   
-    caseDTO = getRestTemplate()
-        .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
+
+    NewCaseRequestDTO newCaseRequest = createNewCaseRequestDTO();
+    caseDTO =
+        getRestTemplate()
+            .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
     log.info("New case created: " + caseDTO.getId());
   }
 
@@ -1211,7 +1210,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .queryParam("agentId", agentId)
             .queryParam("individual", "true");
 
-    ResponseEntity<String> r = getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+    ResponseEntity<String> r =
+        getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
     assertEquals(expectedStatus, r.getStatusCodeValue());
     assertTrue(r.getBody(), r.getBody().contains(expectedContent));
   }
@@ -1232,7 +1232,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     newCaseRequest.setTownName("Exeter");
     return newCaseRequest;
   }
-
 
   private void checkStatus(int httpStatus) {
     HttpStatus status = HttpStatus.valueOf(httpStatus);
