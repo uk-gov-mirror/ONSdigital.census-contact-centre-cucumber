@@ -21,9 +21,11 @@ import cucumber.api.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
+import io.swagger.client.model.CaseType;
 import io.swagger.client.model.DeliveryChannel;
 import io.swagger.client.model.EstabType;
 import io.swagger.client.model.InvalidateCaseRequestDTO;
+import io.swagger.client.model.ModifyCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
 import io.swagger.client.model.ResponseDTO;
@@ -1220,6 +1222,59 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     } else if (strEndpoint.equals("GetCaseByID")) {
       caseDTO = getCaseForID();
       assertNotNull(caseDTO);
+    }
+  }
+
+  @When("the case address details are modified by a member of CC staff")
+  public void the_case_address_details_are_modified_by_a_member_of_CC_staff() {
+    ModifyCaseRequestDTO modifyCaseRequest = createModifyCaseRequest();
+    putCaseForID(modifyCaseRequest);
+  }
+
+  // @When("the case modified event is sent to RM and RM does immediately action it")
+  // public void the_case_modified_event_is_sent_to_RM_and_RM_does_immediately_action_it() {
+  // // Write code here that turns the phrase above into concrete actions
+  // throw new cucumber.api.PendingException();
+  // }
+  //
+  // @When("the call is made to fetch the case again from {string}")
+  // public void the_call_is_made_to_fetch_the_case_again_from(String string) {
+  // // Write code here that turns the phrase above into concrete actions
+  // throw new cucumber.api.PendingException();
+  // }
+  //
+  // @Then("{string} gets the modified case from RM")
+  // public void gets_the_modified_case_from_RM(String string) {
+  // // Write code here that turns the phrase above into concrete actions
+  // throw new cucumber.api.PendingException();
+  // }
+
+  private ModifyCaseRequestDTO createModifyCaseRequest() {
+    ModifyCaseRequestDTO modifyCaseRequest = new ModifyCaseRequestDTO();
+    modifyCaseRequest.setAddressLine1("33 Some Road");
+    modifyCaseRequest.setAddressLine2("Some Small Area");
+    modifyCaseRequest.setAddressLine3("Some Village");
+    modifyCaseRequest.setCeOrgName("Some Organisation");
+    modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
+    modifyCaseRequest.setCaseId(UUID.fromString("3305e937-6fb1-4ce1-9d4c-077f147789ab"));
+    modifyCaseRequest.setEstabType(EstabType.HOUSEHOLD);
+    modifyCaseRequest.setCaseType(CaseType.HH);
+    return modifyCaseRequest;
+  }
+
+  private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId);
+
+    try {
+      getRestTemplate().put(builder.build().encode().toUri(), modifyCaseRequest);
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "A HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
     }
   }
 
