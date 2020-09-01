@@ -1198,7 +1198,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
     this.caseId = strCaseId;
   }
-  
+
   @Given("an empty queue exists for sending {string} events")
   public void an_empty_queue_exists_for_sending_events(String eventTypeAsString)
       throws CTPException {
@@ -1208,7 +1208,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("Flushing queue: '" + queueName + "'");
     rabbit.flushQueue(queueName);
   }
-  
+
   private void checkStatus(int httpStatus) {
     HttpStatus status = HttpStatus.valueOf(httpStatus);
     if (httpStatus < 400) {
