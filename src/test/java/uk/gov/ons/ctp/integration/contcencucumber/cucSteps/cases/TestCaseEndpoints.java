@@ -1184,6 +1184,31 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
+  @Given("the case {string} does not exist in the cache")
+  public void the_case_does_not_exist_in_the_cache(String strCaseId) {
+    List<String> cachedCaseIds = new ArrayList<>();
+    cachedCaseIds.add(strCaseId);
+    for (String id : cachedCaseIds) {
+      try {
+        dataRepo.deleteCachedCase(id);
+      } catch (CTPException e) {
+        // If no case with that id is found in Firestore then catch the exception and just log it
+        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
+      }
+    }
+    this.caseId = strCaseId;
+  }
+  
+  @Given("an empty queue exists for sending {string} events")
+  public void an_empty_queue_exists_for_sending_events(String eventTypeAsString)
+      throws CTPException {
+    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
+    EventType eventType = EventType.valueOf(eventTypeAsString);
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+    rabbit.flushQueue(queueName);
+  }
+  
   private void checkStatus(int httpStatus) {
     HttpStatus status = HttpStatus.valueOf(httpStatus);
     if (httpStatus < 400) {
