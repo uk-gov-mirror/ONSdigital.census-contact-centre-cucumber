@@ -625,32 +625,33 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment("uprn")
-            .pathSegment(uprn);
-
-    ResponseEntity<List<CaseDTO>> caseResponse = null;
-    caseForUprnUrl = builder.build().encode().toUri();
-
-    try {
-      caseResponse =
-          getRestTemplate()
-              .exchange(
-                  caseForUprnUrl,
-                  HttpMethod.GET,
-                  null,
-                  new ParameterizedTypeReference<List<CaseDTO>>() {});
-    } catch (HttpClientErrorException httpClientErrorException) {
-      log.debug(
-          "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
-              + httpClientErrorException.getMessage());
-    }
-    return caseResponse;
-  }
+  //  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
+  //    final UriComponentsBuilder builder =
+  //        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+  //            .port(ccBasePort)
+  //            .pathSegment("cases")
+  //            .pathSegment("uprn")
+  //            .pathSegment(uprn);
+  //
+  //    ResponseEntity<List<CaseDTO>> caseResponse = null;
+  //    caseForUprnUrl = builder.build().encode().toUri();
+  //
+  //    try {
+  //      caseResponse =
+  //          getRestTemplate()
+  //              .exchange(
+  //                  caseForUprnUrl,
+  //                  HttpMethod.GET,
+  //                  null,
+  //                  new ParameterizedTypeReference<List<CaseDTO>>() {});
+  //    } catch (HttpClientErrorException httpClientErrorException) {
+  //      log.debug(
+  //          "A HttpClientErrorException has occurred when trying to get list of cases using
+  // getCaseByUprn endpoint in contact centre: "
+  //              + httpClientErrorException.getMessage());
+  //    }
+  //    return caseResponse;
+  //  }
 
   @Then("the Case endpoint returns a case associated with UPRN {string}")
   public void the_Case_endpoint_returns_a_case_associated_with_UPRN(String strUprn) {
@@ -1209,6 +1210,19 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     rabbit.flushQueue(queueName);
   }
 
+  @Given("the case exists in RM and can be fetched using {string}")
+  public void the_case_exists_in_RM_and_can_be_fetched_using(String strEndpoint) {
+    if (strEndpoint.equals("GetCaseByUPRN")) {
+      this.uprnStr = "1347459999";
+      getCaseForUprn(uprnStr);
+      String caseID = caseDTOList.get(0).getId().toString().trim();
+      assertEquals(caseID, this.caseId);
+    } else if (strEndpoint.equals("GetCaseByID")) {
+      caseDTO = getCaseForID();
+      assertNotNull(caseDTO);
+    }
+  }
+
   private void checkStatus(int httpStatus) {
     HttpStatus status = HttpStatus.valueOf(httpStatus);
     if (httpStatus < 400) {
@@ -1222,5 +1236,48 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     long actualInMillis = dateTime.getTime();
     assertTrue(actualInMillis + " not after " + minAllowed, actualInMillis >= minAllowed);
     assertTrue(actualInMillis + " not before " + maxAllowed, actualInMillis <= maxAllowed);
+  }
+
+  private CaseDTO getCaseForID() {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId);
+    try {
+      caseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+    } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
+      this.exception = httpClientErrorException;
+    }
+    return caseDTO;
+  }
+
+  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprn);
+
+    ResponseEntity<List<CaseDTO>> caseResponse = null;
+    caseForUprnUrl = builder.build().encode().toUri();
+
+    try {
+      caseResponse =
+          getRestTemplate()
+              .exchange(
+                  caseForUprnUrl,
+                  HttpMethod.GET,
+                  null,
+                  new ParameterizedTypeReference<List<CaseDTO>>() {});
+      caseDTOList = caseResponse.getBody();
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
+      this.exception = httpClientErrorException;
+    }
+    return caseResponse;
   }
 }
