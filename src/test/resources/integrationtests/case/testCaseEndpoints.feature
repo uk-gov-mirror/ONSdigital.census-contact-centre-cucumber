@@ -193,3 +193,18 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
       | "3305e937-6fb1-4ce1-9d4c-077f147789dd"  | "true"       | "HI"      | "E"    | "E"          | 400          |
       | "3305e937-6fb1-4ce1-9d4c-770f147711aa"  | "false"      | "SPG"     | "W"    | "E"          | 200          |
       | "3305e937-6fb1-4ce1-9d4c-077f147733aa"  | "true"       | "SPG"     | "N"    | "U"          | 200          |
+
+  @CC @TestCaseEndpointsT382
+  Scenario Outline: [CR-T382, CR-T384] Get latest case from RM
+    Given the case "3305e937-6fb1-4ce1-9d4c-077f147789ab" does not exist in the cache
+    And an empty queue exists for sending "ADDRESS_MODIFIED" events
+    And the case exists in RM and can be fetched using <endpoint>
+    When the case address details are modified by a member of CC staff
+    And the case modified event is sent to RM and RM does immediately action it
+    And the call is made to fetch the case again from <endpoint>
+    Then <endpoint> gets the modified case from RM
+    
+    Examples: 
+      | endpoint        | 
+      | "GetCaseByUPRN" |
+      | "GetCaseByID"   |
