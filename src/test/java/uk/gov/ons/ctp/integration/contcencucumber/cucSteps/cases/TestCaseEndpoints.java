@@ -630,33 +630,33 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  //  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
-  //    final UriComponentsBuilder builder =
-  //        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-  //            .port(ccBasePort)
-  //            .pathSegment("cases")
-  //            .pathSegment("uprn")
-  //            .pathSegment(uprn);
+  // private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
+  // final UriComponentsBuilder builder =
+  // UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+  // .port(ccBasePort)
+  // .pathSegment("cases")
+  // .pathSegment("uprn")
+  // .pathSegment(uprn);
   //
-  //    ResponseEntity<List<CaseDTO>> caseResponse = null;
-  //    caseForUprnUrl = builder.build().encode().toUri();
+  // ResponseEntity<List<CaseDTO>> caseResponse = null;
+  // caseForUprnUrl = builder.build().encode().toUri();
   //
-  //    try {
-  //      caseResponse =
-  //          getRestTemplate()
-  //              .exchange(
-  //                  caseForUprnUrl,
-  //                  HttpMethod.GET,
-  //                  null,
-  //                  new ParameterizedTypeReference<List<CaseDTO>>() {});
-  //    } catch (HttpClientErrorException httpClientErrorException) {
-  //      log.debug(
-  //          "A HttpClientErrorException has occurred when trying to get list of cases using
+  // try {
+  // caseResponse =
+  // getRestTemplate()
+  // .exchange(
+  // caseForUprnUrl,
+  // HttpMethod.GET,
+  // null,
+  // new ParameterizedTypeReference<List<CaseDTO>>() {});
+  // } catch (HttpClientErrorException httpClientErrorException) {
+  // log.debug(
+  // "A HttpClientErrorException has occurred when trying to get list of cases using
   // getCaseByUprn endpoint in contact centre: "
-  //              + httpClientErrorException.getMessage());
-  //    }
-  //    return caseResponse;
-  //  }
+  // + httpClientErrorException.getMessage());
+  // }
+  // return caseResponse;
+  // }
 
   @Then("the Case endpoint returns a case associated with UPRN {string}")
   public void the_Case_endpoint_returns_a_case_associated_with_UPRN(String strUprn) {
@@ -1238,11 +1238,24 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_case_modified_event_is_sent_to_RM_and_RM_does_immediately_action_it()
       throws ClassNotFoundException, CTPException {
     //    GenericEvent specificEvent =
-    //        getEventFromQueue("ADDRESS_MODIFIED", "AddressModifiedEvent.class");
-    //    assertNotNull(specificEvent);
-    //    Header specificHeader = specificEvent.getEvent();
-    //    assertNotNull(specificHeader);
-    //    assertEquals("ADDRESS_MODIFIED", specificHeader.getType().toString());
+    //        getEventFromQueue("ADDRESS_MODIFIED", GenericEvent.class);
+    log.info(
+        "Check that an event of type ADDRESS_MODIFIED has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
+
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        AddressModifiedEvent.class,
+        RABBIT_TIMEOUT);
+
+    AddressModifiedEvent addressModifiedEvent =
+        rabbit.getMessage(queueName, AddressModifiedEvent.class, RABBIT_TIMEOUT);
+
+    assertNotNull(addressModifiedEvent);
+    Header addressModifiedHeader = addressModifiedEvent.getEvent();
+    assertNotNull(addressModifiedHeader);
+    assertEquals("ADDRESS_MODIFIED", addressModifiedHeader.getType().toString());
 
     CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
     caseContainerInRM.setId(modifyCaseRequest.getCaseId());
@@ -1352,7 +1365,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     return caseResponse;
   }
 
-  private GenericEvent getEventFromQueue(String eventType, String clazzName)
+  private GenericEvent getEventFromQueue(String eventType, Class<GenericEvent> clazzName)
       throws CTPException, ClassNotFoundException {
     log.with(eventType)
         .info(
@@ -1366,7 +1379,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         RABBIT_TIMEOUT);
 
     GenericEvent genericEvent =
-        (GenericEvent) rabbit.getMessage(queueName, AddressModifiedEvent.class, RABBIT_TIMEOUT);
+        (GenericEvent) rabbit.getMessage(queueName, clazzName, RABBIT_TIMEOUT);
 
     return genericEvent;
   }
