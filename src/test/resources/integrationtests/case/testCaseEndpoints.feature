@@ -131,14 +131,14 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
 
     Examples:
       | uprn         | status               |
-      | "1347459995" | "DERELICT"           |
-      | "1347459995" | "DEMOLISHED"         |
-      | "1347459995" | "NON_RESIDENTIAL"    |
-      | "1347459995" | "UNDER_CONSTRUCTION" |
-      | "1347459995" | "SPLIT_ADDRESS"      |
-      | "1347459995" | "MERGED"             |
-      | "1347459995" | "DUPLICATE"          |
-      | "1347459995" | "DOES_NOT_EXIST"     |
+      | "1710030095" | "DERELICT"           |
+      | "1710030095" | "DEMOLISHED"         |
+      | "1710030095" | "NON_RESIDENTIAL"    |
+      | "1710030095" | "UNDER_CONSTRUCTION" |
+      | "1710030095" | "SPLIT_ADDRESS"      |
+      | "1710030095" | "MERGED"             |
+      | "1710030095" | "DUPLICATE"          |
+      | "1710030095" | "DOES_NOT_EXIST"     |
 
   @CC @TestCaseEndpointsT379 @SetUp
   Scenario Outline: [CR-T379] No Invalid Address Event for CE
