@@ -63,10 +63,12 @@ import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 import uk.gov.ons.ctp.common.event.EventPublisher.Source;
 import uk.gov.ons.ctp.common.event.model.Address;
+import uk.gov.ons.ctp.common.event.model.AddressModifiedEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValid;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
 import uk.gov.ons.ctp.common.event.model.CollectionCaseNewAddress;
+import uk.gov.ons.ctp.common.event.model.GenericEvent;
 import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.NewAddress;
 import uk.gov.ons.ctp.common.event.model.NewAddressPayload;
@@ -112,6 +114,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private AddressNotValidEvent addressNotValidEvent;
   private String uprnStr;
   private String status = "";
+  private ModifyCaseRequestDTO modifyCaseRequest = null;
 
   @Value("${keystore}")
   private String keyStore;
@@ -1215,7 +1218,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("the case exists in RM and can be fetched using {string}")
   public void the_case_exists_in_RM_and_can_be_fetched_using(String strEndpoint) {
     if (strEndpoint.equals("GetCaseByUPRN")) {
-      this.uprnStr = "1347459999";
+      this.uprnStr = "1710030106";
       getCaseForUprn(uprnStr);
       String caseID = caseDTOList.get(0).getId().toString().trim();
       assertEquals(caseID, this.caseId);
@@ -1227,16 +1230,30 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("the case address details are modified by a member of CC staff")
   public void the_case_address_details_are_modified_by_a_member_of_CC_staff() {
-    ModifyCaseRequestDTO modifyCaseRequest = createModifyCaseRequest();
+    createModifyCaseRequest();
     putCaseForID(modifyCaseRequest);
   }
 
-  // @When("the case modified event is sent to RM and RM does immediately action it")
-  // public void the_case_modified_event_is_sent_to_RM_and_RM_does_immediately_action_it() {
-  // // Write code here that turns the phrase above into concrete actions
-  // throw new cucumber.api.PendingException();
-  // }
-  //
+  @When("the case modified event is sent to RM and RM does immediately action it")
+  public void the_case_modified_event_is_sent_to_RM_and_RM_does_immediately_action_it()
+      throws ClassNotFoundException, CTPException {
+    //    GenericEvent specificEvent =
+    //        getEventFromQueue("ADDRESS_MODIFIED", "AddressModifiedEvent.class");
+    //    assertNotNull(specificEvent);
+    //    Header specificHeader = specificEvent.getEvent();
+    //    assertNotNull(specificHeader);
+    //    assertEquals("ADDRESS_MODIFIED", specificHeader.getType().toString());
+
+    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
+    caseContainerInRM.setId(modifyCaseRequest.getCaseId());
+    caseContainerInRM.setAddressLine1(modifyCaseRequest.getAddressLine1());
+    caseContainerInRM.setAddressLine2(modifyCaseRequest.getAddressLine2());
+    caseContainerInRM.setAddressLine3(modifyCaseRequest.getAddressLine3());
+    caseContainerInRM.setOrganisationName(modifyCaseRequest.getCeOrgName());
+    List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
+    postCasesToMockService(postCaseList);
+  }
+
   // @When("the call is made to fetch the case again from {string}")
   // public void the_call_is_made_to_fetch_the_case_again_from(String string) {
   // // Write code here that turns the phrase above into concrete actions
@@ -1249,8 +1266,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   // throw new cucumber.api.PendingException();
   // }
 
-  private ModifyCaseRequestDTO createModifyCaseRequest() {
-    ModifyCaseRequestDTO modifyCaseRequest = new ModifyCaseRequestDTO();
+  private void createModifyCaseRequest() {
+    modifyCaseRequest = new ModifyCaseRequestDTO();
     modifyCaseRequest.setAddressLine1("33 Some Road");
     modifyCaseRequest.setAddressLine2("Some Small Area");
     modifyCaseRequest.setAddressLine3("Some Village");
@@ -1259,7 +1276,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     modifyCaseRequest.setCaseId(UUID.fromString("3305e937-6fb1-4ce1-9d4c-077f147789ab"));
     modifyCaseRequest.setEstabType(EstabType.HOUSEHOLD);
     modifyCaseRequest.setCaseType(CaseType.HH);
-    return modifyCaseRequest;
   }
 
   private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
@@ -1334,5 +1350,24 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       this.exception = httpClientErrorException;
     }
     return caseResponse;
+  }
+
+  private GenericEvent getEventFromQueue(String eventType, String clazzName)
+      throws CTPException, ClassNotFoundException {
+    log.with(eventType)
+        .info(
+            "Check that an event of this type has now been put on the empty queue, named {}, ready to be picked up by RM",
+            queueName);
+
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        clazzName,
+        RABBIT_TIMEOUT);
+
+    GenericEvent genericEvent =
+        (GenericEvent) rabbit.getMessage(queueName, AddressModifiedEvent.class, RABBIT_TIMEOUT);
+
+    return genericEvent;
   }
 }
