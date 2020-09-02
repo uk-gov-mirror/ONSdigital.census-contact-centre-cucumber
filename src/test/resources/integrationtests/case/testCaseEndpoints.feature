@@ -196,7 +196,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
 
   @CC @TestCaseEndpointsT382
   Scenario Outline: [CR-T382, CR-T384] Get latest case from RM
-    Given the case "3305e937-6fb1-4ce1-9d4c-077f147733aa" does not exist in the cache
+    Given the case "03f58cb5-9af4-4d40-9d60-c124c5bddfff" does not exist in the cache
     And an empty queue exists for sending "ADDRESS_MODIFIED" events
     And the case exists in RM and can be fetched using <endpoint>
     When the case address details are modified by a member of CC staff

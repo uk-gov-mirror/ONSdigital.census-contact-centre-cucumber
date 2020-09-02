@@ -1218,7 +1218,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("the case exists in RM and can be fetched using {string}")
   public void the_case_exists_in_RM_and_can_be_fetched_using(String strEndpoint) {
     if (strEndpoint.equals("GetCaseByUPRN")) {
-      this.uprnStr = "1710030106";
+      this.uprnStr = "100041131297";
       getCaseForUprn(uprnStr);
       String caseID = caseDTOList.get(0).getId().toString().trim();
       assertEquals(caseID, this.caseId);
@@ -1273,7 +1273,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     modifyCaseRequest.setAddressLine3("Some Village");
     modifyCaseRequest.setCeOrgName("Some Organisation");
     modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
-    modifyCaseRequest.setCaseId(UUID.fromString("3305e937-6fb1-4ce1-9d4c-077f147789ab"));
+    modifyCaseRequest.setCaseId(UUID.fromString("03f58cb5-9af4-4d40-9d60-c124c5bddfff"));
     modifyCaseRequest.setEstabType(EstabType.HOUSEHOLD);
     modifyCaseRequest.setCaseType(CaseType.HH);
   }
