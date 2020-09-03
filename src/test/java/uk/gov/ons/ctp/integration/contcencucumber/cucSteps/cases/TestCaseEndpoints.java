@@ -68,7 +68,6 @@ import uk.gov.ons.ctp.common.event.model.AddressNotValid;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
 import uk.gov.ons.ctp.common.event.model.CollectionCaseNewAddress;
-import uk.gov.ons.ctp.common.event.model.GenericEvent;
 import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.NewAddress;
 import uk.gov.ons.ctp.common.event.model.NewAddressPayload;
@@ -1217,6 +1216,10 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("the case exists in RM and can be fetched using {string}")
   public void the_case_exists_in_RM_and_can_be_fetched_using(String strEndpoint) {
+    fetchTheCaseFromCCSvc(strEndpoint);
+  }
+
+  private void fetchTheCaseFromCCSvc(String strEndpoint) {
     if (strEndpoint.equals("GetCaseByUPRN")) {
       this.uprnStr = "100041131297";
       getCaseForUprn(uprnStr);
@@ -1237,8 +1240,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @When("the case modified event is sent to RM and RM does immediately action it")
   public void the_case_modified_event_is_sent_to_RM_and_RM_does_immediately_action_it()
       throws ClassNotFoundException, CTPException {
-    //    GenericEvent specificEvent =
-    //        getEventFromQueue("ADDRESS_MODIFIED", GenericEvent.class);
     log.info(
         "Check that an event of type ADDRESS_MODIFIED has now been put on the empty queue, named {}, ready to be picked up by RM",
         queueName);
@@ -1267,12 +1268,11 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     postCasesToMockService(postCaseList);
   }
 
-  // @When("the call is made to fetch the case again from {string}")
-  // public void the_call_is_made_to_fetch_the_case_again_from(String string) {
-  // // Write code here that turns the phrase above into concrete actions
-  // throw new cucumber.api.PendingException();
-  // }
-  //
+  @When("the call is made to fetch the case again from {string}")
+  public void the_call_is_made_to_fetch_the_case_again_from(String strEndpoint) {
+    fetchTheCaseFromCCSvc(strEndpoint);
+  }
+
   // @Then("{string} gets the modified case from RM")
   // public void gets_the_modified_case_from_RM(String string) {
   // // Write code here that turns the phrase above into concrete actions
@@ -1363,24 +1363,5 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       this.exception = httpClientErrorException;
     }
     return caseResponse;
-  }
-
-  private GenericEvent getEventFromQueue(String eventType, Class<GenericEvent> clazzName)
-      throws CTPException, ClassNotFoundException {
-    log.with(eventType)
-        .info(
-            "Check that an event of this type has now been put on the empty queue, named {}, ready to be picked up by RM",
-            queueName);
-
-    log.info(
-        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
-        queueName,
-        clazzName,
-        RABBIT_TIMEOUT);
-
-    GenericEvent genericEvent =
-        (GenericEvent) rabbit.getMessage(queueName, clazzName, RABBIT_TIMEOUT);
-
-    return genericEvent;
   }
 }
