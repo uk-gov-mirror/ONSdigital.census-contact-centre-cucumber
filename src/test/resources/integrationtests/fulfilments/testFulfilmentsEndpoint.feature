@@ -188,8 +188,8 @@ Feature: Test Contact centre Fulfilments Endpoints
 
   @SetUp
   Scenario: [CR-T323] PENDING - I want to request a Paper Questionnaire for a SPG Individual Respondent in NI
-    Given the CC advisor has provided a valid UPRN "1710030106"
-    Then the Case endpoint returns a case, associated with UPRN "1710030106", which has caseType "SPG" and addressLevel "U" and handDelivery "false"
+    Given the CC advisor has provided a valid UPRN "1710030110"
+    Then the Case endpoint returns a case, associated with UPRN "1710030110", which has caseType "SPG" and addressLevel "U" and handDelivery "false"
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"

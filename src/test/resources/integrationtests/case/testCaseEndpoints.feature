@@ -16,11 +16,11 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
 
     Examples:
       | caseId                                 | uprn       | caseEvents | noCaseEvents | estabUprn      | secure  |
-      | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | 1347459999 | "true"     |            2 | "334111111111" | "true"  |
-      | "3305e937-6fb1-4ce1-9d4c-077f147789ac" | 1347459999 | "true"     |            1 | ""             | "false" |
-      | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | 1347459999 | "false"    |            0 | "334111111111" | "true"  |
-      | "3305e937-6fb1-4ce1-9d4c-077f147789ac" | 1347459999 | "false"    |            0 | ""             | "false" |
-      | "03f58cb5-9af4-4d40-9d60-c124c5bddf09" | 1347459999 | "true"     |            0 | ""             | "false" |
+      | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | 1710030106 | "true"     |            2 | "334111111111" | "true"  |
+      | "3305e937-6fb1-4ce1-9d4c-077f147789ac" | 1710030106 | "true"     |            1 | ""             | "false" |
+      | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | 1710030106 | "false"    |            0 | "334111111111" | "true"  |
+      | "3305e937-6fb1-4ce1-9d4c-077f147789ac" | 1710030106 | "false"    |            0 | ""             | "false" |
+      | "03f58cb5-9af4-4d40-9d60-c124c5bddf09" | 1710030106 | "true"     |            0 | ""             | "false" |
 
   @CC
   Scenario Outline: [CR-T135] I want to verify that the case search by invalid case ID works
@@ -44,7 +44,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
 
     Examples:
       | uprn         | case_ids                                                                                                         |
-      | "1347459999" | "3305e937-6fb1-4ce1-9d4c-077f147789ab,3305e937-6fb1-4ce1-9d4c-077f147789ac,03f58cb5-9af4-4d40-9d60-c124c5bddf09" |
+      | "1710030106" | "3305e937-6fb1-4ce1-9d4c-077f147789ab,3305e937-6fb1-4ce1-9d4c-077f147789ac,03f58cb5-9af4-4d40-9d60-c124c5bddf09" |
 
   @CC @AD
   Scenario Outline: [CR-T137] I want to verify that the case search by invalid case UPRN works
@@ -142,8 +142,8 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
 
   @CC @TestCaseEndpointsT379 @SetUp
   Scenario Outline: [CR-T379] No Invalid Address Event for CE
-    Given the CC advisor has provided a valid UPRN "1347459987"
-    And the Case endpoint returns a CE case associated with UPRN "1347459987"
+    Given the CC advisor has provided a valid UPRN "1710030113"
+    And the Case endpoint returns a CE case associated with UPRN "1710030113"
     When CC Advisor selects the CE address status change <status>
     Then a "400 Bad Request" error is returned along with the message about CE addresses
 
