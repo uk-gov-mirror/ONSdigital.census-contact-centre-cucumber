@@ -1221,7 +1221,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private void fetchTheCaseFromCCSvc(String strEndpoint) {
     if (strEndpoint.equals("GetCaseByUPRN")) {
-      this.uprnStr = "100041131297";
+      this.uprnStr = "1710030112";
       getCaseForUprn(uprnStr);
       String caseID = caseDTOList.get(0).getId().toString().trim();
       assertEquals(caseID, this.caseId);
@@ -1286,9 +1286,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     modifyCaseRequest.setAddressLine3("Some Village");
     modifyCaseRequest.setCeOrgName("Some Organisation");
     modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
-    modifyCaseRequest.setCaseId(UUID.fromString("03f58cb5-9af4-4d40-9d60-c124c5bddfff"));
-    modifyCaseRequest.setEstabType(EstabType.HOUSEHOLD);
-    modifyCaseRequest.setCaseType(CaseType.HH);
+    modifyCaseRequest.setCaseId(UUID.fromString("5a54ee1f-3552-4a46-adcc-0940f0998f90"));
+    modifyCaseRequest.setEstabType(EstabType.OTHER);
+    modifyCaseRequest.setCaseType(CaseType.CE);
   }
 
   private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
