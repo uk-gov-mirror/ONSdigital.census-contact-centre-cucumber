@@ -207,4 +207,4 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
     Examples: 
       | endpoint        | 
       | "GetCaseByUPRN" |
-      | "GetCaseByID"   |
+      #| "GetCaseByID"   |

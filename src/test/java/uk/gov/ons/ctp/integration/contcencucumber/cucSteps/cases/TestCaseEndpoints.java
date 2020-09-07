@@ -1216,19 +1216,15 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("the case exists in RM and can be fetched using {string}")
   public void the_case_exists_in_RM_and_can_be_fetched_using(String strEndpoint) {
+    caseDTO = null;
     fetchTheCaseFromCCSvc(strEndpoint);
-  }
-
-  private void fetchTheCaseFromCCSvc(String strEndpoint) {
-    if (strEndpoint.equals("GetCaseByUPRN")) {
-      this.uprnStr = "1710030112";
-      getCaseForUprn(uprnStr);
-      String caseID = caseDTOList.get(0).getId().toString().trim();
-      assertEquals(caseID, this.caseId);
-    } else if (strEndpoint.equals("GetCaseByID")) {
-      caseDTO = getCaseForID();
-      assertNotNull(caseDTO);
-    }
+    assertNotNull(caseDTO);
+    assertEquals(this.caseId, caseDTO.getId().toString());
+    assertEquals(this.uprnStr, caseDTO.getUprn());
+    assertEquals("Napier House", caseDTO.getAddressLine1());
+    assertEquals("88 Harbour Street", caseDTO.getAddressLine2());
+    assertEquals("Parkhead", caseDTO.getAddressLine3());
+    assertEquals("ON", caseDTO.getCeOrgName());
   }
 
   @When("the case address details are modified by a member of CC staff")
@@ -1258,12 +1254,15 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(addressModifiedHeader);
     assertEquals("ADDRESS_MODIFIED", addressModifiedHeader.getType().toString());
 
-    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
+    CaseContainerDTO caseContainerInRM =
+        new CaseContainerDTO(); // need to use the existing caseDTO and map it to a CaseContainerDTO
+                                // here
     caseContainerInRM.setId(modifyCaseRequest.getCaseId());
-    caseContainerInRM.setAddressLine1(modifyCaseRequest.getAddressLine1());
-    caseContainerInRM.setAddressLine2(modifyCaseRequest.getAddressLine2());
-    caseContainerInRM.setAddressLine3(modifyCaseRequest.getAddressLine3());
-    caseContainerInRM.setOrganisationName(modifyCaseRequest.getCeOrgName());
+    caseContainerInRM.setAddressLine1("44 RM Road");
+    caseContainerInRM.setAddressLine2("RM Street");
+    caseContainerInRM.setAddressLine3("RM Village");
+    caseContainerInRM.setOrganisationName("Response Management Org");
+    caseContainerInRM.setCreatedDateTime(new Date());
     List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
     postCasesToMockService(postCaseList);
   }
@@ -1273,11 +1272,27 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     fetchTheCaseFromCCSvc(strEndpoint);
   }
 
-  // @Then("{string} gets the modified case from RM")
-  // public void gets_the_modified_case_from_RM(String string) {
-  // // Write code here that turns the phrase above into concrete actions
-  // throw new cucumber.api.PendingException();
-  // }
+  @Then("{string} gets the modified case from RM")
+  public void gets_the_modified_case_from_RM(String strEndpoint) {
+    log.info(
+        "assert that the GET endpoint now picks up the RM case rather then the one that the PUT endpoint has created in the cache");
+    assertEquals(this.caseId, caseDTO.getId().toString());
+    assertEquals(this.uprnStr, caseDTO.getUprn());
+//    assertEquals("44 RM Road", caseDTO.getAddressLine1());
+//    assertEquals("RM Street", caseDTO.getAddressLine2());
+//    assertEquals("RM Village", caseDTO.getAddressLine3());
+//    assertEquals("Response Management Org", caseDTO.getCeOrgName());
+  }
+
+  private void fetchTheCaseFromCCSvc(String strEndpoint) {
+    if (strEndpoint.equals("GetCaseByUPRN")) {
+      this.uprnStr = "1710030112";
+      getCaseForUprn(uprnStr);
+      caseDTO = caseDTOList.get(0);
+    } else if (strEndpoint.equals("GetCaseByID")) {
+      getCaseForID();
+    }
+  }
 
   private void createModifyCaseRequest() {
     modifyCaseRequest = new ModifyCaseRequestDTO();
@@ -1322,7 +1337,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertTrue(actualInMillis + " not before " + maxAllowed, actualInMillis <= maxAllowed);
   }
 
-  private CaseDTO getCaseForID() {
+  private void getCaseForID() {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
@@ -1333,7 +1348,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
     }
-    return caseDTO;
   }
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
