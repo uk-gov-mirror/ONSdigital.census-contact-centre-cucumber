@@ -1189,8 +1189,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  @Given("the case {string} does not exist in the cache")
-  public void the_case_does_not_exist_in_the_cache(String strCaseId) {
+  @Given("the case with id {string} and uprn {string} does not exist in the cache")
+  public void the_case_with_id_and_uprn_does_not_exist_in_the_cache(
+      String strCaseId, String strUprn) {
     List<String> cachedCaseIds = new ArrayList<>();
     cachedCaseIds.add(strCaseId);
     for (String id : cachedCaseIds) {
@@ -1202,6 +1203,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       }
     }
     this.caseId = strCaseId;
+    this.uprnStr = strUprn;
   }
 
   @Given("an empty queue exists for sending {string} events")
@@ -1254,9 +1256,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(addressModifiedHeader);
     assertEquals("ADDRESS_MODIFIED", addressModifiedHeader.getType().toString());
 
-    CaseContainerDTO caseContainerInRM =
-        new CaseContainerDTO(); // need to use the existing caseDTO and map it to a CaseContainerDTO
-                                // here
+    CaseContainerDTO caseContainerInRM = new CaseContainerDTO(); // need to use the existing caseDTO
+    // and map it to a CaseContainerDTO
+    // here
     caseContainerInRM.setId(modifyCaseRequest.getCaseId());
     caseContainerInRM.setAddressLine1("44 RM Road");
     caseContainerInRM.setAddressLine2("RM Street");
@@ -1278,15 +1280,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "assert that the GET endpoint now picks up the RM case rather then the one that the PUT endpoint has created in the cache");
     assertEquals(this.caseId, caseDTO.getId().toString());
     assertEquals(this.uprnStr, caseDTO.getUprn());
-//    assertEquals("44 RM Road", caseDTO.getAddressLine1());
-//    assertEquals("RM Street", caseDTO.getAddressLine2());
-//    assertEquals("RM Village", caseDTO.getAddressLine3());
-//    assertEquals("Response Management Org", caseDTO.getCeOrgName());
+    // assertEquals("44 RM Road", caseDTO.getAddressLine1());
+    // assertEquals("RM Street", caseDTO.getAddressLine2());
+    // assertEquals("RM Village", caseDTO.getAddressLine3());
+    // assertEquals("Response Management Org", caseDTO.getCeOrgName());
   }
 
   private void fetchTheCaseFromCCSvc(String strEndpoint) {
     if (strEndpoint.equals("GetCaseByUPRN")) {
-      this.uprnStr = "1710030112";
       getCaseForUprn(uprnStr);
       caseDTO = caseDTOList.get(0);
     } else if (strEndpoint.equals("GetCaseByID")) {
