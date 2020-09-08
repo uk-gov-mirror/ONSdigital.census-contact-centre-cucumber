@@ -193,3 +193,8 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
       | "3305e937-6fb1-4ce1-9d4c-077f147789dd"  | "true"       | "HI"      | "E"    | "E"          | 400          |
       | "3305e937-6fb1-4ce1-9d4c-770f147711aa"  | "false"      | "SPG"     | "W"    | "E"          | 200          |
       | "3305e937-6fb1-4ce1-9d4c-077f147733aa"  | "true"       | "SPG"     | "N"    | "U"          | 200          |
+      
+   @CC @CR-T376
+   Scenario: [CR-T376] Launch EQ for Address in AIMS but no case linked
+     Given that a new cached case has been created for a new address but is not yet in RM 
+     Then Getting launch URL results in a 202 status and content containing "Unable to provide launch URL/UAC at present"

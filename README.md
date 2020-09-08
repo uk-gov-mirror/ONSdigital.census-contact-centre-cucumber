@@ -4,8 +4,9 @@ Cucumber integration tests for service responding to contact centre and assisted
 
 This project tests the functionality of the services deployed for contact centre and assisted digital requests.
 It currently tests the address and case endpoints.
-It uses Spring Boot to create a restTemplate - mapping Json Objects to POJOs
+It uses Spring Boot to create a restTemplate \- mapping Json Objects to POJOs
 It also uses Scenario Outlines to utilize tabulated data in tests
+
 ```
   Scenario Outline: I want to verify that address search by postcode works
     Given I have a valid Postcode <postcode>
