@@ -26,8 +26,10 @@ import io.swagger.client.model.DeliveryChannel;
 import io.swagger.client.model.EstabType;
 import io.swagger.client.model.InvalidateCaseRequestDTO;
 import io.swagger.client.model.ModifyCaseRequestDTO;
+import io.swagger.client.model.NewCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
+import io.swagger.client.model.Region;
 import io.swagger.client.model.ResponseDTO;
 import io.swagger.client.model.UACResponseDTO;
 import java.net.URI;
@@ -1296,6 +1298,35 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("Response Management Org", caseDTO.getCeOrgName());
   }
 
+  @Given("that a new cached case has been created for a new address but is not yet in RM")
+  public void createNewCachedCase() {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
+
+    NewCaseRequestDTO newCaseRequest = createNewCaseRequestDTO();
+    caseDTO =
+        getRestTemplate()
+            .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
+    log.info("New case created: " + caseDTO.getId());
+  }
+
+  @Then("Getting launch URL results in a {int} status and content containing {string}")
+  public void getLaunchUrlWhenCaseNotInRM(int expectedStatus, String expectedContent) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseDTO.getId().toString())
+            .pathSegment("launch")
+            .queryParam("agentId", agentId)
+            .queryParam("individual", "true");
+
+    ResponseEntity<String> r =
+        getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+    assertEquals(expectedStatus, r.getStatusCodeValue());
+    assertTrue(r.getBody(), r.getBody().contains(expectedContent));
+  }
+
   private void fetchTheCaseFromCCSvc(String strEndpoint) {
     if (strEndpoint.equals("GetCaseByUPRN")) {
       getCaseForUprn(uprnStr);
@@ -1331,6 +1362,23 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "A HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
               + httpClientErrorException.getMessage());
     }
+  }
+
+  private NewCaseRequestDTO createNewCaseRequestDTO() {
+    NewCaseRequestDTO newCaseRequest = new NewCaseRequestDTO();
+    newCaseRequest.setCaseType(CaseType.SPG);
+    newCaseRequest.setAddressLine1("12 Newlands Terrace");
+    newCaseRequest.setAddressLine2("Flatfield");
+    newCaseRequest.setAddressLine3("Brumble");
+    newCaseRequest.setCeOrgName("Claringdon House");
+    newCaseRequest.setCeUsualResidents(13);
+    newCaseRequest.setEstabType(EstabType.ROYAL_HOUSEHOLD);
+    newCaseRequest.setDateTime("2016-11-09T11:44:44.797");
+    newCaseRequest.setUprn("3333334");
+    newCaseRequest.setRegion(Region.E);
+    newCaseRequest.setPostcode("EX2 5WH");
+    newCaseRequest.setTownName("Exeter");
+    return newCaseRequest;
   }
 
   private void checkStatus(int httpStatus) {
