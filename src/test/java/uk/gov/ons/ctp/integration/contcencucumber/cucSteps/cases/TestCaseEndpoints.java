@@ -1257,24 +1257,22 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(addressModifiedHeader);
     assertEquals("ADDRESS_MODIFIED", addressModifiedHeader.getType().toString());
 
-    CaseContainerDTO caseContainerInRM = new CaseContainerDTO(); // need to use the existing caseDTO
-    // and map it to a CaseContainerDTO
-    // here
-    caseContainerInRM.setId(modifyCaseRequest.getCaseId());
+    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
+    caseContainerInRM.setId(UUID.fromString(this.caseId));
     caseContainerInRM.setCaseRef("124124009");
-    caseContainerInRM.setCaseType("CE"); // may not be needed
-    caseContainerInRM.setAddressType("HH"); // may not be needed
-    caseContainerInRM.setEstabType("OTHER"); // may not be needed
+    caseContainerInRM.setCaseType("CE");
+    caseContainerInRM.setAddressType("HH");
+    caseContainerInRM.setEstabType("OTHER");
     caseContainerInRM.setCreatedDateTime(new Date());
-    caseContainerInRM.setLastUpdated(null); // may not be needed
+    caseContainerInRM.setLastUpdated(null);
     caseContainerInRM.setAddressLine1("44 RM Road");
     caseContainerInRM.setAddressLine2("RM Street");
     caseContainerInRM.setAddressLine3("RM Village");
-    caseContainerInRM.setTownName("Newport"); // may not be needed
-    caseContainerInRM.setRegion("W"); // may not be needed
-    caseContainerInRM.setPostcode("G1 2AA"); // may not be needed
+    caseContainerInRM.setTownName("Newport");
+    caseContainerInRM.setRegion("W");
+    caseContainerInRM.setPostcode("G1 2AA");
     caseContainerInRM.setOrganisationName("Response Management Org");
-    caseContainerInRM.setUprn("1710030112");
+    caseContainerInRM.setUprn(this.uprnStr);
     List<EventDTO> caseEvents = new ArrayList<EventDTO>();
     caseContainerInRM.setCaseEvents(caseEvents);
     List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
@@ -1293,9 +1291,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(this.caseId, caseDTO.getId().toString());
     assertEquals(this.uprnStr, caseDTO.getUprn());
     assertEquals("44 RM Road", caseDTO.getAddressLine1());
-    // assertEquals("RM Street", caseDTO.getAddressLine2());
-    // assertEquals("RM Village", caseDTO.getAddressLine3());
-    // assertEquals("Response Management Org", caseDTO.getCeOrgName());
+    assertEquals("RM Street", caseDTO.getAddressLine2());
+    assertEquals("RM Village", caseDTO.getAddressLine3());
+    assertEquals("Response Management Org", caseDTO.getCeOrgName());
   }
 
   private void fetchTheCaseFromCCSvc(String strEndpoint) {
@@ -1314,7 +1312,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     modifyCaseRequest.setAddressLine3("Some Village");
     modifyCaseRequest.setCeOrgName("Some Organisation");
     modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
-    modifyCaseRequest.setCaseId(UUID.fromString("5a54ee1f-3552-4a46-adcc-0940f0998f90"));
+    modifyCaseRequest.setCaseId(UUID.fromString(this.caseId));
     modifyCaseRequest.setEstabType(EstabType.OTHER);
     modifyCaseRequest.setCaseType(CaseType.CE);
   }
