@@ -79,6 +79,7 @@ import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
+import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.EventDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
@@ -1260,11 +1261,22 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     // and map it to a CaseContainerDTO
     // here
     caseContainerInRM.setId(modifyCaseRequest.getCaseId());
+    caseContainerInRM.setCaseRef("124124009");
+    caseContainerInRM.setCaseType("CE"); // may not be needed
+    caseContainerInRM.setAddressType("HH"); // may not be needed
+    caseContainerInRM.setEstabType("OTHER"); // may not be needed
+    caseContainerInRM.setCreatedDateTime(new Date());
+    caseContainerInRM.setLastUpdated(null); // may not be needed
     caseContainerInRM.setAddressLine1("44 RM Road");
     caseContainerInRM.setAddressLine2("RM Street");
     caseContainerInRM.setAddressLine3("RM Village");
+    caseContainerInRM.setTownName("Newport"); // may not be needed
+    caseContainerInRM.setRegion("W"); // may not be needed
+    caseContainerInRM.setPostcode("G1 2AA"); // may not be needed
     caseContainerInRM.setOrganisationName("Response Management Org");
-    caseContainerInRM.setCreatedDateTime(new Date());
+    caseContainerInRM.setUprn("1710030112");
+    List<EventDTO> caseEvents = new ArrayList<EventDTO>();
+    caseContainerInRM.setCaseEvents(caseEvents);
     List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
     postCasesToMockService(postCaseList);
   }
@@ -1280,7 +1292,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "assert that the GET endpoint now picks up the RM case rather then the one that the PUT endpoint has created in the cache");
     assertEquals(this.caseId, caseDTO.getId().toString());
     assertEquals(this.uprnStr, caseDTO.getUprn());
-    // assertEquals("44 RM Road", caseDTO.getAddressLine1());
+    assertEquals("44 RM Road", caseDTO.getAddressLine1());
     // assertEquals("RM Street", caseDTO.getAddressLine2());
     // assertEquals("RM Village", caseDTO.getAddressLine3());
     // assertEquals("Response Management Org", caseDTO.getCeOrgName());
