@@ -198,3 +198,16 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
    Scenario: [CR-T376] Launch EQ for Address in AIMS but no case linked
      Given that a new cached case has been created for a new address but is not yet in RM 
      Then Getting launch URL results in a 202 status and content containing "Unable to provide launch URL/UAC at present"
+
+  @AD @CR-T381
+  Scenario: CR-T381 Get latest case from Cache (GetCaseByUPRN)
+    Given that new cached cases have been created for a new address but are not yet in RM
+    When  I Search cases By UPRN
+    Then  the correct case for my UPRN is returned "3333334"
+
+  @AD @CR-T385
+  Scenario: CR-T385 Get latest case from Cache (GetCaseByID)
+    Given that a new cached case has been created for a new address but is not yet in RM
+    When  I Search for cases By case ID
+    Then  the correct case for my case ID is returned
+

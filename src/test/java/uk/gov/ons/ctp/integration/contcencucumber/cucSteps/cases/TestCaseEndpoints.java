@@ -113,6 +113,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private AddressNotValidEvent addressNotValidEvent;
   private String uprnStr;
   private String status = "";
+  private UUID expectedCaseId;
 
   @Value("${keystore}")
   private String keyStore;
@@ -1189,14 +1190,30 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("that a new cached case has been created for a new address but is not yet in RM")
   public void createNewCachedCase() {
+    NewCaseRequestDTO newCaseRequest = createNewCaseRequestDTO();
+    caseDTO = postNewCase(newCaseRequest);
+    expectedCaseId = caseDTO.getId();
+  }
+
+  @Given("that new cached cases have been created for a new address but are not yet in RM")
+  public void createNewCachedCases() {
+    NewCaseRequestDTO newCaseRequest1 = createNewCaseRequestDTO();
+    newCaseRequest1.setDateTime("2016-11-09T11:44:44.797");
+    postNewCase(newCaseRequest1);
+    NewCaseRequestDTO newCaseRequest2 = createNewCaseRequestDTO();
+    newCaseRequest2.setDateTime("2017-11-09T11:44:44.797");
+    caseDTO = postNewCase(newCaseRequest2);
+    expectedCaseId = caseDTO.getId();
+  }
+
+  private CaseDTO postNewCase(final NewCaseRequestDTO newCaseRequest) {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
-
-    NewCaseRequestDTO newCaseRequest = createNewCaseRequestDTO();
-    caseDTO =
+    CaseDTO createdCaseDTO =
         getRestTemplate()
             .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
     log.info("New case created: " + caseDTO.getId());
+    return createdCaseDTO;
   }
 
   @Then("Getting launch URL results in a {int} status and content containing {string}")
