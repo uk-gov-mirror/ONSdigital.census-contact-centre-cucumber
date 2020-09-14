@@ -68,6 +68,7 @@ import uk.gov.ons.ctp.common.event.model.AddressNotValid;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
 import uk.gov.ons.ctp.common.event.model.CollectionCaseNewAddress;
+import uk.gov.ons.ctp.common.event.model.ContactCompact;
 import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.NewAddress;
 import uk.gov.ons.ctp.common.event.model.NewAddressPayload;
@@ -534,7 +535,16 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(type, details.getType());
     log.info("Verifying refusal event details");
     assertEquals(RefusalFixture.compactAddress(), details.getAddress());
-    assertEquals(RefusalFixture.contactCompact(), details.getContact());
+    if ("HARD_REFUSAL".contentEquals(type)) {
+      ContactCompact c = details.getContact();
+      // should be encrypted.
+      // IMPROVEME Check actual encryption.
+      assertFalse(RefusalFixture.A_TITLE.equals(c.getTitle()));
+      assertFalse(RefusalFixture.A_FORENAME.equals(c.getForename()));
+      assertFalse(RefusalFixture.A_SURNAME.equals(c.getSurname()));
+    } else {
+      assertNull(details.getContact());
+    }
     assertEquals(RefusalFixture.A_CALL_ID, details.getCallId());
     assertEquals(agentId, details.getAgentId());
     assertEquals(UUID.fromString(caseId), details.getCollectionCase().getId());
