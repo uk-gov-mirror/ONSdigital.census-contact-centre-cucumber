@@ -31,9 +31,6 @@ public class CucTestContext {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  // @Before(order = 1)
-  public void init() {}
-
   public RestTemplate getRestTemplate() {
     return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
   }

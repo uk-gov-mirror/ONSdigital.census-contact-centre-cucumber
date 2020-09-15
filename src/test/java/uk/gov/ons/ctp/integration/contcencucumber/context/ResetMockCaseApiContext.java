@@ -60,9 +60,6 @@ public class ResetMockCaseApiContext {
 
   private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiContext.class);
 
-  // @Before(order = 1)
-  public void init() {}
-
   public void setCases(final String cases) throws IOException {
     System.out.println("Resetting Mock Case API Data");
     log.info("Resetting Mock Case API Data");
