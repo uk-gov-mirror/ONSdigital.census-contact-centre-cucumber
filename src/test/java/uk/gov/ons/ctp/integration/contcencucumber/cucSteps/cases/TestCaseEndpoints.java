@@ -1225,7 +1225,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
     RestTemplate template = getRestTemplate();
-         return template.postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
+    return template.postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
   }
 
   @Then("Getting launch URL results in a {int} status and content containing {string}")
