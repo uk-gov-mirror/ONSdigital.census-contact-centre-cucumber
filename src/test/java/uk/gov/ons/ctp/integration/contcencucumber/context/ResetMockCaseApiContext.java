@@ -2,6 +2,7 @@ package uk.gov.ons.ctp.integration.contcencucumber.context;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 import static org.junit.Assert.fail;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
@@ -59,7 +60,7 @@ public class ResetMockCaseApiContext {
 
   private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiContext.class);
 
- // @Before(order = 1)
+  // @Before(order = 1)
   public void init() {}
 
   public void setCases(final String cases) throws IOException {

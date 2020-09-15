@@ -9,7 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import uk.gov.ons.ctp.common.cloud.FirestoreDataStore;
 import uk.gov.ons.ctp.common.cloud.TestCloudDataStore;
-
 import uk.gov.ons.ctp.integration.contcencucumber.context.CucTestContext;
 import uk.gov.ons.ctp.integration.contcencucumber.context.ResetMockCaseApiContext;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
@@ -34,6 +33,6 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 })
 public class SpringIntegrationTest {
 
-    @Before(order = 0)
-    public void init() {}
+  @Before(order = 0)
+  public void init() {}
 }

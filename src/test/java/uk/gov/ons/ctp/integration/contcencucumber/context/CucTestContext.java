@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.integration.contcencucumber.context;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,7 @@ public class CucTestContext {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  //@Before(order = 1)
+  // @Before(order = 1)
   public void init() {}
 
   public RestTemplate getRestTemplate() {

@@ -117,11 +117,9 @@ public class TestCaseEndpoints {
   private String status = "";
   private UUID expectedCaseId;
 
-  @Autowired
-  private CaseDataRepository dataRepo;
+  @Autowired private CaseDataRepository dataRepo;
 
-  @Autowired
-  private ResetMockCaseApiContext context;
+  @Autowired private ResetMockCaseApiContext context;
 
   @Value("${keystore}")
   private String keyStore;
@@ -162,7 +160,8 @@ public class TestCaseEndpoints {
 
   @Then("I do the smoke test and receive a response of OK from the service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_service() {
-    checkServiceHealthy( context.getCcBaseUrl(),  context.getCcBasePort(), "THE SERVICE MAY NOT BE RUNNING ");
+    checkServiceHealthy(
+        context.getCcBaseUrl(), context.getCcBasePort(), "THE SERVICE MAY NOT BE RUNNING ");
   }
 
   @Given("I am about to do a smoke test by going to a mock case api endpoint")
@@ -172,7 +171,10 @@ public class TestCaseEndpoints {
 
   @Then("I do the smoke test and receive a response of OK from the mock case api service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
-    checkServiceHealthy( context.getMcsBaseUrl(),  context.getMcsBasePort(), "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
+    checkServiceHealthy(
+        context.getMcsBaseUrl(),
+        context.getMcsBasePort(),
+        "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
   }
 
   @Given("I have a valid case ID <caseId>")
@@ -181,18 +183,18 @@ public class TestCaseEndpoints {
   }
 
   @When("I Search cases By case ID <caseEvents>")
-  public void iSearchCasesByCaseIDCaseEvents() {
-  }
+  public void iSearchCasesByCaseIDCaseEvents() {}
 
   @When("I Search cases By case ID {string}")
   public void i_Search_cases_By_case_ID(String showCaseEvents) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .queryParam("caseEvents", showCaseEvents);
-    caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+    caseDTO =
+        context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
   }
 
   @Then("the correct case for my case ID is returned <uprn>")
@@ -202,12 +204,11 @@ public class TestCaseEndpoints {
   }
 
   @Then("the correct case for my case ID is returned {int}")
-  public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {
-
-  }
+  public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {}
 
   @And("the correct number of events are returned <caseEvents> <noCaseEvents>")
-  public void theCorrectNumberOfEventsAreReturnedCaseEventsNoCaseEvents(String showCaseEvents, Integer expectedCaseEvents) {
+  public void theCorrectNumberOfEventsAreReturnedCaseEventsNoCaseEvents(
+      String showCaseEvents, Integer expectedCaseEvents) {
     if (!Boolean.parseBoolean(showCaseEvents)) {
       assertTrue("Should be no case events", caseDTO.getCaseEvents().isEmpty());
     } else {
@@ -252,12 +253,13 @@ public class TestCaseEndpoints {
   @When("I Search for cases By case ID")
   public void i_Search_for_cases_By_case_ID() {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId);
     try {
-      caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+      caseDTO =
+          context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
     }
@@ -279,14 +281,15 @@ public class TestCaseEndpoints {
   @When("I Search cases By UPRN")
   public void i_Search_cases_By_UPRN() {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -317,14 +320,15 @@ public class TestCaseEndpoints {
   public void i_Search_cases_By_invalid_UPRN() {
     exception = null;
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -560,14 +564,15 @@ public class TestCaseEndpoints {
   @When("I Refuse a case")
   public void i_Refuse_a_case() {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("refusal");
     try {
       responseDTO =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .postForObject(builder.build().encode().toUri(), refusalDTO, ResponseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
@@ -617,8 +622,8 @@ public class TestCaseEndpoints {
 
   private ResponseEntity<String> getEqToken(String caseId, boolean isIndividual) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("launch")
@@ -647,8 +652,8 @@ public class TestCaseEndpoints {
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprn);
@@ -658,7 +663,8 @@ public class TestCaseEndpoints {
 
     try {
       caseResponse =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .exchange(
                   caseForUprnUrl,
                   HttpMethod.GET,
@@ -782,13 +788,14 @@ public class TestCaseEndpoints {
   @Given("the agent has confirmed the respondent address")
   public void the_agent_has_confirmed_the_respondent_address() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -827,8 +834,8 @@ public class TestCaseEndpoints {
   @Given("the case service does not have any case created for the address in question")
   public void the_case_service_does_not_have_any_case_created_for_the_address_in_question() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getMcsBaseUrl())
-            .port( context.getMcsBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getMcsBaseUrl())
+            .port(context.getMcsBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
@@ -863,8 +870,8 @@ public class TestCaseEndpoints {
   public void the_service_creates_a_fake_Case_with_the_address_details_from_AIMS()
       throws CTPException {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
@@ -875,7 +882,8 @@ public class TestCaseEndpoints {
         ccUprnEndpointUrl);
 
     ResponseEntity<List<CaseDTO>> caseResponse =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -1049,13 +1057,14 @@ public class TestCaseEndpoints {
   @Given("the CC agent has selected an address that is not of addressType CE, HH, or SPG")
   public void the_CC_agent_has_selected_an_address_that_is_not_of_addressType_CE_HH_or_SPG() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", "Public Telephone 13M From 11 Nine Acres");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -1099,8 +1108,8 @@ public class TestCaseEndpoints {
   @Then("the CC SVC must also return a {string} error")
   public void the_CC_SVC_must_also_return_a_error(String expectedErr) {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
@@ -1113,7 +1122,8 @@ public class TestCaseEndpoints {
     status = "";
 
     try {
-      context.getRestTemplate()
+      context
+          .getRestTemplate()
           .exchange(
               builder.build().encode().toUri(),
               HttpMethod.GET,
@@ -1135,8 +1145,8 @@ public class TestCaseEndpoints {
 
   private ResponseEntity<ResponseDTO> callInvalidateEndpoint(String statusSelected) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("invalidate");
@@ -1150,7 +1160,8 @@ public class TestCaseEndpoints {
         .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
 
     ResponseEntity<ResponseDTO> response =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
     return response;
   }
@@ -1167,8 +1178,8 @@ public class TestCaseEndpoints {
   @Given("the AD advisor requests a new UAC for {string} {string}")
   public void getNewUAC(final String caseId, final String individual) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("uac")
@@ -1239,7 +1250,9 @@ public class TestCaseEndpoints {
 
   private CaseDTO postNewCase(final NewCaseRequestDTO newCaseRequest) {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl()).port( context.getCcBasePort()).pathSegment("cases");
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
+            .pathSegment("cases");
     RestTemplate template = context.getRestTemplate();
     return template.postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
   }
@@ -1247,8 +1260,8 @@ public class TestCaseEndpoints {
   @Then("Getting launch URL results in a {int} status and content containing {string}")
   public void getLaunchUrlWhenCaseNotInRM(int expectedStatus, String expectedContent) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseDTO.getId().toString())
             .pathSegment("launch")

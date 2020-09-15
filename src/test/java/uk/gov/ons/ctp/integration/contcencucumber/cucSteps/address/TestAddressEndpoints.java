@@ -33,8 +33,7 @@ public class TestAddressEndpoints {
   private String addressSearchString = "";
   private String addressEndpointUrl;
 
-  @Autowired
-  private CucTestContext context;
+  @Autowired private CucTestContext context;
 
   @Given("I have a valid Postcode {string}")
   public void i_have_a_valid_Postcode(final String postcode) {
@@ -44,13 +43,14 @@ public class TestAddressEndpoints {
   @When("I Search Addresses By Postcode")
   public void i_Search_Addresses_By_Postcode() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .pathSegment("postcode")
             .queryParam("postcode", postcode);
     addressQueryResponseDTO =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
   }
 
@@ -69,14 +69,15 @@ public class TestAddressEndpoints {
   @When("I Search Addresses By Invalid Postcode")
   public void i_Search_Addresses_By_Invalid_Postcode() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .pathSegment("postcode")
             .queryParam("postcode", postcode);
     try {
       addressQueryResponseDTO =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
     } catch (HttpClientErrorException hcee) {
       assertNull(" Invalid format Address Query Response must be null", addressQueryResponseDTO);
@@ -100,12 +101,13 @@ public class TestAddressEndpoints {
   @When("I Search Addresses By Address Search")
   public void i_Search_Addresses_By_Address_Search() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", addressSearchString);
     addressQueryResponseDTO =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
   }
 
@@ -124,13 +126,14 @@ public class TestAddressEndpoints {
   @When("I Search invalid Addresses By Address Search")
   public void i_Search_invalid_Addresses_By_Address_Search() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", addressSearchString);
     try {
       addressQueryResponseDTO =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
     } catch (HttpClientErrorException hcee) {
       assertNull(" Invalid format Address Query Response must be null", addressQueryResponseDTO);
@@ -154,8 +157,8 @@ public class TestAddressEndpoints {
   @Given("the respondent address exists in AIMS")
   public void the_respondent_address_exists_in_AIMS() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
     addressEndpointUrl = builder.build().encode().toUri().toString();
@@ -183,13 +186,14 @@ public class TestAddressEndpoints {
   public void
       the_CC_SVC_returns_address_attributes_with_region_code_address_type_and_establishment_type() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
-            .port( context.getCcBasePort())
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
