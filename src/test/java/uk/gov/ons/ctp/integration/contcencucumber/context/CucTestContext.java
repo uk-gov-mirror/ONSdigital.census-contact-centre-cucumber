@@ -1,12 +1,17 @@
-package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
+package uk.gov.ons.ctp.integration.contcencucumber.context;
 
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestTemplate;
-import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
 
-public class TestBase extends SpringIntegrationTest {
-
+@Data
+@NoArgsConstructor
+@Scope(SCOPE_CUCUMBER_GLUE)
+public class CucTestContext {
   @Value("${contact-centre.host}")
   protected String ccBaseUrl;
 
@@ -25,7 +30,10 @@ public class TestBase extends SpringIntegrationTest {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  protected RestTemplate getRestTemplate() {
+  //@Before(order = 1)
+  public void init() {}
+
+  public RestTemplate getRestTemplate() {
     return new RestTemplateBuilder().basicAuthentication(ccUsername, ccPassword).build();
   }
 }

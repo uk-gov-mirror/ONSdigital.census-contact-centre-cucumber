@@ -11,13 +11,13 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
-import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
@@ -45,6 +45,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -80,12 +81,13 @@ import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
-import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
+import uk.gov.ons.ctp.integration.contcencucumber.context.ResetMockCaseApiContext;
+import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataRepository;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
-public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
+public class TestCaseEndpoints {
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
   private static final long RABBIT_TIMEOUT = 2000L;
@@ -114,6 +116,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String uprnStr;
   private String status = "";
   private UUID expectedCaseId;
+
+  @Autowired
+  private CaseDataRepository dataRepo;
+
+  @Autowired
+  private ResetMockCaseApiContext context;
 
   @Value("${keystore}")
   private String keyStore;
@@ -154,7 +162,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Then("I do the smoke test and receive a response of OK from the service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_service() {
-    checkServiceHealthy(ccBaseUrl, ccBasePort, "THE SERVICE MAY NOT BE RUNNING ");
+    checkServiceHealthy( context.getCcBaseUrl(),  context.getCcBasePort(), "THE SERVICE MAY NOT BE RUNNING ");
   }
 
   @Given("I am about to do a smoke test by going to a mock case api endpoint")
@@ -164,34 +172,42 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Then("I do the smoke test and receive a response of OK from the mock case api service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
-    checkServiceHealthy(mcsBaseUrl, mcsBasePort, "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
+    checkServiceHealthy( context.getMcsBaseUrl(),  context.getMcsBasePort(), "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
   }
 
-  @Given("I have a valid case ID {string}")
-  public void i_have_a_valid_case_ID(String caseId) {
+  @Given("I have a valid case ID <caseId>")
+  public void iHaveAValidCaseIDCaseId(final String caseId) {
     this.caseId = caseId;
+  }
+
+  @When("I Search cases By case ID <caseEvents>")
+  public void iSearchCasesByCaseIDCaseEvents() {
   }
 
   @When("I Search cases By case ID {string}")
   public void i_Search_cases_By_case_ID(String showCaseEvents) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .queryParam("caseEvents", showCaseEvents);
-    caseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+    caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
   }
 
-  @Then("the correct case for my case ID is returned {int}")
-  public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {
+  @Then("the correct case for my case ID is returned <uprn>")
+  public void theCorrectCaseForMyCaseIDIsReturnedUprn(final int uprn) {
     assertNotNull("Case Query Response must not be null", caseDTO);
     assertEquals("Case Query Response UPRN must match", caseDTO.getUprn(), Integer.toString(uprn));
   }
 
-  @Then("the correct number of events are returned {string} {int}")
-  public void the_correct_number_of_events_are_returned(
-      String showCaseEvents, Integer expectedCaseEvents) {
+  @Then("the correct case for my case ID is returned {int}")
+  public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {
+
+  }
+
+  @And("the correct number of events are returned <caseEvents> <noCaseEvents>")
+  public void theCorrectNumberOfEventsAreReturnedCaseEventsNoCaseEvents(String showCaseEvents, Integer expectedCaseEvents) {
     if (!Boolean.parseBoolean(showCaseEvents)) {
       assertTrue("Should be no case events", caseDTO.getCaseEvents().isEmpty());
     } else {
@@ -202,8 +218,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  @And("the establishment UPRN is {string}")
-  public void the_establishment_UPRN_is(String expectedEstabUprn) {
+  @And("the establishment UPRN is <estabUprn>")
+  public void theEstablishmentUPRNIsEstabUprn(String expectedEstabUprn) {
     UniquePropertyReferenceNumber estabUprn =
         UniquePropertyReferenceNumber.create(caseDTO.getEstabUprn());
     if (estabUprn.getValue() == 0L) {
@@ -220,35 +236,35 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  @And("the secure establishment is set to {string}")
-  public void the_secure_establishment_is_set_to(String secure) {
+  @And("the secure establishment is set to <secure>")
+  public void theSecureEstablishmentIsSetToSecure(final String secure) {
     boolean secureEstablishment = caseDTO.isSecureEstablishment();
     boolean expectedSecure = Boolean.parseBoolean(secure);
     assertEquals(
         "Mismatching expectation of secure establishment", expectedSecure, secureEstablishment);
   }
 
-  @Given("I have an invalid case ID {string}")
-  public void i_have_an_invalid_case_ID(String caseId) {
+  @Given("I have an invalid case ID <caseId>")
+  public void iHaveAnInvalidCaseIDCaseId(final String caseId) {
     this.caseId = caseId;
   }
 
   @When("I Search for cases By case ID")
   public void i_Search_for_cases_By_case_ID() {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId);
     try {
-      caseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+      caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
     }
   }
 
-  @Then("An error is thrown and no case is returned {string}")
-  public void an_error_is_thrown_and_no_case_is_returned(String httpError) {
+  @Then("An error is thrown and no case is returned <httpError>")
+  public void anErrorIsThrownAndNoCaseIsReturnedHttpError(String httpError) {
     assertNotNull("An error was expected, but it succeeded", exception);
     assertTrue(
         "The correct http status must be returned " + httpError,
@@ -263,14 +279,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @When("I Search cases By UPRN")
   public void i_Search_cases_By_UPRN() {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          getRestTemplate()
+          context.getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -301,14 +317,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void i_Search_cases_By_invalid_UPRN() {
     exception = null;
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          getRestTemplate()
+          context.getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -544,14 +560,14 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @When("I Refuse a case")
   public void i_Refuse_a_case() {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("refusal");
     try {
       responseDTO =
-          getRestTemplate()
+          context.getRestTemplate()
               .postForObject(builder.build().encode().toUri(), refusalDTO, ResponseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
@@ -586,7 +602,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         UriComponentsBuilder.fromHttpUrl(baseUrl).port(port).pathSegment("info");
     URI url = builder.build().encode().toUri();
 
-    RestTemplate restTemplate = getAuthenticationFreeRestTemplate();
+    RestTemplate restTemplate = context.getAuthenticationFreeRestTemplate();
 
     try {
       HttpStatus svcResponse = restTemplate.getForEntity(url, String.class).getStatusCode();
@@ -601,8 +617,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private ResponseEntity<String> getEqToken(String caseId, boolean isIndividual) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("launch")
@@ -611,7 +627,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     telephoneEndpointUrl = builder.build().encode().toUri().toString();
     log.info("Using the following endpoint to launch EQ: " + telephoneEndpointUrl);
-    return getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+    return context.getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
   }
 
   @Given("the CC advisor has provided a valid UPRN {string}")
@@ -631,8 +647,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprn);
@@ -642,7 +658,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     try {
       caseResponse =
-          getRestTemplate()
+          context.getRestTemplate()
               .exchange(
                   caseForUprnUrl,
                   HttpMethod.GET,
@@ -766,13 +782,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("the agent has confirmed the respondent address")
   public void the_agent_has_confirmed_the_respondent_address() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        getRestTemplate()
+        context.getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -811,8 +827,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("the case service does not have any case created for the address in question")
   public void the_case_service_does_not_have_any_case_created_for_the_address_in_question() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
-            .port(mcsBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getMcsBaseUrl())
+            .port( context.getMcsBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
@@ -823,7 +839,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             + mcsUprnEndpointUrl);
 
     try {
-      getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+      context.getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
     } catch (RestClientException e) {
       log.with(e.getMessage())
           .info("catching the error returned by the mock case service endpoint");
@@ -833,7 +849,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     log.info("The response status: " + status);
   }
 
-  @When("Get\\/Case API returns a {string} error because there is no case found")
+  @When("Get Case API returns a {string} error because there is no case found")
   public void getCaseAPIReturnsAErrorBecauseThereIsNoCaseFound(String statusStr) {
     int returnStatus = Integer.parseInt(statusStr);
     assertEquals(
@@ -847,8 +863,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_service_creates_a_fake_Case_with_the_address_details_from_AIMS()
       throws CTPException {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
@@ -859,7 +875,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         ccUprnEndpointUrl);
 
     ResponseEntity<List<CaseDTO>> caseResponse =
-        getRestTemplate()
+        context.getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -996,7 +1012,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private String requestSurveyLaunch() {
     log.with(telephoneEndpointUrl).info("The url for requesting the survey launch");
-    return getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
+    return context.getRestTemplate().getForObject(telephoneEndpointUrl, String.class);
   }
 
   @Then("a Survey Launched event is emitted to RM")
@@ -1033,13 +1049,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("the CC agent has selected an address that is not of addressType CE, HH, or SPG")
   public void the_CC_agent_has_selected_an_address_that_is_not_of_addressType_CE_HH_or_SPG() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", "Public Telephone 13M From 11 Nine Acres");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        getRestTemplate()
+        context.getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -1083,8 +1099,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Then("the CC SVC must also return a {string} error")
   public void the_CC_SVC_must_also_return_a_error(String expectedErr) {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
@@ -1097,7 +1113,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     status = "";
 
     try {
-      getRestTemplate()
+      context.getRestTemplate()
           .exchange(
               builder.build().encode().toUri(),
               HttpMethod.GET,
@@ -1119,8 +1135,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private ResponseEntity<ResponseDTO> callInvalidateEndpoint(String statusSelected) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("invalidate");
@@ -1134,7 +1150,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
 
     ResponseEntity<ResponseDTO> response =
-        getRestTemplate()
+        context.getRestTemplate()
             .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
     return response;
   }
@@ -1142,7 +1158,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("the AD advisor has the {string} for a case with {string}, {string} and {string}")
   public void checkCaseAttributes(
       final String caseId, final String caseType, final String region, final String addressLevel) {
-    CaseContainerDTO caze = getCase(caseId);
+    CaseContainerDTO caze = context.getCase(caseId);
     assertEquals(caseType, caze.getCaseType());
     assertEquals(region, caze.getRegion());
     assertEquals(addressLevel, caze.getAddressLevel());
@@ -1151,8 +1167,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @Given("the AD advisor requests a new UAC for {string} {string}")
   public void getNewUAC(final String caseId, final String individual) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("uac")
@@ -1162,7 +1178,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     URI newUACURL = builder.build().encode().toUri();
     try {
       timeBeforeInvocation = System.currentTimeMillis();
-      this.responseEntity = getRestTemplate().getForEntity(newUACURL, UACResponseDTO.class);
+      this.responseEntity = context.getRestTemplate().getForEntity(newUACURL, UACResponseDTO.class);
     } catch (HttpStatusCodeException statusException) {
       this.exception = statusException;
     } finally {
@@ -1223,16 +1239,16 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private CaseDTO postNewCase(final NewCaseRequestDTO newCaseRequest) {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
-    RestTemplate template = getRestTemplate();
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl()).port( context.getCcBasePort()).pathSegment("cases");
+    RestTemplate template = context.getRestTemplate();
     return template.postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
   }
 
   @Then("Getting launch URL results in a {int} status and content containing {string}")
   public void getLaunchUrlWhenCaseNotInRM(int expectedStatus, String expectedContent) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl( context.getCcBaseUrl())
+            .port( context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseDTO.getId().toString())
             .pathSegment("launch")
@@ -1240,7 +1256,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
             .queryParam("individual", "true");
 
     ResponseEntity<String> r =
-        getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+        context.getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
     assertEquals(expectedStatus, r.getStatusCodeValue());
     assertTrue(r.getBody(), r.getBody().contains(expectedContent));
   }
@@ -1275,5 +1291,10 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     long actualInMillis = dateTime.getTime();
     assertTrue(actualInMillis + " not after " + minAllowed, actualInMillis >= minAllowed);
     assertTrue(actualInMillis + " not before " + maxAllowed, actualInMillis <= maxAllowed);
+  }
+
+  @Given("I have a valid case ID {string}")
+  public void haveAValidCaseID(String caseId) {
+    this.caseId = caseId;
   }
 }

@@ -1,7 +1,7 @@
-package uk.gov.ons.ctp.integration.contcencucumber.cucSteps;
+package uk.gov.ons.ctp.integration.contcencucumber.context;
 
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 import static org.junit.Assert.fail;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
@@ -10,24 +10,29 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
-import uk.gov.ons.ctp.integration.contcencucumber.main.SpringIntegrationTest;
-import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataRepository;
+import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.YamlPropertySourceFactory;
 
 @Component
 @EnableConfigurationProperties
 @PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:cases.yml")
 @ConfigurationProperties("casedata")
-public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
+@Data
+@NoArgsConstructor
+@Scope(SCOPE_CUCUMBER_GLUE)
+public class ResetMockCaseApiContext {
 
   @Value("${contact-centre.host}")
   protected String ccBaseUrl;
@@ -47,13 +52,18 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
   @Value("${mock-case-service.port}")
   protected String mcsBasePort;
 
-  @Autowired protected CaseDataRepository dataRepo;
+  @Value("${keystore}")
+  private String keyStore;
 
   private List<CaseContainerDTO> caseList;
 
-  private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiAndPostCasesBase.class);
+  private static final Logger log = LoggerFactory.getLogger(ResetMockCaseApiContext.class);
+
+ // @Before(order = 1)
+  public void init() {}
 
   public void setCases(final String cases) throws IOException {
+    System.out.println("Resetting Mock Case API Data");
     log.info("Resetting Mock Case API Data");
     resetData();
 
@@ -83,8 +93,12 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
     }
   }
 
-  protected RestTemplate getRestTemplate() {
+  public RestTemplate getRestTemplate() {
     return getRestTemplate(ccUsername, ccPassword);
+  }
+
+  public RestTemplate getRestTemplate(final String username, final String password) {
+    return new RestTemplateBuilder().basicAuthentication(username, password).build();
   }
 
   private void resetData() {
@@ -103,11 +117,15 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
     }
   }
 
-  protected CaseContainerDTO getCase(String caseId) {
+  public CaseContainerDTO getCase(String caseId) {
     return caseList
         .stream()
         .filter(c -> c.getId().toString().equals(caseId))
         .findFirst()
         .orElse(null);
+  }
+
+  public RestTemplate getAuthenticationFreeRestTemplate() {
+    return new RestTemplateBuilder().build();
   }
 }
