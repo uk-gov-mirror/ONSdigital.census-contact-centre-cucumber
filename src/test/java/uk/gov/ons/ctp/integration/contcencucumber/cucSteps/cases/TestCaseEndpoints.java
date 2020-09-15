@@ -1206,14 +1206,24 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     expectedCaseId = caseDTO.getId();
   }
 
+  @Then("the correct case for my UPRN is returned {string}")
+  public void the_correct_case_for_my_UPRN_is_returned(String uprnStr) {
+    assertEquals("Expected UUID is: " + expectedCaseId, expectedCaseId, caseDTOList.get(0).getId());
+    assertEquals("Expected UPRN is: " + uprnStr, uprnStr, caseDTOList.get(0).getUprn());
+  }
+
+  @Then("the correct case for my case ID is returned")
+  public void the_correct_case_for_my_case_ID_is_returned() {
+    assertNotNull("Case Query Response must not be null", caseDTO);
+    assertEquals(
+        "Case Query Response caseID must match" + expectedCaseId, expectedCaseId, caseDTO.getId());
+  }
+
   private CaseDTO postNewCase(final NewCaseRequestDTO newCaseRequest) {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
-    CaseDTO createdCaseDTO =
-        getRestTemplate()
-            .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
-    log.info("New case created: " + caseDTO.getId());
-    return createdCaseDTO;
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases/");
+    RestTemplate template = getRestTemplate();
+         return template.postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
   }
 
   @Then("Getting launch URL results in a {int} status and content containing {string}")
@@ -1243,7 +1253,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     newCaseRequest.setCeUsualResidents(13);
     newCaseRequest.setEstabType(EstabType.ROYAL_HOUSEHOLD);
     newCaseRequest.setDateTime("2016-11-09T11:44:44.797");
-    newCaseRequest.setUprn("3333334");
+    newCaseRequest.setUprn("100091131297");
     newCaseRequest.setRegion(Region.E);
     newCaseRequest.setPostcode("EX2 5WH");
     newCaseRequest.setTownName("Exeter");
