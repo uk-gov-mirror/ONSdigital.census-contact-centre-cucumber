@@ -756,13 +756,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private void deleteCaseFromCache(String strUprn) throws CTPException {
     List<CachedCase> cachedCases = null;
-    try {
-      cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
-    } catch (CTPException e1) {
-      log.with(e1.getMessage())
-          .with(strUprn)
-          .info("An exception was thrown while reading cases from Firestore for this uprn");
-    }
+    cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
 
     List<String> cachedCaseIds = new ArrayList<>();
 

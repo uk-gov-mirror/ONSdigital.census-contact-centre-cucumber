@@ -643,34 +643,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  // private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
-  // final UriComponentsBuilder builder =
-  // UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-  // .port(ccBasePort)
-  // .pathSegment("cases")
-  // .pathSegment("uprn")
-  // .pathSegment(uprn);
-  //
-  // ResponseEntity<List<CaseDTO>> caseResponse = null;
-  // caseForUprnUrl = builder.build().encode().toUri();
-  //
-  // try {
-  // caseResponse =
-  // getRestTemplate()
-  // .exchange(
-  // caseForUprnUrl,
-  // HttpMethod.GET,
-  // null,
-  // new ParameterizedTypeReference<List<CaseDTO>>() {});
-  // } catch (HttpClientErrorException httpClientErrorException) {
-  // log.debug(
-  // "A HttpClientErrorException has occurred when trying to get list of cases using
-  // getCaseByUprn endpoint in contact centre: "
-  // + httpClientErrorException.getMessage());
-  // }
-  // return caseResponse;
-  // }
-
   @Then("the Case endpoint returns a case associated with UPRN {string}")
   public void the_Case_endpoint_returns_a_case_associated_with_UPRN(String strUprn) {
     caseId = listOfCasesWithUprn.get(0).getId().toString();
@@ -1207,13 +1179,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void the_case_with_id_and_uprn_does_not_exist_in_the_cache(
       String strCaseId, String strUprn) throws CTPException {
     List<CachedCase> cachedCases = null;
-    try {
-      cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
-    } catch (CTPException e1) {
-      log.with(e1.getMessage())
-          .with(strUprn)
-          .info("An exception was thrown while reading cases from Firestore for this uprn");
-    }
+    cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
 
     List<String> cachedCaseIds = new ArrayList<>();
     cachedCaseIds.add(strCaseId);
@@ -1460,13 +1426,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private void deleteCaseFromCache(String strUprn) throws CTPException {
     List<CachedCase> cachedCases = null;
-    try {
-      cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
-    } catch (CTPException e1) {
-      log.with(e1.getMessage())
-          .with(strUprn)
-          .info("An exception was thrown while reading cases from Firestore for this uprn");
-    }
+    cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
 
     List<String> cachedCaseIds = new ArrayList<>();
 
