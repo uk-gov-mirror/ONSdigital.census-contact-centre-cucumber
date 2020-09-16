@@ -513,15 +513,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("Must have the correct region code", "GB-ENG", result1.get("region_code"));
   }
 
-  @And("an empty queue exists for sending Refusal events")
-  public void an_empty_queue_exists_for_sending_Refusal_events() throws CTPException {
-    EventType eventType = EventType.valueOf("REFUSAL_RECEIVED");
-    log.info("Creating queue for events of type: '" + eventType + "'");
-    queueName = rabbit.createQueue(eventType);
-    log.info("Flushing queue: '" + queueName + "'");
-    rabbit.flushQueue(queueName);
-  }
-
   @And("a Refusal event is sent with type {string}")
   public void a_Refusal_event_is_sent(String type) throws CTPException {
     log.info("Check that a Refusal event has been sent");
@@ -661,17 +652,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     assertEquals("CE", caze.getCaseType().name());
     assertEquals(expectedUprn, caze.getUprn());
-  }
-
-  @Given("an empty queue exists for sending AddressNotValid events")
-  public void an_empty_queue_exists_for_sending_AddressNotValid_events() throws CTPException {
-    String eventTypeAsString = "ADDRESS_NOT_VALID";
-    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
-    EventType eventType = EventType.valueOf(eventTypeAsString);
-    queueName = rabbit.createQueue(eventType);
-    log.info("Flushing queue: '" + queueName + "'");
-
-    rabbit.flushQueue(queueName);
   }
 
   @When("CC Advisor selects the address status change {string}")
@@ -891,17 +871,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  @Given("an empty queue exists for sending NewAddressReported events")
-  public void an_empty_queue_exists_for_sending_NewAddressReported_events() throws CTPException {
-    String eventTypeAsString = "NEW_ADDRESS_REPORTED";
-    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
-    EventType eventType = EventType.valueOf(eventTypeAsString);
-    queueName = rabbit.createQueue(eventType);
-    log.info("Flushing queue: '" + queueName + "'");
-
-    rabbit.flushQueue(queueName);
-  }
-
   @Then("the service must publish a new address event to RM with the fake CaseID")
   public void the_service_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID()
       throws CTPException {
@@ -958,15 +927,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNull(address.getLatitude());
     assertNull(address.getLongitude());
     assertEquals(uprnStr, address.getUprn());
-  }
-
-  @And("an empty queue exists for sending SurveyLaunched events")
-  public void an_empty_queue_exists_for_sending_SurveyLaunched_events() throws CTPException {
-    EventType eventType = EventType.valueOf("SURVEY_LAUNCHED");
-    log.info("Creating queue for events of type: '" + eventType + "'");
-    queueName = rabbit.createQueue(eventType);
-    log.info("Flushing queue: '" + queueName + "'");
-    rabbit.flushQueue(queueName);
   }
 
   @When("CC Advisor selects the survey launch")

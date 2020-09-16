@@ -73,7 +73,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
   @CC @RefusalReasonAcceptedAndEventPosted
   Scenario Outline: I want to verify that a valid reason for Refusal is accepted and event posted
     Given I have a valid case ID <caseId>
-    And an empty queue exists for sending Refusal events
+    And an empty queue exists for sending "REFUSAL_RECEIVED" events
     And I supply a <reason> reason for Refusal
     And I supply the Refusal information
     When I Refuse a case
@@ -125,7 +125,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
   Scenario Outline: [CR-T357] Invalid Address
     Given the CC advisor has provided a valid UPRN <uprn>
     Then the Case endpoint returns a case associated with UPRN <uprn>
-    Given an empty queue exists for sending AddressNotValid events
+    Given an empty queue exists for sending "ADDRESS_NOT_VALID" events
     When CC Advisor selects the address status change <status>
     Then an AddressNotValid event is emitted to RM, which contains the <status> change
 
@@ -163,7 +163,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
     Given the agent has confirmed the respondent address
     And the case service does not have any case created for the address in question
     And Get/Case API returns a "404" error because there is no case found
-    And an empty queue exists for sending NewAddressReported events
+    And an empty queue exists for sending "NEW_ADDRESS_REPORTED" events
     And cached cases for the UPRN do not already exist
     Given the service creates a fake Case with the address details from AIMS
     Then the service must publish a new address event to RM with the fake CaseID
