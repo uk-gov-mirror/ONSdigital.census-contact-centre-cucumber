@@ -126,6 +126,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void setup() throws Exception {
     rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
     addressNotValidEvent = null;
+    deleteCaseFromCache("1710030095");
   }
 
   @Before("@SetUpT134")
@@ -1446,5 +1447,31 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       this.exception = httpClientErrorException;
     }
     return caseResponse;
+  }
+
+  private void deleteCaseFromCache(String strUprn) {
+    List<CachedCase> cachedCases = null;
+    try {
+      cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
+    } catch (CTPException e1) {
+      log.with(e1.getMessage())
+          .with(strUprn)
+          .info("An exception was thrown while reading cases from Firestore for this uprn");
+    }
+
+    List<String> cachedCaseIds = new ArrayList<>();
+
+    for (CachedCase cachedCase : cachedCases) {
+      cachedCaseIds.add(cachedCase.getId());
+    }
+
+    for (String id : cachedCaseIds) {
+      try {
+        dataRepo.deleteCachedCase(id);
+      } catch (CTPException e) {
+        // If no case with that id is found in Firestore then catch the exception and just log it
+        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
+      }
+    }
   }
 }
