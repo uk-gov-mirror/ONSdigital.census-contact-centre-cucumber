@@ -39,6 +39,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1211,8 +1212,11 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     caseContainerInRM.setCaseType("CE");
     caseContainerInRM.setAddressType("HH");
     caseContainerInRM.setEstabType("OTHER");
-    caseContainerInRM.setCreatedDateTime(new Date());
-    caseContainerInRM.setLastUpdated(null);
+    Calendar cal = Calendar.getInstance();
+    cal.set(2019, Calendar.JANUARY, 9);
+    Date earlyDate = cal.getTime();
+    caseContainerInRM.setCreatedDateTime(earlyDate);
+    caseContainerInRM.setLastUpdated(new Date());
     caseContainerInRM.setAddressLine1("44 RM Road");
     caseContainerInRM.setAddressLine2("RM Street");
     caseContainerInRM.setAddressLine3("RM Village");
@@ -1238,7 +1242,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "assert that the GET endpoint now picks up the RM case rather then the one that the PUT endpoint has created in the cache");
     assertEquals(this.caseId, caseDTO.getId().toString());
     assertEquals(this.uprnStr, caseDTO.getUprn());
-    assertEquals("44 RM Road", caseDTO.getAddressLine1());
+    assertEquals(
+        "44 RM Road",
+        caseDTO.getAddressLine1()); // Note that the one in the cache is different - 33 RM Road
     assertEquals("RM Street", caseDTO.getAddressLine2());
     assertEquals("RM Village", caseDTO.getAddressLine3());
     assertEquals("Response Management Org", caseDTO.getCeOrgName());
@@ -1284,10 +1290,10 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private void createModifyCaseRequest() {
     modifyCaseRequest = new ModifyCaseRequestDTO();
-    modifyCaseRequest.setAddressLine1("33 Some Road");
-    modifyCaseRequest.setAddressLine2("Some Small Area");
-    modifyCaseRequest.setAddressLine3("Some Village");
-    modifyCaseRequest.setCeOrgName("Some Organisation");
+    modifyCaseRequest.setAddressLine1("33 RM Road");
+    modifyCaseRequest.setAddressLine2("RM Street");
+    modifyCaseRequest.setAddressLine3("RM Village");
+    modifyCaseRequest.setCeOrgName("Response Management Org");
     modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
     modifyCaseRequest.setCaseId(UUID.fromString(this.caseId));
     modifyCaseRequest.setEstabType(EstabType.OTHER);
