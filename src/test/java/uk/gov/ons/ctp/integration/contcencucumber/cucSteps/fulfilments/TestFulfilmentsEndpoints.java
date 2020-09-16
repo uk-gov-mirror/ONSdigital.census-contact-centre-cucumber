@@ -754,7 +754,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     return requestFulfilmentBySMSResponse;
   }
 
-  private void deleteCaseFromCache(String strUprn) {
+  private void deleteCaseFromCache(String strUprn) throws CTPException {
     List<CachedCase> cachedCases = null;
     try {
       cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
@@ -771,12 +771,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
 
     for (String id : cachedCaseIds) {
-      try {
-        dataRepo.deleteCachedCase(id);
-      } catch (CTPException e) {
-        // If no case with that id is found in Firestore then catch the exception and just log it
-        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
-      }
+      dataRepo.deleteCachedCase(id);
     }
   }
 }

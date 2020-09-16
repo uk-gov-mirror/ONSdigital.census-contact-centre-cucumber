@@ -1205,16 +1205,25 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("the case with id {string} and uprn {string} does not exist in the cache")
   public void the_case_with_id_and_uprn_does_not_exist_in_the_cache(
-      String strCaseId, String strUprn) {
+      String strCaseId, String strUprn) throws CTPException {
+    List<CachedCase> cachedCases = null;
+    try {
+      cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
+    } catch (CTPException e1) {
+      log.with(e1.getMessage())
+          .with(strUprn)
+          .info("An exception was thrown while reading cases from Firestore for this uprn");
+    }
+
     List<String> cachedCaseIds = new ArrayList<>();
     cachedCaseIds.add(strCaseId);
+
+    for (CachedCase cachedCase : cachedCases) {
+      cachedCaseIds.add(cachedCase.getId());
+    }
+
     for (String id : cachedCaseIds) {
-      try {
-        dataRepo.deleteCachedCase(id);
-      } catch (CTPException e) {
-        // If no case with that id is found in Firestore then catch the exception and just log it
-        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
-      }
+      dataRepo.deleteCachedCase(id);
     }
     this.caseId = strCaseId;
     this.uprnStr = strUprn;
@@ -1449,7 +1458,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     return caseResponse;
   }
 
-  private void deleteCaseFromCache(String strUprn) {
+  private void deleteCaseFromCache(String strUprn) throws CTPException {
     List<CachedCase> cachedCases = null;
     try {
       cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
@@ -1466,12 +1475,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
 
     for (String id : cachedCaseIds) {
-      try {
-        dataRepo.deleteCachedCase(id);
-      } catch (CTPException e) {
-        // If no case with that id is found in Firestore then catch the exception and just log it
-        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
-      }
+      dataRepo.deleteCachedCase(id);
     }
   }
 }
