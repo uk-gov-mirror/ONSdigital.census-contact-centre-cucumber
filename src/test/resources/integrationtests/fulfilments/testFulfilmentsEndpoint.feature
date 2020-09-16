@@ -104,8 +104,8 @@ Feature: Test Contact centre Fulfilments Endpoints
       | uprn         | case_type | region | delivery_channel | individual |
       |100140222798  | HH        | E      | SMS              | false      |
       |100240222798  | CE        | E      | SMS              | true       |
-      |100340222798  | HH        | W      | SMS              | true       |
-      |100340222798  | HH        | W      | SMS              | true       |
+      |100340222798  | HH        | W      | SMS              | false      |
+      |100440222798  | CE        | W      | SMS              | false      |
 
   @SetUp
   Scenario Outline: [CR-T375] I want to check that EMPTY title, forename or surname items are not fulfilled for an individual POSTAL request

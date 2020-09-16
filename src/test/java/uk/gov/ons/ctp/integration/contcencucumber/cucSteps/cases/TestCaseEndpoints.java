@@ -1222,32 +1222,6 @@ public class TestCaseEndpoints {
     expectedCaseId = caseDTO.getId();
   }
 
-  @Given("that new cached cases have been created for a new address but are not yet in RM")
-  public void createNewCachedCases() {
-    NewCaseRequestDTO newCaseRequest1 = createNewCaseRequestDTO();
-    newCaseRequest1.setDateTime("2016-11-09T11:44:44.797");
-    postNewCase(newCaseRequest1);
-    NewCaseRequestDTO newCaseRequest2 = createNewCaseRequestDTO();
-    newCaseRequest2.setDateTime("2017-11-09T11:44:44.797");
-    caseDTO = postNewCase(newCaseRequest2);
-    expectedCaseId = caseDTO.getId();
-    this.uprnStr = caseDTO.getUprn();
-  }
-
-  @Then("the correct case for my UPRN is returned {string}")
-  public void the_correct_case_for_my_UPRN_is_returned(String uprnString) {
-    assertEquals("Expected result set size should be 1", 1, caseDTOList.size());
-    assertEquals("Expected UUID is: " + expectedCaseId, expectedCaseId, caseDTOList.get(0).getId());
-    assertEquals("Expected UPRN is: " + uprnString, uprnString, caseDTOList.get(0).getUprn());
-  }
-
-  @Then("the correct case for my case ID is returned")
-  public void the_correct_case_for_my_case_ID_is_returned() {
-    assertNotNull("Case Query Response must not be null", caseDTO);
-    assertEquals(
-        "Case Query Response caseID must match" + expectedCaseId, expectedCaseId, caseDTO.getId());
-  }
-
   private CaseDTO postNewCase(final NewCaseRequestDTO newCaseRequest) {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
