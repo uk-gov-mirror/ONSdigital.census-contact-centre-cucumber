@@ -1232,8 +1232,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     fetchTheCaseFromCCSvc(strEndpoint);
   }
 
-  @Then("{string} gets the modified case from RM")
-  public void gets_the_modified_case_from_RM(String strEndpoint) {
+  @Then("the latest case is fetched, which is the modified case from RM")
+  public void the_latest_case_is_fetched_which_is_the_modified_case_from_RM() {
     log.info(
         "assert that the GET endpoint now picks up the RM case rather then the one that the PUT endpoint has created in the cache");
     assertEquals(this.caseId, caseDTO.getId().toString());
@@ -1273,11 +1273,11 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertTrue(r.getBody(), r.getBody().contains(expectedContent));
   }
 
-  private void fetchTheCaseFromCCSvc(String strEndpoint) {
-    if (strEndpoint.equals("GetCaseByUPRN")) {
+  private void fetchTheCaseFromCCSvc(String operation) {
+    if (operation.equals("GetCaseByUPRN")) {
       getCaseForUprn(uprnStr);
       caseDTO = caseDTOList.get(0);
-    } else if (strEndpoint.equals("GetCaseByID")) {
+    } else if (operation.equals("GetCaseByID")) {
       getCaseForID();
     }
   }
@@ -1305,7 +1305,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       getRestTemplate().put(builder.build().encode().toUri(), modifyCaseRequest);
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
-          "A HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
+          "An HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
               + httpClientErrorException.getMessage());
     }
   }
@@ -1377,7 +1377,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       caseDTOList = caseResponse.getBody();
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
-          "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
+          "An HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
               + httpClientErrorException.getMessage());
       this.exception = httpClientErrorException;
     }
