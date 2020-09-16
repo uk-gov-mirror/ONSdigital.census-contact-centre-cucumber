@@ -131,18 +131,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @Before("@SetUpT134")
-  public void setUpT134() {
+  public void setUpT134() throws CTPException {
     List<String> cachedCaseIds = new ArrayList<>();
     cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ab");
     cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ac");
     cachedCaseIds.add("03f58cb5-9af4-4d40-9d60-c124c5bddf09");
     for (String id : cachedCaseIds) {
-      try {
-        dataRepo.deleteCachedCase(id);
-      } catch (CTPException e) {
-        // If no case with that id is found in Firestore then catch the exception and just log it
-        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
-      }
+      dataRepo.deleteCachedCase(id);
     }
   }
 
@@ -1167,9 +1162,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   }
 
   @Given("the case exists in RM and can be fetched using {string}")
-  public void the_case_exists_in_RM_and_can_be_fetched_using(String strEndpoint) {
+  public void the_case_exists_in_RM_and_can_be_fetched_using(String operation) {
     caseDTO = null;
-    fetchTheCaseFromCCSvc(strEndpoint);
+    fetchTheCaseFromCCSvc(operation);
     assertNotNull(caseDTO);
     assertEquals(this.caseId, caseDTO.getId().toString());
     assertEquals(this.uprnStr, caseDTO.getUprn());
@@ -1206,34 +1201,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNotNull(addressModifiedHeader);
     assertEquals("ADDRESS_MODIFIED", addressModifiedHeader.getType().toString());
 
-    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
-    caseContainerInRM.setId(UUID.fromString(this.caseId));
-    caseContainerInRM.setCaseRef("124124009");
-    caseContainerInRM.setCaseType("CE");
-    caseContainerInRM.setAddressType("HH");
-    caseContainerInRM.setEstabType("OTHER");
-    Calendar cal = Calendar.getInstance();
-    cal.set(2019, Calendar.JANUARY, 9);
-    Date earlyDate = cal.getTime();
-    caseContainerInRM.setCreatedDateTime(earlyDate);
-    caseContainerInRM.setLastUpdated(new Date());
-    caseContainerInRM.setAddressLine1("44 RM Road");
-    caseContainerInRM.setAddressLine2("RM Street");
-    caseContainerInRM.setAddressLine3("RM Village");
-    caseContainerInRM.setTownName("Newport");
-    caseContainerInRM.setRegion("W");
-    caseContainerInRM.setPostcode("G1 2AA");
-    caseContainerInRM.setOrganisationName("Response Management Org");
-    caseContainerInRM.setUprn(this.uprnStr);
-    List<EventDTO> caseEvents = new ArrayList<EventDTO>();
-    caseContainerInRM.setCaseEvents(caseEvents);
-    List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
-    postCasesToMockService(postCaseList);
+    rmActionsCaseModifiedEvent();
   }
 
   @When("the call is made to fetch the case again from {string}")
-  public void the_call_is_made_to_fetch_the_case_again_from(String strEndpoint) {
-    fetchTheCaseFromCCSvc(strEndpoint);
+  public void the_call_is_made_to_fetch_the_case_again_from(String operation) {
+    fetchTheCaseFromCCSvc(operation);
   }
 
   @Then("the latest case is fetched, which is the modified case from RM")
@@ -1242,9 +1215,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "assert that the GET endpoint now picks up the RM case rather then the one that the PUT endpoint has created in the cache");
     assertEquals(this.caseId, caseDTO.getId().toString());
     assertEquals(this.uprnStr, caseDTO.getUprn());
-    assertEquals(
-        "44 RM Road",
-        caseDTO.getAddressLine1()); // Note that the one in the cache is different - 33 RM Road
+    assertEquals("44 RM Road", caseDTO.getAddressLine1()); // Note that the one in the cache is
+    // different - 33 RM Road
     assertEquals("RM Street", caseDTO.getAddressLine2());
     assertEquals("RM Village", caseDTO.getAddressLine3());
     assertEquals("Response Management Org", caseDTO.getCeOrgName());
@@ -1403,5 +1375,36 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     for (String id : cachedCaseIds) {
       dataRepo.deleteCachedCase(id);
     }
+  }
+
+  /**
+   * The following simulates the RM data being modified but with one tiny difference (which wouldn't
+   * be there in real life) to facilitate testing.
+   */
+  private void rmActionsCaseModifiedEvent() {
+    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
+    caseContainerInRM.setId(UUID.fromString(this.caseId));
+    caseContainerInRM.setCaseRef("124124009");
+    caseContainerInRM.setCaseType("CE");
+    caseContainerInRM.setAddressType("HH");
+    caseContainerInRM.setEstabType("OTHER");
+    Calendar cal = Calendar.getInstance();
+    cal.set(2019, Calendar.JANUARY, 9);
+    Date earlyDate = cal.getTime();
+    caseContainerInRM.setCreatedDateTime(earlyDate);
+    caseContainerInRM.setLastUpdated(new Date());
+    caseContainerInRM.setAddressLine1(
+        "44 RM Road"); // the difference is 44 rather than 33 (used in the cache)
+    caseContainerInRM.setAddressLine2("RM Street");
+    caseContainerInRM.setAddressLine3("RM Village");
+    caseContainerInRM.setTownName("Newport");
+    caseContainerInRM.setRegion("W");
+    caseContainerInRM.setPostcode("G1 2AA");
+    caseContainerInRM.setOrganisationName("Response Management Org");
+    caseContainerInRM.setUprn(this.uprnStr);
+    List<EventDTO> caseEvents = new ArrayList<EventDTO>();
+    caseContainerInRM.setCaseEvents(caseEvents);
+    List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
+    postCasesToMockService(postCaseList);
   }
 }
