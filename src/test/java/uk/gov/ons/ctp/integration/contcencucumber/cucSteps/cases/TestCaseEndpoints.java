@@ -29,7 +29,6 @@ import io.swagger.client.model.ModifyCaseRequestDTO;
 import io.swagger.client.model.NewCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
-import io.swagger.client.model.Region;
 import io.swagger.client.model.ResponseDTO;
 import io.swagger.client.model.UACResponseDTO;
 import java.net.URI;
@@ -39,7 +38,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -83,9 +83,9 @@ import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
-import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.EventDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
+import uk.gov.ons.ctp.integration.contcencucumber.data.ExampleData;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
@@ -1182,7 +1182,18 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("the case modified event is sent to RM and RM does immediately action it")
   public void the_case_modified_event_is_sent_to_RM_and_RM_does_immediately_action_it()
-      throws ClassNotFoundException, CTPException {
+      throws CTPException {
+    createAddressModificationAndPutOnQueue();
+    rmActionsCaseModifiedEvent();
+  }
+
+  @When("the case modified event is sent to RM and RM does not immediately action it")
+  public void the_case_modified_event_is_sent_to_RM_and_RM_does_not_immediately_action_it()
+      throws CTPException {
+    createAddressModificationAndPutOnQueue();
+  }
+
+  private void createAddressModificationAndPutOnQueue() throws CTPException {
     log.info(
         "Check that an event of type ADDRESS_MODIFIED has now been put on the empty queue, named {}, ready to be picked up by RM",
         queueName);
@@ -1200,8 +1211,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     Header addressModifiedHeader = addressModifiedEvent.getEvent();
     assertNotNull(addressModifiedHeader);
     assertEquals("ADDRESS_MODIFIED", addressModifiedHeader.getType().toString());
-
-    rmActionsCaseModifiedEvent();
   }
 
   @When("the call is made to fetch the case again from {string}")
@@ -1227,7 +1236,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
 
-    NewCaseRequestDTO newCaseRequest = createNewCaseRequestDTO();
+    NewCaseRequestDTO newCaseRequest = ExampleData.createNewCaseRequestDTO();
     caseDTO =
         getRestTemplate()
             .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
@@ -1254,7 +1263,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private void fetchTheCaseFromCCSvc(String operation) {
     if (operation.equals("GetCaseByUPRN")) {
       getCaseForUprn(uprnStr);
-      caseDTO = caseDTOList.get(0);
+      caseDTO = caseDTOList.stream().max(Comparator.comparing(CaseDTO::getCreatedDateTime)).get();
     } else if (operation.equals("GetCaseByID")) {
       getCaseForID();
     }
@@ -1286,23 +1295,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "An HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
               + httpClientErrorException.getMessage());
     }
-  }
-
-  private NewCaseRequestDTO createNewCaseRequestDTO() {
-    NewCaseRequestDTO newCaseRequest = new NewCaseRequestDTO();
-    newCaseRequest.setCaseType(CaseType.SPG);
-    newCaseRequest.setAddressLine1("12 Newlands Terrace");
-    newCaseRequest.setAddressLine2("Flatfield");
-    newCaseRequest.setAddressLine3("Brumble");
-    newCaseRequest.setCeOrgName("Claringdon House");
-    newCaseRequest.setCeUsualResidents(13);
-    newCaseRequest.setEstabType(EstabType.ROYAL_HOUSEHOLD);
-    newCaseRequest.setDateTime("2016-11-09T11:44:44.797");
-    newCaseRequest.setUprn("3333334");
-    newCaseRequest.setRegion(Region.E);
-    newCaseRequest.setPostcode("EX2 5WH");
-    newCaseRequest.setTownName("Exeter");
-    return newCaseRequest;
   }
 
   private void checkStatus(int httpStatus) {
@@ -1382,29 +1374,21 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
    * be there in real life) to facilitate testing.
    */
   private void rmActionsCaseModifiedEvent() {
-    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
-    caseContainerInRM.setId(UUID.fromString(this.caseId));
-    caseContainerInRM.setCaseRef("124124009");
-    caseContainerInRM.setCaseType("CE");
-    caseContainerInRM.setAddressType("HH");
-    caseContainerInRM.setEstabType("OTHER");
-    Calendar cal = Calendar.getInstance();
-    cal.set(2019, Calendar.JANUARY, 9);
-    Date earlyDate = cal.getTime();
-    caseContainerInRM.setCreatedDateTime(earlyDate);
-    caseContainerInRM.setLastUpdated(new Date());
-    caseContainerInRM.setAddressLine1(
-        "44 RM Road"); // the difference is 44 rather than 33 (used in the cache)
-    caseContainerInRM.setAddressLine2("RM Street");
-    caseContainerInRM.setAddressLine3("RM Village");
-    caseContainerInRM.setTownName("Newport");
-    caseContainerInRM.setRegion("W");
-    caseContainerInRM.setPostcode("G1 2AA");
-    caseContainerInRM.setOrganisationName("Response Management Org");
-    caseContainerInRM.setUprn(this.uprnStr);
-    List<EventDTO> caseEvents = new ArrayList<EventDTO>();
-    caseContainerInRM.setCaseEvents(caseEvents);
-    List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
+    CaseContainerDTO caseContainerInRM = ExampleData.createCaseContainer(caseId, uprnStr);
+    List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
     postCasesToMockService(postCaseList);
+  }
+
+  @Then("the modified case is returned from the cache")
+  public void theModifiedCaseIsReturnedFromTheCache() {
+    ModifyCaseRequestDTO expectedCaseData =
+        ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
+    assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
+    assertEquals(expectedCaseData.getAddressLine2(), caseDTO.getAddressLine2());
+    assertEquals(expectedCaseData.getAddressLine3(), caseDTO.getAddressLine3());
+    assertEquals(expectedCaseData.getCeOrgName(), caseDTO.getCeOrgName());
+    assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
+    assertEquals(expectedCaseData.getDateTime(), caseDTO.getCreatedDateTime());
+    assertEquals(expectedCaseData.getCaseId(), caseDTO.getId());
   }
 }
