@@ -543,9 +543,10 @@ public class TestFulfilmentsEndpoints {
         fulfillmentException.getMessage().contains(expectedExceptionMessage));
   }
 
-  @Then("a fulfilment request event is emitted to RM for addressType = {string} and individual = {string}")
-  public void aFulfillmentRequestEventIsEmittedToRMForAddressTypeAndIndividual(String expectedAddressType,
-      String individual) throws CTPException {
+  @Then(
+      "a fulfilment request event is emitted to RM for addressType = {string} and individual = {string}")
+  public void aFulfillmentRequestEventIsEmittedToRMForAddressTypeAndIndividual(
+      String expectedAddressType, String individual) throws CTPException {
     log.info(
         "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
             + queueName
