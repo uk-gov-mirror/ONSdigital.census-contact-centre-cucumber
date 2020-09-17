@@ -1,4 +1,4 @@
-package uk.gov.ons.ctp.integration.contcencucumber;
+package uk.gov.ons.ctp.integration.contcencucumber.glue;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;

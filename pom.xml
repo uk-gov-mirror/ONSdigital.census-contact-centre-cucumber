@@ -272,7 +272,7 @@
           <!-- <testClassesDirectory>census-rh-cucumber/src/test/java</testClassesDirectory> -->
           <testSourceDirectory>census-rh-cucumber/src/test/java</testSourceDirectory>
           <includes>
-            <include>**/RunCucumberTest*.java</include>
+            <include>**/glue/*.java</include>
           </includes>
           <!-- <excludes> <exclude>**/*AccessTheCensusRunner.java</exclude>
             </excludes> -->
