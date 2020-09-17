@@ -1137,16 +1137,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     List<CachedCase> cachedCases = null;
     cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
 
-    List<String> cachedCaseIds = new ArrayList<>();
-    cachedCaseIds.add(strCaseId);
+    dataRepo.deleteCachedCase(strCaseId);
 
     for (CachedCase cachedCase : cachedCases) {
-      cachedCaseIds.add(cachedCase.getId());
+      dataRepo.deleteCachedCase(cachedCase.getId());
     }
 
-    for (String id : cachedCaseIds) {
-      dataRepo.deleteCachedCase(id);
-    }
     this.caseId = strCaseId;
     this.uprnStr = strUprn;
   }
@@ -1366,14 +1362,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     List<CachedCase> cachedCases = null;
     cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
 
-    List<String> cachedCaseIds = new ArrayList<>();
-
     for (CachedCase cachedCase : cachedCases) {
-      cachedCaseIds.add(cachedCase.getId());
-    }
-
-    for (String id : cachedCaseIds) {
-      dataRepo.deleteCachedCase(id);
+      dataRepo.deleteCachedCase(cachedCase.getId());
     }
   }
 
@@ -1393,8 +1383,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     Date earlyDate = cal.getTime();
     caseContainerInRM.setCreatedDateTime(earlyDate);
     caseContainerInRM.setLastUpdated(new Date());
-    caseContainerInRM.setAddressLine1(
-        "44 RM Road"); // the difference is 44 rather than 33 (used in the cache)
+    caseContainerInRM.setAddressLine1("44 RM Road"); // the difference is 44 rather than 33 (used in
+    // the cache)
     caseContainerInRM.setAddressLine2("RM Street");
     caseContainerInRM.setAddressLine3("RM Village");
     caseContainerInRM.setTownName("Newport");
