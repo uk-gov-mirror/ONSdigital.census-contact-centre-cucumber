@@ -651,34 +651,6 @@ public class TestCaseEndpoints {
     }
   }
 
-  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
-            .port(context.getCcBasePort())
-            .pathSegment("cases")
-            .pathSegment("uprn")
-            .pathSegment(uprn);
-
-    ResponseEntity<List<CaseDTO>> caseResponse = null;
-    caseForUprnUrl = builder.build().encode().toUri();
-
-    try {
-      caseResponse =
-          context
-              .getRestTemplate()
-              .exchange(
-                  caseForUprnUrl,
-                  HttpMethod.GET,
-                  null,
-                  new ParameterizedTypeReference<List<CaseDTO>>() {});
-    } catch (HttpClientErrorException httpClientErrorException) {
-      log.debug(
-          "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
-              + httpClientErrorException.getMessage());
-    }
-    return caseResponse;
-  }
-
   @Then("the Case endpoint returns a case associated with UPRN {string}")
   public void the_Case_endpoint_returns_a_case_associated_with_UPRN(String strUprn) {
     caseId = listOfCasesWithUprn.get(0).getId().toString();
@@ -1284,11 +1256,10 @@ public class TestCaseEndpoints {
   @Given("that a new cached case has been created for a new address but is not yet in RM")
   public void createNewCachedCase() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl()).port(context.getCcBasePort()).pathSegment("cases");
 
     NewCaseRequestDTO newCaseRequest = ExampleData.createNewCaseRequestDTO();
-    caseDTO =
-        getRestTemplate()
+    caseDTO = context.getRestTemplate()
             .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
     log.info("New case created: " + caseDTO.getId());
   }
@@ -1333,13 +1304,13 @@ public class TestCaseEndpoints {
 
   private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId);
 
     try {
-      getRestTemplate().put(builder.build().encode().toUri(), modifyCaseRequest);
+      context.getRestTemplate().put(builder.build().encode().toUri(), modifyCaseRequest);
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
           "An HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
@@ -1364,12 +1335,12 @@ public class TestCaseEndpoints {
 
   private void getCaseForID() {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId);
     try {
-      caseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+      caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
     }
@@ -1377,8 +1348,8 @@ public class TestCaseEndpoints {
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprn);
@@ -1388,7 +1359,7 @@ public class TestCaseEndpoints {
 
     try {
       caseResponse =
-          getRestTemplate()
+          context.getRestTemplate()
               .exchange(
                   caseForUprnUrl,
                   HttpMethod.GET,
@@ -1420,7 +1391,8 @@ public class TestCaseEndpoints {
   private void rmActionsCaseModifiedEvent() {
     CaseContainerDTO caseContainerInRM = ExampleData.createCaseContainer(caseId, uprnStr);
     List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
-    postCasesToMockService(postCaseList);
+    final boolean failTest = false;
+    context.postCasesToMockService(postCaseList, failTest);
   }
 
   @Then("the modified case is returned from the cache")

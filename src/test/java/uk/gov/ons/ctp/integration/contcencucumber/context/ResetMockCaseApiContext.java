@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import lombok.Data;
@@ -67,22 +67,8 @@ public class ResetMockCaseApiContext {
 
     final ObjectMapper objectMapper = new ObjectMapper();
     caseList = objectMapper.readValue(cases, new TypeReference<List<CaseContainerDTO>>() {});
-    postCasesToMockService(caseList);
-  }
-
-  protected void postCasesToMockService(final List<CaseContainerDTO> caseList) {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
-            .port(mcsBasePort)
-            .pathSegment("cases")
-            .pathSegment("data")
-            .pathSegment("cases")
-            .pathSegment("save");
-    for (CaseContainerDTO caseContainer : caseList) {
-      final List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainer);
-      getAuthenticationFreeRestTemplate()
-          .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
-    }
+    final boolean failTest = false;
+    postCasesToMockService(caseList, failTest);
   }
 
   public RestTemplate getRestTemplate() {
@@ -119,5 +105,32 @@ public class ResetMockCaseApiContext {
 
   public RestTemplate getAuthenticationFreeRestTemplate() {
     return new RestTemplateBuilder().build();
+  }
+
+  public void postCasesToMockService(final List<CaseContainerDTO> caseList, boolean failTest) {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+            .port(mcsBasePort)
+            .pathSegment("cases")
+            .pathSegment("data")
+            .pathSegment("cases")
+            .pathSegment("add");
+    for (CaseContainerDTO caseContainer : caseList) {
+      final List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainer);
+      try {
+        getAuthenticationFreeRestTemplate()
+            .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
+      } catch (HttpClientErrorException mockDuplicateCaseException) {
+        final String mockDuplicateCaseErrorMessage = "Posted duplicate case - exception thrown by mock case service - case: "
+            + caseContainer.getId();
+        if (failTest) {
+          log.error(mockDuplicateCaseErrorMessage);
+          throw new RuntimeException(mockDuplicateCaseException);
+        }
+        else {
+          log.warn(mockDuplicateCaseErrorMessage);
+        }
+      }
+    }
   }
 }
