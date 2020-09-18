@@ -1137,16 +1137,12 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     List<CachedCase> cachedCases = null;
     cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
 
-    List<String> cachedCaseIds = new ArrayList<>();
-    cachedCaseIds.add(strCaseId);
+    dataRepo.deleteCachedCase(strCaseId);
 
     for (CachedCase cachedCase : cachedCases) {
-      cachedCaseIds.add(cachedCase.getId());
+      dataRepo.deleteCachedCase(cachedCase.getId());
     }
 
-    for (String id : cachedCaseIds) {
-      dataRepo.deleteCachedCase(id);
-    }
     this.caseId = strCaseId;
     this.uprnStr = strUprn;
   }
@@ -1358,14 +1354,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     List<CachedCase> cachedCases = null;
     cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
 
-    List<String> cachedCaseIds = new ArrayList<>();
-
     for (CachedCase cachedCase : cachedCases) {
-      cachedCaseIds.add(cachedCase.getId());
-    }
-
-    for (String id : cachedCaseIds) {
-      dataRepo.deleteCachedCase(id);
+      dataRepo.deleteCachedCase(cachedCase.getId());
     }
   }
 

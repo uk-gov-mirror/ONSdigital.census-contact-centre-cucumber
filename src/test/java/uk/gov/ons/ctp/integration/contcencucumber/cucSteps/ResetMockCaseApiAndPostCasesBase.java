@@ -72,12 +72,8 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
             .pathSegment("save");
     for (CaseContainerDTO caseContainer : caseList) {
       final List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainer);
-      try {
-        getAuthenticationFreeRestTemplate()
-            .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
-      } catch (HttpClientErrorException ex) {
-        log.warn("Exception thrown by mock case service - case: " + caseContainer.getId());
-      }
+      getAuthenticationFreeRestTemplate()
+          .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
     }
   }
 
