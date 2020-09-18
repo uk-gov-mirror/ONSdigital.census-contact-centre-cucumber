@@ -84,7 +84,7 @@ The advantage of running the smoke tests separately is that, if they find an err
 
 ##To run all the CCCUC tests locally do as follows:
 
-Make sure that your local IP address is whitelisted for access to AI e.g. try accessing this link: [https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true](https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true)
+Make sure that your local IP address is whitelisted for access to AI e.g. try accessing this link: [https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/1710030095?addresstype=paf&verbose=true](https://rh-dev-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/1710030095?addresstype=paf&verbose=true)
 
 Run rabbitmq locally e.g. go into the census-rh-service repo, in the terminal, and enter this command:
 
@@ -117,7 +117,7 @@ Also, if there's a problem with using the AI in dev then an alternative is to po
 ```
 export ADDRESS_INDEX_SETTINGS_REST_CLIENT_CONFIG_HOST=whitelodge-ai-api.ai.census-gcp.onsdigital.uk
 ```
-NB. You can test access to whitelodge AI using this link: [https://whitelodge-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true](https://whitelodge-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/10034869241?addresstype=paf&verbose=true)
+NB. You can test access to whitelodge AI using this link: [https://whitelodge-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/1710030095?addresstype=paf&verbose=true](https://whitelodge-ai-api.ai.census-gcp.onsdigital.uk/addresses/rh/uprn/1710030095?addresstype=paf&verbose=true)
 
 Run the contact centre service locally (either using eclipse or mvn spring-boot:run)
 

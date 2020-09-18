@@ -25,6 +25,7 @@ import io.swagger.client.model.CaseType;
 import io.swagger.client.model.DeliveryChannel;
 import io.swagger.client.model.EstabType;
 import io.swagger.client.model.InvalidateCaseRequestDTO;
+import io.swagger.client.model.ModifyCaseRequestDTO;
 import io.swagger.client.model.NewCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
@@ -38,6 +39,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +66,7 @@ import uk.gov.ons.ctp.common.event.EventPublisher.Channel;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
 import uk.gov.ons.ctp.common.event.EventPublisher.Source;
 import uk.gov.ons.ctp.common.event.model.Address;
+import uk.gov.ons.ctp.common.event.model.AddressModifiedEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValid;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidEvent;
 import uk.gov.ons.ctp.common.event.model.AddressNotValidPayload;
@@ -80,6 +83,7 @@ import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
+import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.EventDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
@@ -114,6 +118,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private AddressNotValidEvent addressNotValidEvent;
   private String uprnStr;
   private String status = "";
+  private ModifyCaseRequestDTO modifyCaseRequest = null;
 
   @Value("${keystore}")
   private String keyStore;
@@ -122,21 +127,17 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void setup() throws Exception {
     rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
     addressNotValidEvent = null;
+    deleteCaseFromCache("1710030095");
   }
 
   @Before("@SetUpT134")
-  public void setUpT134() {
+  public void setUpT134() throws CTPException {
     List<String> cachedCaseIds = new ArrayList<>();
     cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ab");
     cachedCaseIds.add("3305e937-6fb1-4ce1-9d4c-077f147789ac");
     cachedCaseIds.add("03f58cb5-9af4-4d40-9d60-c124c5bddf09");
     for (String id : cachedCaseIds) {
-      try {
-        dataRepo.deleteCachedCase(id);
-      } catch (CTPException e) {
-        // If no case with that id is found in Firestore then catch the exception and just log it
-        log.with(e.getMessage()).with(id).info("No case in Firestore found to delete for case id");
-      }
+      dataRepo.deleteCachedCase(id);
     }
   }
 
@@ -508,15 +509,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals("Must have the correct region code", "GB-ENG", result1.get("region_code"));
   }
 
-  @And("an empty queue exists for sending Refusal events")
-  public void an_empty_queue_exists_for_sending_Refusal_events() throws CTPException {
-    EventType eventType = EventType.valueOf("REFUSAL_RECEIVED");
-    log.info("Creating queue for events of type: '" + eventType + "'");
-    queueName = rabbit.createQueue(eventType);
-    log.info("Flushing queue: '" + queueName + "'");
-    rabbit.flushQueue(queueName);
-  }
-
   @And("a Refusal event is sent with type {string}")
   public void a_Refusal_event_is_sent(String type) throws CTPException {
     log.info("Check that a Refusal event has been sent");
@@ -638,33 +630,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment("uprn")
-            .pathSegment(uprn);
-
-    ResponseEntity<List<CaseDTO>> caseResponse = null;
-    caseForUprnUrl = builder.build().encode().toUri();
-
-    try {
-      caseResponse =
-          getRestTemplate()
-              .exchange(
-                  caseForUprnUrl,
-                  HttpMethod.GET,
-                  null,
-                  new ParameterizedTypeReference<List<CaseDTO>>() {});
-    } catch (HttpClientErrorException httpClientErrorException) {
-      log.debug(
-          "A HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
-              + httpClientErrorException.getMessage());
-    }
-    return caseResponse;
-  }
-
   @Then("the Case endpoint returns a case associated with UPRN {string}")
   public void the_Case_endpoint_returns_a_case_associated_with_UPRN(String strUprn) {
     caseId = listOfCasesWithUprn.get(0).getId().toString();
@@ -683,17 +648,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     assertEquals("CE", caze.getCaseType().name());
     assertEquals(expectedUprn, caze.getUprn());
-  }
-
-  @Given("an empty queue exists for sending AddressNotValid events")
-  public void an_empty_queue_exists_for_sending_AddressNotValid_events() throws CTPException {
-    String eventTypeAsString = "ADDRESS_NOT_VALID";
-    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
-    EventType eventType = EventType.valueOf(eventTypeAsString);
-    queueName = rabbit.createQueue(eventType);
-    log.info("Flushing queue: '" + queueName + "'");
-
-    rabbit.flushQueue(queueName);
   }
 
   @When("CC Advisor selects the address status change {string}")
@@ -913,17 +867,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  @Given("an empty queue exists for sending NewAddressReported events")
-  public void an_empty_queue_exists_for_sending_NewAddressReported_events() throws CTPException {
-    String eventTypeAsString = "NEW_ADDRESS_REPORTED";
-    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
-    EventType eventType = EventType.valueOf(eventTypeAsString);
-    queueName = rabbit.createQueue(eventType);
-    log.info("Flushing queue: '" + queueName + "'");
-
-    rabbit.flushQueue(queueName);
-  }
-
   @Then("the service must publish a new address event to RM with the fake CaseID")
   public void the_service_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID()
       throws CTPException {
@@ -980,15 +923,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertNull(address.getLatitude());
     assertNull(address.getLongitude());
     assertEquals(uprnStr, address.getUprn());
-  }
-
-  @And("an empty queue exists for sending SurveyLaunched events")
-  public void an_empty_queue_exists_for_sending_SurveyLaunched_events() throws CTPException {
-    EventType eventType = EventType.valueOf("SURVEY_LAUNCHED");
-    log.info("Creating queue for events of type: '" + eventType + "'");
-    queueName = rabbit.createQueue(eventType);
-    log.info("Flushing queue: '" + queueName + "'");
-    rabbit.flushQueue(queueName);
   }
 
   @When("CC Advisor selects the survey launch")
@@ -1197,6 +1131,93 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
+  @Given("the case with id {string} and uprn {string} does not exist in the cache")
+  public void the_case_with_id_and_uprn_does_not_exist_in_the_cache(
+      String strCaseId, String strUprn) throws CTPException {
+    List<CachedCase> cachedCases = null;
+    cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
+
+    dataRepo.deleteCachedCase(strCaseId);
+
+    for (CachedCase cachedCase : cachedCases) {
+      dataRepo.deleteCachedCase(cachedCase.getId());
+    }
+
+    this.caseId = strCaseId;
+    this.uprnStr = strUprn;
+  }
+
+  @Given("an empty queue exists for sending {string} events")
+  public void an_empty_queue_exists_for_sending_events(String eventTypeAsString)
+      throws CTPException {
+    log.info("Creating queue for events of type: '" + eventTypeAsString + "'");
+    EventType eventType = EventType.valueOf(eventTypeAsString);
+    queueName = rabbit.createQueue(eventType);
+    log.info("Flushing queue: '" + queueName + "'");
+    rabbit.flushQueue(queueName);
+  }
+
+  @Given("the case exists in RM and can be fetched using {string}")
+  public void the_case_exists_in_RM_and_can_be_fetched_using(String operation) {
+    caseDTO = null;
+    fetchTheCaseFromCCSvc(operation);
+    assertNotNull(caseDTO);
+    assertEquals(this.caseId, caseDTO.getId().toString());
+    assertEquals(this.uprnStr, caseDTO.getUprn());
+    assertEquals("Napier House", caseDTO.getAddressLine1());
+    assertEquals("88 Harbour Street", caseDTO.getAddressLine2());
+    assertEquals("Parkhead", caseDTO.getAddressLine3());
+    assertEquals("ON", caseDTO.getCeOrgName());
+  }
+
+  @When("the case address details are modified by a member of CC staff")
+  public void the_case_address_details_are_modified_by_a_member_of_CC_staff() {
+    createModifyCaseRequest();
+    putCaseForID(modifyCaseRequest);
+  }
+
+  @When("the case modified event is sent to RM and RM does immediately action it")
+  public void the_case_modified_event_is_sent_to_RM_and_RM_does_immediately_action_it()
+      throws ClassNotFoundException, CTPException {
+    log.info(
+        "Check that an event of type ADDRESS_MODIFIED has now been put on the empty queue, named {}, ready to be picked up by RM",
+        queueName);
+
+    log.info(
+        "Getting from queue: '{}' and converting to an object of type '{}', with timeout of '{}'",
+        queueName,
+        AddressModifiedEvent.class,
+        RABBIT_TIMEOUT);
+
+    AddressModifiedEvent addressModifiedEvent =
+        rabbit.getMessage(queueName, AddressModifiedEvent.class, RABBIT_TIMEOUT);
+
+    assertNotNull(addressModifiedEvent);
+    Header addressModifiedHeader = addressModifiedEvent.getEvent();
+    assertNotNull(addressModifiedHeader);
+    assertEquals("ADDRESS_MODIFIED", addressModifiedHeader.getType().toString());
+
+    rmActionsCaseModifiedEvent();
+  }
+
+  @When("the call is made to fetch the case again from {string}")
+  public void the_call_is_made_to_fetch_the_case_again_from(String operation) {
+    fetchTheCaseFromCCSvc(operation);
+  }
+
+  @Then("the latest case is fetched, which is the modified case from RM")
+  public void the_latest_case_is_fetched_which_is_the_modified_case_from_RM() {
+    log.info(
+        "assert that the GET endpoint now picks up the RM case rather then the one that the PUT endpoint has created in the cache");
+    assertEquals(this.caseId, caseDTO.getId().toString());
+    assertEquals(this.uprnStr, caseDTO.getUprn());
+    assertEquals("44 RM Road", caseDTO.getAddressLine1()); // Note that the one in the cache is
+    // different - 33 RM Road
+    assertEquals("RM Street", caseDTO.getAddressLine2());
+    assertEquals("RM Village", caseDTO.getAddressLine3());
+    assertEquals("Response Management Org", caseDTO.getCeOrgName());
+  }
+
   @Given("that a new cached case has been created for a new address but is not yet in RM")
   public void createNewCachedCase() {
     UriComponentsBuilder builder =
@@ -1224,6 +1245,43 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
     assertEquals(expectedStatus, r.getStatusCodeValue());
     assertTrue(r.getBody(), r.getBody().contains(expectedContent));
+  }
+
+  private void fetchTheCaseFromCCSvc(String operation) {
+    if (operation.equals("GetCaseByUPRN")) {
+      getCaseForUprn(uprnStr);
+      caseDTO = caseDTOList.get(0);
+    } else if (operation.equals("GetCaseByID")) {
+      getCaseForID();
+    }
+  }
+
+  private void createModifyCaseRequest() {
+    modifyCaseRequest = new ModifyCaseRequestDTO();
+    modifyCaseRequest.setAddressLine1("33 RM Road");
+    modifyCaseRequest.setAddressLine2("RM Street");
+    modifyCaseRequest.setAddressLine3("RM Village");
+    modifyCaseRequest.setCeOrgName("Response Management Org");
+    modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
+    modifyCaseRequest.setCaseId(UUID.fromString(this.caseId));
+    modifyCaseRequest.setEstabType(EstabType.OTHER);
+    modifyCaseRequest.setCaseType(CaseType.CE);
+  }
+
+  private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId);
+
+    try {
+      getRestTemplate().put(builder.build().encode().toUri(), modifyCaseRequest);
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "An HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
+    }
   }
 
   private NewCaseRequestDTO createNewCaseRequestDTO() {
@@ -1256,5 +1314,87 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     long actualInMillis = dateTime.getTime();
     assertTrue(actualInMillis + " not after " + minAllowed, actualInMillis >= minAllowed);
     assertTrue(actualInMillis + " not before " + maxAllowed, actualInMillis <= maxAllowed);
+  }
+
+  private void getCaseForID() {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment(caseId);
+    try {
+      caseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+    } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
+      this.exception = httpClientErrorException;
+    }
+  }
+
+  private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprn);
+
+    ResponseEntity<List<CaseDTO>> caseResponse = null;
+    caseForUprnUrl = builder.build().encode().toUri();
+
+    try {
+      caseResponse =
+          getRestTemplate()
+              .exchange(
+                  caseForUprnUrl,
+                  HttpMethod.GET,
+                  null,
+                  new ParameterizedTypeReference<List<CaseDTO>>() {});
+      caseDTOList = caseResponse.getBody();
+    } catch (HttpClientErrorException httpClientErrorException) {
+      log.debug(
+          "An HttpClientErrorException has occurred when trying to get list of cases using getCaseByUprn endpoint in contact centre: "
+              + httpClientErrorException.getMessage());
+      this.exception = httpClientErrorException;
+    }
+    return caseResponse;
+  }
+
+  private void deleteCaseFromCache(String strUprn) throws CTPException {
+    List<CachedCase> cachedCases = null;
+    cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
+
+    for (CachedCase cachedCase : cachedCases) {
+      dataRepo.deleteCachedCase(cachedCase.getId());
+    }
+  }
+
+  /**
+   * The following simulates the RM data being modified but with one tiny difference (which wouldn't
+   * be there in real life) to facilitate testing.
+   */
+  private void rmActionsCaseModifiedEvent() {
+    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
+    caseContainerInRM.setId(UUID.fromString(this.caseId));
+    caseContainerInRM.setCaseRef("124124009");
+    caseContainerInRM.setCaseType("CE");
+    caseContainerInRM.setAddressType("HH");
+    caseContainerInRM.setEstabType("OTHER");
+    Calendar cal = Calendar.getInstance();
+    cal.set(2019, Calendar.JANUARY, 9);
+    Date earlyDate = cal.getTime();
+    caseContainerInRM.setCreatedDateTime(earlyDate);
+    caseContainerInRM.setLastUpdated(new Date());
+    caseContainerInRM.setAddressLine1("44 RM Road"); // the difference is 44 rather than 33 (used in
+    // the cache)
+    caseContainerInRM.setAddressLine2("RM Street");
+    caseContainerInRM.setAddressLine3("RM Village");
+    caseContainerInRM.setTownName("Newport");
+    caseContainerInRM.setRegion("W");
+    caseContainerInRM.setPostcode("G1 2AA");
+    caseContainerInRM.setOrganisationName("Response Management Org");
+    caseContainerInRM.setUprn(this.uprnStr);
+    List<EventDTO> caseEvents = new ArrayList<EventDTO>();
+    caseContainerInRM.setCaseEvents(caseEvents);
+    List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
+    postCasesToMockService(postCaseList);
   }
 }
