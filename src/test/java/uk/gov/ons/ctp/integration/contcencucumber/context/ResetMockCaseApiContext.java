@@ -70,24 +70,18 @@ public class ResetMockCaseApiContext {
     postCasesToMockService(caseList);
   }
 
-  private void postCasesToMockService(final List<CaseContainerDTO> caseList) {
+  protected void postCasesToMockService(final List<CaseContainerDTO> caseList) {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
             .port(mcsBasePort)
             .pathSegment("cases")
             .pathSegment("data")
             .pathSegment("cases")
-            .pathSegment("add");
+            .pathSegment("save");
     for (CaseContainerDTO caseContainer : caseList) {
       final List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainer);
-      try {
-        getAuthenticationFreeRestTemplate()
-            .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
-      } catch (HttpClientErrorException ex) {
-        log.warn(
-            "Posted duplicate cases - exception thrown by mock case service - case: "
-                + caseContainer.getId());
-      }
+      getAuthenticationFreeRestTemplate()
+          .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
     }
   }
 

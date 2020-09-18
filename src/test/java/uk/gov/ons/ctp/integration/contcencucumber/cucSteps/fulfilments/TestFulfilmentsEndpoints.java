@@ -88,6 +88,8 @@ public class TestFulfilmentsEndpoints {
   public void setup() throws CTPException {
     rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
     fulfilmentRequestedEvent = null;
+    deleteCaseFromCache("1710030110");
+    deleteCaseFromCache("1710030113");
   }
 
   @Given("I Search fulfilments")
@@ -761,5 +763,20 @@ public class TestFulfilmentsEndpoints {
               + httpClientErrorException.getMessage());
     }
     return requestFulfilmentBySMSResponse;
+  }
+
+  private void deleteCaseFromCache(String strUprn) throws CTPException {
+    List<CachedCase> cachedCases = null;
+    cachedCases = dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(strUprn));
+
+    List<String> cachedCaseIds = new ArrayList<>();
+
+    for (CachedCase cachedCase : cachedCases) {
+      cachedCaseIds.add(cachedCase.getId());
+    }
+
+    for (String id : cachedCaseIds) {
+      dataRepo.deleteCachedCase(id);
+    }
   }
 }

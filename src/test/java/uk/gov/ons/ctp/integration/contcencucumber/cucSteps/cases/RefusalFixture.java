@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.ons.ctp.common.event.model.AddressCompact;
-import uk.gov.ons.ctp.common.event.model.ContactCompact;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RefusalFixture {
@@ -65,14 +64,5 @@ public final class RefusalFixture {
     addr.setRegion(A_REGION.name());
     addr.setUprn(A_UPRN_STR);
     return addr;
-  }
-
-  // to match details in the request DTO
-  public static ContactCompact contactCompact() {
-    ContactCompact contactCompact = new ContactCompact();
-    contactCompact.setTitle(A_TITLE);
-    contactCompact.setForename(A_FORENAME);
-    contactCompact.setSurname(A_SURNAME);
-    return contactCompact;
   }
 }
