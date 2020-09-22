@@ -10,7 +10,7 @@ Feature: Test Contact Centre Telephone Capture Endpoint
 
   Scenario Outline: [CR-T144, CR-T145]  I want to verify that the telephone capture endpoint in CC-SERVICE works correctly
     Given confirmed CaseType <caseId> <individual>
-    And an empty queue exists for sending "SURVEY_LAUNCHED" events
+    And an empty queue exists for sending SurveyLaunched events
     And EQ is launched <caseType> <caseId> <individual>
     When CC Advisor selects the survey launch
     Then a Survey Launched event is emitted to RM

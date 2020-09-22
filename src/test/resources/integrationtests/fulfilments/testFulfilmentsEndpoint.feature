@@ -52,8 +52,8 @@ Feature: Test Contact centre Fulfilments Endpoints
 
   @SetUp
   Scenario: [CR-T142] I want to request an UAC for a HH Respondent in NI via POST
-    Given the CC advisor has provided a valid UPRN "1710030095"
-    Then the Case endpoint returns a case, associated with UPRN "1710030095", which has caseType "HH"
+    Given the CC advisor has provided a valid UPRN "1347459995"
+    Then the Case endpoint returns a case, associated with UPRN "1347459995", which has caseType "HH"
     Given a list of available fulfilment product codes is presented for a HH caseType where individual flag = "false" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
@@ -104,8 +104,8 @@ Feature: Test Contact centre Fulfilments Endpoints
       | uprn         | case_type | region | delivery_channel | individual |
       |100140222798  | HH        | E      | SMS              | false      |
       |100240222798  | CE        | E      | SMS              | true       |
-      |100340222798  | HH        | W      | SMS              | false      |
-      |100440222798  | CE        | W      | SMS              | false      |
+      |100340222798  | HH        | W      | SMS              | true       |
+      |100340222798  | HH        | W      | SMS              | true       |
 
   @SetUp
   Scenario Outline: [CR-T375] I want to check that EMPTY title, forename or surname items are not fulfilled for an individual POSTAL request
@@ -188,8 +188,8 @@ Feature: Test Contact centre Fulfilments Endpoints
 
   @SetUp
   Scenario: [CR-T323] PENDING - I want to request a Paper Questionnaire for a SPG Individual Respondent in NI
-    Given the CC advisor has provided a valid UPRN "1710030110"
-    Then the Case endpoint returns a case, associated with UPRN "1710030110", which has caseType "SPG" and addressLevel "U" and handDelivery "false"
+    Given the CC advisor has provided a valid UPRN "1347459994"
+    Then the Case endpoint returns a case, associated with UPRN "1347459994", which has caseType "SPG" and addressLevel "U" and handDelivery "false"
     Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
