@@ -1361,9 +1361,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void theModifiedCaseIsReturnedFromTheCache() {
     ModifyCaseRequestDTO expectedCaseData =
         ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
-    assertEquals(
-        expectedCaseData.getAddressLine1(),
-        caseDTO.getAddressLine1());
+    assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
     assertEquals(expectedCaseData.getAddressLine2(), caseDTO.getAddressLine2());
     assertEquals(expectedCaseData.getAddressLine3(), caseDTO.getAddressLine3());
     assertEquals(expectedCaseData.getCeOrgName(), caseDTO.getCeOrgName());
