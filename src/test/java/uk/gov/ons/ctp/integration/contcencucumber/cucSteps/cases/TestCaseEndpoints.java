@@ -21,7 +21,6 @@ import cucumber.api.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
-import io.swagger.client.model.CaseType;
 import io.swagger.client.model.DeliveryChannel;
 import io.swagger.client.model.EstabType;
 import io.swagger.client.model.InvalidateCaseRequestDTO;
@@ -1172,7 +1171,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("the case address details are modified by a member of CC staff")
   public void the_case_address_details_are_modified_by_a_member_of_CC_staff() {
-    createModifyCaseRequest();
+    modifyCaseRequest = ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
     putCaseForID(modifyCaseRequest);
   }
 
@@ -1265,18 +1264,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
-  private void createModifyCaseRequest() {
-    modifyCaseRequest = new ModifyCaseRequestDTO();
-    modifyCaseRequest.setAddressLine1("33 RM Road");
-    modifyCaseRequest.setAddressLine2("RM Street");
-    modifyCaseRequest.setAddressLine3("RM Village");
-    modifyCaseRequest.setCeOrgName("Response Management Org");
-    modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
-    modifyCaseRequest.setCaseId(UUID.fromString(this.caseId));
-    modifyCaseRequest.setEstabType(EstabType.OTHER);
-    modifyCaseRequest.setCaseType(CaseType.CE);
-  }
-
   private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
@@ -1364,6 +1351,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
    * be there in real life) to facilitate testing.
    */
   private void rmActionsCaseModifiedEvent() {
+    // createCaseContainer - the difference is 44 rather than 33 (used in the cache)
     CaseContainerDTO caseContainerInRM = ExampleData.createCaseContainer(caseId, uprnStr);
     List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
     postCasesToMockService(postCaseList);
@@ -1373,12 +1361,13 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void theModifiedCaseIsReturnedFromTheCache() {
     ModifyCaseRequestDTO expectedCaseData =
         ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
-    assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
+    assertEquals(
+        expectedCaseData.getAddressLine1(),
+        caseDTO.getAddressLine1());
     assertEquals(expectedCaseData.getAddressLine2(), caseDTO.getAddressLine2());
     assertEquals(expectedCaseData.getAddressLine3(), caseDTO.getAddressLine3());
     assertEquals(expectedCaseData.getCeOrgName(), caseDTO.getCeOrgName());
     assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
-    assertEquals(expectedCaseData.getDateTime(), caseDTO.getCreatedDateTime());
     assertEquals(expectedCaseData.getCaseId(), caseDTO.getId());
   }
 }

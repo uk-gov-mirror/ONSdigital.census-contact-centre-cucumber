@@ -217,7 +217,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
     When the case address details are modified by a member of CC staff
     And the case modified event is sent to RM and RM does not immediately action it
     And the call is made to fetch the case again from <endpoint>
-    Then the latest case is fetched, which is the modified case from cache
+    Then the modified case is returned from the cache
 
     Examples:
       | endpoint        |

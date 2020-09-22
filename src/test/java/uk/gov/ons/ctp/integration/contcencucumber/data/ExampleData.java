@@ -39,8 +39,7 @@ public class ExampleData {
     Date earlyDate = cal.getTime();
     caseContainer.setCreatedDateTime(earlyDate);
     caseContainer.setLastUpdated(new Date());
-    caseContainer.setAddressLine1(
-        "44 RM Road"); // the difference is 44 rather than 33 (used in the cache)
+    caseContainer.setAddressLine1("44 RM Road");
     caseContainer.setAddressLine2("RM Street");
     caseContainer.setAddressLine3("RM Village");
     caseContainer.setTownName("Newport");
