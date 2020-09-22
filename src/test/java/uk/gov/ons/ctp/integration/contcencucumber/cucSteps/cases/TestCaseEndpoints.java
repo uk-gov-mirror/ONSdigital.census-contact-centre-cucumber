@@ -161,8 +161,7 @@ public class TestCaseEndpoints {
 
   @Then("I do the smoke test and receive a response of OK from the service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_service() {
-    checkServiceHealthy(
-        context.getCcBaseUrl(), context.getCcBasePort(), "THE SERVICE MAY NOT BE RUNNING ");
+    checkServiceHealthy(context.getCcBaseUrl(), context.getCcBasePort(), "THE SERVICE MAY NOT BE RUNNING ");
   }
 
   @Given("I am about to do a smoke test by going to a mock case api endpoint")
@@ -172,19 +171,13 @@ public class TestCaseEndpoints {
 
   @Then("I do the smoke test and receive a response of OK from the mock case api service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
-    checkServiceHealthy(
-        context.getMcsBaseUrl(),
-        context.getMcsBasePort(),
-        "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
+    checkServiceHealthy(context.getMcsBaseUrl(), context.getMcsBasePort(), "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
   }
 
-  @Given("I have a valid case ID <caseId>")
-  public void iHaveAValidCaseIDCaseId(final String caseId) {
+  @Given("I have a valid case ID {string}")
+  public void i_have_a_valid_case_ID(String caseId) {
     this.caseId = caseId;
   }
-
-  @When("I Search cases By case ID <caseEvents>")
-  public void iSearchCasesByCaseIDCaseEvents() {}
 
   @When("I Search cases By case ID {string}")
   public void i_Search_cases_By_case_ID(String showCaseEvents) {
@@ -194,21 +187,17 @@ public class TestCaseEndpoints {
             .pathSegment("cases")
             .pathSegment(caseId)
             .queryParam("caseEvents", showCaseEvents);
-    caseDTO =
-        context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+    caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
   }
 
-  @Then("the correct case for my case ID is returned <uprn>")
-  public void theCorrectCaseForMyCaseIDIsReturnedUprn(final int uprn) {
+  @Then("the correct case for my case ID is returned {int}")
+  public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {
     assertNotNull("Case Query Response must not be null", caseDTO);
     assertEquals("Case Query Response UPRN must match", caseDTO.getUprn(), Integer.toString(uprn));
   }
 
-  @Then("the correct case for my case ID is returned {int}")
-  public void the_correct_case_for_my_case_ID_is_returned(Integer uprn) {}
-
-  @And("the correct number of events are returned <caseEvents> <noCaseEvents>")
-  public void theCorrectNumberOfEventsAreReturnedCaseEventsNoCaseEvents(
+  @Then("the correct number of events are returned {string} {int}")
+  public void the_correct_number_of_events_are_returned(
       String showCaseEvents, Integer expectedCaseEvents) {
     if (!Boolean.parseBoolean(showCaseEvents)) {
       assertTrue("Should be no case events", caseDTO.getCaseEvents().isEmpty());
@@ -220,8 +209,8 @@ public class TestCaseEndpoints {
     }
   }
 
-  @And("the establishment UPRN is <estabUprn>")
-  public void theEstablishmentUPRNIsEstabUprn(String expectedEstabUprn) {
+  @And("the establishment UPRN is {string}")
+  public void the_establishment_UPRN_is(String expectedEstabUprn) {
     UniquePropertyReferenceNumber estabUprn =
         UniquePropertyReferenceNumber.create(caseDTO.getEstabUprn());
     if (estabUprn.getValue() == 0L) {
@@ -238,16 +227,16 @@ public class TestCaseEndpoints {
     }
   }
 
-  @And("the secure establishment is set to <secure>")
-  public void theSecureEstablishmentIsSetToSecure(final String secure) {
+  @And("the secure establishment is set to {string}")
+  public void the_secure_establishment_is_set_to(String secure) {
     boolean secureEstablishment = caseDTO.isSecureEstablishment();
     boolean expectedSecure = Boolean.parseBoolean(secure);
     assertEquals(
         "Mismatching expectation of secure establishment", expectedSecure, secureEstablishment);
   }
 
-  @Given("I have an invalid case ID <caseId>")
-  public void iHaveAnInvalidCaseIDCaseId(final String caseId) {
+  @Given("I have an invalid case ID {string}")
+  public void i_have_an_invalid_case_ID(String caseId) {
     this.caseId = caseId;
   }
 
@@ -259,15 +248,14 @@ public class TestCaseEndpoints {
             .pathSegment("cases")
             .pathSegment(caseId);
     try {
-      caseDTO =
-          context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+      caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
     }
   }
 
-  @Then("An error is thrown and no case is returned <httpError>")
-  public void anErrorIsThrownAndNoCaseIsReturnedHttpError(String httpError) {
+  @Then("An error is thrown and no case is returned {string}")
+  public void an_error_is_thrown_and_no_case_is_returned(String httpError) {
     assertNotNull("An error was expected, but it succeeded", exception);
     assertTrue(
         "The correct http status must be returned " + httpError,
@@ -289,8 +277,7 @@ public class TestCaseEndpoints {
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          context
-              .getRestTemplate()
+          context.getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -328,8 +315,7 @@ public class TestCaseEndpoints {
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          context
-              .getRestTemplate()
+          context.getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -572,8 +558,7 @@ public class TestCaseEndpoints {
             .pathSegment("refusal");
     try {
       responseDTO =
-          context
-              .getRestTemplate()
+          context.getRestTemplate()
               .postForObject(builder.build().encode().toUri(), refusalDTO, ResponseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
@@ -756,8 +741,7 @@ public class TestCaseEndpoints {
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        context
-            .getRestTemplate()
+        context.getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -818,7 +802,7 @@ public class TestCaseEndpoints {
     log.info("The response status: " + status);
   }
 
-  @When("Get Case API returns a {string} error because there is no case found")
+  @When("Get\\/Case API returns a {string} error because there is no case found")
   public void getCaseAPIReturnsAErrorBecauseThereIsNoCaseFound(String statusStr) {
     int returnStatus = Integer.parseInt(statusStr);
     assertEquals(
@@ -844,8 +828,7 @@ public class TestCaseEndpoints {
         ccUprnEndpointUrl);
 
     ResponseEntity<List<CaseDTO>> caseResponse =
-        context
-            .getRestTemplate()
+        context.getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -1005,8 +988,7 @@ public class TestCaseEndpoints {
             .queryParam("input", "Public Telephone 13M From 11 Nine Acres");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        context
-            .getRestTemplate()
+        context.getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -1064,8 +1046,7 @@ public class TestCaseEndpoints {
     status = "";
 
     try {
-      context
-          .getRestTemplate()
+      context.getRestTemplate()
           .exchange(
               builder.build().encode().toUri(),
               HttpMethod.GET,
@@ -1102,8 +1083,7 @@ public class TestCaseEndpoints {
         .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
 
     ResponseEntity<ResponseDTO> response =
-        context
-            .getRestTemplate()
+        context.getRestTemplate()
             .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
     return response;
   }
@@ -1259,7 +1239,8 @@ public class TestCaseEndpoints {
         UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl()).port(context.getCcBasePort()).pathSegment("cases");
 
     NewCaseRequestDTO newCaseRequest = ExampleData.createNewCaseRequestDTO();
-    caseDTO = context.getRestTemplate()
+    caseDTO =
+        context.getRestTemplate()
             .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
     log.info("New case created: " + caseDTO.getId());
   }
@@ -1391,8 +1372,7 @@ public class TestCaseEndpoints {
   private void rmActionsCaseModifiedEvent() {
     CaseContainerDTO caseContainerInRM = ExampleData.createCaseContainer(caseId, uprnStr);
     List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
-    final boolean failTest = false;
-    context.postCasesToMockService(postCaseList, failTest);
+    context.postCasesToMockService(postCaseList, false);
   }
 
   @Then("the modified case is returned from the cache")
