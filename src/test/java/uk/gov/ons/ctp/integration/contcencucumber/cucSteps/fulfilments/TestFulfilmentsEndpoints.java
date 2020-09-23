@@ -113,8 +113,7 @@ public class TestFulfilmentsEndpoints {
 
     try {
       ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse =
-          mcontext
-              .getRestTemplate()
+          mcontext.getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -171,8 +170,7 @@ public class TestFulfilmentsEndpoints {
             .pathSegment("addresses")
             .queryParam("input", addressSearchString);
     addressQueryResponseDTO =
-        mcontext
-            .getRestTemplate()
+        mcontext.getRestTemplate()
             .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
   }
 
@@ -220,8 +218,7 @@ public class TestFulfilmentsEndpoints {
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          mcontext
-              .getRestTemplate()
+          mcontext.getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -388,8 +385,8 @@ public class TestFulfilmentsEndpoints {
   @Then(
       "the Case endpoint returns a case, associated with UPRN {string}, which has caseType {string} and addressLevel {string} and handDelivery {string}")
   public void
-      the_Case_endpoint_returns_a_case_associated_with_UPRN_which_has_caseType_and_addressLevel_and_handDelivery(
-          String strUprn, String strCaseType, String strAddressLevel, String strHandDelivery) {
+  the_Case_endpoint_returns_a_case_associated_with_UPRN_which_has_caseType_and_addressLevel_and_handDelivery(
+      String strUprn, String strCaseType, String strAddressLevel, String strHandDelivery) {
     caseId = listOfCasesWithUprn.get(0).getId().toString();
     log.with(caseId).debug("The case id returned by getCasesWithUprn endpoint");
 
@@ -413,8 +410,8 @@ public class TestFulfilmentsEndpoints {
   @Given(
       "a list of available fulfilment product codes is presented for a HH caseType where individual flag = {string} and region = {string}")
   public void
-      a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
-          String individual, String region) throws CTPException {
+  a_list_of_available_fulfilment_product_codes_is_presented_for_a_HH_caseType_where_individual_flag_and_region(
+      String individual, String region) throws CTPException {
     try {
       ResponseEntity<List<Product>> productsResponse = getProducts("HH", region, individual);
       listOfProducts = productsResponse.getBody();
@@ -436,8 +433,8 @@ public class TestFulfilmentsEndpoints {
   @Given(
       "a list of available fulfilment product codes is presented for a caseType = {string} where individual flag = {string} and region = {string}")
   public void
-      a_list_of_available_fulfilment_product_codes_is_presented_for_a_caseType_where_individual_flag_and_region(
-          String caseType, String individual, String region) {
+  a_list_of_available_fulfilment_product_codes_is_presented_for_a_caseType_where_individual_flag_and_region(
+      String caseType, String individual, String region) {
     try {
       ResponseEntity<List<Product>> productsResponse = getProducts(caseType, region, individual);
       listOfProducts = productsResponse.getBody();
@@ -498,7 +495,7 @@ public class TestFulfilmentsEndpoints {
     return prodCodeSelected;
   }
 
-  @And("Requests a fulfilment for the case and delivery channel {string}")
+  @And("Requests a fulfillment for the case and delivery channel {string}")
   public void requestsAFulfillmentForTheCaseAndDeliveryChannel(final String strDeliveryChannel) {
     fulfillmentException = null;
     try {
@@ -530,7 +527,7 @@ public class TestFulfilmentsEndpoints {
     }
   }
 
-  @And("Requests a fulfilment for the case and title {string} forename {string} surname {string}")
+  @And("Requests a fulfillment for the case and title {string} forename {string} surname {string}")
   public void requestsAFulfillmentForTheCaseAndTitleForenameSurname(
       String title, String forename, String surname) {
     fulfillmentException = null;
@@ -546,8 +543,9 @@ public class TestFulfilmentsEndpoints {
   }
 
   @Then(
-      "a fulfilment request event is emitted to RM for addressType = {string} and individual = {string}")
-  public void aFulfillmentRequestEventIsEmittedToRMForAddressTypeAndIndividual(
+      "a fulfilment request event is emitted to RM for UPRN = {string} addressType = {string} individual = {string} and region = {string}")
+  public void
+  a_fulfilment_request_event_is_emitted_to_RM_for_UPRN_addressType_individual_and_region(
       String expectedAddressType, String individual) throws CTPException {
     log.info(
         "Check that a FULFILMENT_REQUESTED event has now been put on the empty queue, named "
@@ -632,8 +630,7 @@ public class TestFulfilmentsEndpoints {
 
     try {
       caseResponse =
-          mcontext
-              .getRestTemplate()
+          mcontext.getRestTemplate()
               .exchange(
                   caseForUprnUrl,
                   HttpMethod.GET,
@@ -662,8 +659,7 @@ public class TestFulfilmentsEndpoints {
 
     try {
       productsResponse =
-          mcontext
-              .getRestTemplate()
+          mcontext.getRestTemplate()
               .exchange(
                   productsUrl,
                   HttpMethod.GET,
@@ -717,8 +713,7 @@ public class TestFulfilmentsEndpoints {
 
     try {
       requestFulfilmentByPostResponse =
-          mcontext
-              .getRestTemplate()
+          mcontext.getRestTemplate()
               .exchange(fulfilmentByPostUrl, HttpMethod.POST, requestEntity, ResponseDTO.class);
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
@@ -754,8 +749,7 @@ public class TestFulfilmentsEndpoints {
 
     try {
       requestFulfilmentBySMSResponse =
-          mcontext
-              .getRestTemplate()
+          mcontext.getRestTemplate()
               .exchange(fulfilmentBySMSUrl, HttpMethod.POST, requestEntity, ResponseDTO.class);
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(

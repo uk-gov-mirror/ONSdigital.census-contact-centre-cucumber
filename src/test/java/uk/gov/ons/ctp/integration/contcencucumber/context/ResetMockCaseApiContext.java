@@ -114,7 +114,7 @@ public class ResetMockCaseApiContext {
             .pathSegment("cases")
             .pathSegment("data")
             .pathSegment("cases")
-            .pathSegment("add");
+            .pathSegment("save");
     for (CaseContainerDTO caseContainer : caseList) {
       final List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainer);
       try {
@@ -122,7 +122,7 @@ public class ResetMockCaseApiContext {
             .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
       } catch (HttpClientErrorException mockDuplicateCaseException) {
         final String mockDuplicateCaseErrorMessage = "Posted duplicate case - exception thrown by mock case service - case: "
-            + caseContainer.getId();
+            + caseContainer.getId() + " - " + mockDuplicateCaseException.getMessage();
         if (failTest) {
           log.error(mockDuplicateCaseErrorMessage);
           throw new RuntimeException(mockDuplicateCaseException);

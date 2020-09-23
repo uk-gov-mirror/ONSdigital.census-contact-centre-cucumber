@@ -1178,7 +1178,7 @@ public class TestCaseEndpoints {
 
   @When("the case address details are modified by a member of CC staff")
   public void the_case_address_details_are_modified_by_a_member_of_CC_staff() {
-    createModifyCaseRequest();
+    modifyCaseRequest = ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
     putCaseForID(modifyCaseRequest);
   }
 
@@ -1271,18 +1271,6 @@ public class TestCaseEndpoints {
     }
   }
 
-  private void createModifyCaseRequest() {
-    modifyCaseRequest = new ModifyCaseRequestDTO();
-    modifyCaseRequest.setAddressLine1("33 RM Road");
-    modifyCaseRequest.setAddressLine2("RM Street");
-    modifyCaseRequest.setAddressLine3("RM Village");
-    modifyCaseRequest.setCeOrgName("Response Management Org");
-    modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
-    modifyCaseRequest.setCaseId(UUID.fromString(this.caseId));
-    modifyCaseRequest.setEstabType(EstabType.OTHER);
-    modifyCaseRequest.setCaseType(CaseType.CE);
-  }
-
   private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
@@ -1370,6 +1358,7 @@ public class TestCaseEndpoints {
    * be there in real life) to facilitate testing.
    */
   private void rmActionsCaseModifiedEvent() {
+    // createCaseContainer - the difference is 44 rather than 33 (used in the cache)
     CaseContainerDTO caseContainerInRM = ExampleData.createCaseContainer(caseId, uprnStr);
     List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
     context.postCasesToMockService(postCaseList, false);
@@ -1384,7 +1373,6 @@ public class TestCaseEndpoints {
     assertEquals(expectedCaseData.getAddressLine3(), caseDTO.getAddressLine3());
     assertEquals(expectedCaseData.getCeOrgName(), caseDTO.getCeOrgName());
     assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
-    assertEquals(expectedCaseData.getDateTime(), caseDTO.getCreatedDateTime());
     assertEquals(expectedCaseData.getCaseId(), caseDTO.getId());
   }
 }
