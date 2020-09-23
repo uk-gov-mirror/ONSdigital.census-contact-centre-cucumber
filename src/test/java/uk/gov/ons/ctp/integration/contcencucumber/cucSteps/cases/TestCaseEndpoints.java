@@ -21,6 +21,7 @@ import cucumber.api.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
+import io.swagger.client.model.CaseType;
 import io.swagger.client.model.DeliveryChannel;
 import io.swagger.client.model.EstabType;
 import io.swagger.client.model.InvalidateCaseRequestDTO;
@@ -28,6 +29,7 @@ import io.swagger.client.model.ModifyCaseRequestDTO;
 import io.swagger.client.model.NewCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
+import io.swagger.client.model.Region;
 import io.swagger.client.model.ResponseDTO;
 import io.swagger.client.model.UACResponseDTO;
 import java.net.URI;
@@ -85,7 +87,6 @@ import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerD
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.EventDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
-import uk.gov.ons.ctp.integration.contcencucumber.data.ExampleData;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
@@ -1172,7 +1173,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("the case address details are modified by a member of CC staff")
   public void the_case_address_details_are_modified_by_a_member_of_CC_staff() {
-    modifyCaseRequest = ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
+    createModifyCaseRequest();
     putCaseForID(modifyCaseRequest);
   }
 
@@ -1232,7 +1233,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl).port(ccBasePort).pathSegment("cases");
 
-    NewCaseRequestDTO newCaseRequest = ExampleData.createNewCaseRequestDTO();
+    NewCaseRequestDTO newCaseRequest = createNewCaseRequestDTO();
     caseDTO =
         getRestTemplate()
             .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
@@ -1265,6 +1266,18 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     }
   }
 
+  private void createModifyCaseRequest() {
+    modifyCaseRequest = new ModifyCaseRequestDTO();
+    modifyCaseRequest.setAddressLine1("33 RM Road");
+    modifyCaseRequest.setAddressLine2("RM Street");
+    modifyCaseRequest.setAddressLine3("RM Village");
+    modifyCaseRequest.setCeOrgName("Response Management Org");
+    modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
+    modifyCaseRequest.setCaseId(UUID.fromString(this.caseId));
+    modifyCaseRequest.setEstabType(EstabType.OTHER);
+    modifyCaseRequest.setCaseType(CaseType.CE);
+  }
+
   private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
@@ -1279,6 +1292,23 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
           "An HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
               + httpClientErrorException.getMessage());
     }
+  }
+
+  private NewCaseRequestDTO createNewCaseRequestDTO() {
+    NewCaseRequestDTO newCaseRequest = new NewCaseRequestDTO();
+    newCaseRequest.setCaseType(CaseType.SPG);
+    newCaseRequest.setAddressLine1("12 Newlands Terrace");
+    newCaseRequest.setAddressLine2("Flatfield");
+    newCaseRequest.setAddressLine3("Brumble");
+    newCaseRequest.setCeOrgName("Claringdon House");
+    newCaseRequest.setCeUsualResidents(13);
+    newCaseRequest.setEstabType(EstabType.ROYAL_HOUSEHOLD);
+    newCaseRequest.setDateTime("2016-11-09T11:44:44.797");
+    newCaseRequest.setUprn("3333334");
+    newCaseRequest.setRegion(Region.E);
+    newCaseRequest.setPostcode("EX2 5WH");
+    newCaseRequest.setTownName("Exeter");
+    return newCaseRequest;
   }
 
   private void checkStatus(int httpStatus) {
@@ -1381,8 +1411,8 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   /** Note that the data we get back should still have the original non-modified address */
   @Then("the modified case is returned from the cache")
   public void theModifiedCaseIsReturnedFromTheCache() {
-    ModifyCaseRequestDTO expectedCaseData =
-        ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
+    createModifyCaseRequest();
+    final ModifyCaseRequestDTO expectedCaseData = modifyCaseRequest;
     assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
     assertEquals(expectedCaseData.getAddressLine2(), caseDTO.getAddressLine2());
     assertEquals(expectedCaseData.getAddressLine3(), caseDTO.getAddressLine3());
