@@ -37,8 +37,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +82,7 @@ import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
+import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.EventDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
 import uk.gov.ons.ctp.integration.contcencucumber.data.ExampleData;
@@ -530,9 +531,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       ContactCompact c = details.getContact();
       // should be encrypted.
       // IMPROVEME Check actual encryption.
-      assertFalse(RefusalFixture.A_TITLE.equals(c.getTitle()));
-      assertFalse(RefusalFixture.A_FORENAME.equals(c.getForename()));
-      assertFalse(RefusalFixture.A_SURNAME.equals(c.getSurname()));
+      assertNotEquals(RefusalFixture.A_TITLE, c.getTitle());
+      assertNotEquals(RefusalFixture.A_FORENAME, c.getForename());
+      assertNotEquals(RefusalFixture.A_SURNAME, c.getSurname());
     } else {
       assertNull(details.getContact());
     }
@@ -1258,7 +1259,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private void fetchTheCaseFromCCSvc(String operation) {
     if (operation.equals("GetCaseByUPRN")) {
       getCaseForUprn(uprnStr);
-      caseDTO = caseDTOList.stream().max(Comparator.comparing(CaseDTO::getCreatedDateTime)).get();
+      caseDTO = caseDTOList.get(0);
     } else if (operation.equals("GetCaseByID")) {
       getCaseForID();
     }
@@ -1351,12 +1352,35 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
    * be there in real life) to facilitate testing.
    */
   private void rmActionsCaseModifiedEvent() {
-    // createCaseContainer - the difference is 44 rather than 33 (used in the cache)
-    CaseContainerDTO caseContainerInRM = ExampleData.createCaseContainer(caseId, uprnStr);
+    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
+    caseContainerInRM.setId(UUID.fromString(this.caseId));
+    caseContainerInRM.setCaseRef("124124009");
+    caseContainerInRM.setCaseType("CE");
+    caseContainerInRM.setAddressType("HH");
+    caseContainerInRM.setEstabType("OTHER");
+    Calendar cal = Calendar.getInstance();
+    cal.set(2019, Calendar.JANUARY, 9);
+    Date earlyDate = cal.getTime();
+    caseContainerInRM.setCreatedDateTime(earlyDate);
+    caseContainerInRM.setLastUpdated(new Date());
+    caseContainerInRM.setAddressLine1("44 RM Road"); // the difference is 44 rather than 33 (used in
+    // the cache)
+    caseContainerInRM.setAddressLine2("RM Street");
+    caseContainerInRM.setAddressLine3("RM Village");
+    caseContainerInRM.setTownName("Newport");
+    caseContainerInRM.setRegion("W");
+    caseContainerInRM.setPostcode("G1 2AA");
+    caseContainerInRM.setOrganisationName("Response Management Org");
+    caseContainerInRM.setUprn(this.uprnStr);
+    List<EventDTO> caseEvents = new ArrayList<EventDTO>();
+    caseContainerInRM.setCaseEvents(caseEvents);
     List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
     postCasesToMockService(postCaseList);
   }
 
+  /**
+   * Note that the data we get back should still have the original non-modified address
+   */
   @Then("the modified case is returned from the cache")
   public void theModifiedCaseIsReturnedFromTheCache() {
     ModifyCaseRequestDTO expectedCaseData =
