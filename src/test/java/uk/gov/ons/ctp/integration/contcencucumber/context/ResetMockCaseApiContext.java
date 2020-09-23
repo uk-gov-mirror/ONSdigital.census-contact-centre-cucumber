@@ -121,13 +121,15 @@ public class ResetMockCaseApiContext {
         getAuthenticationFreeRestTemplate()
             .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
       } catch (HttpClientErrorException mockDuplicateCaseException) {
-        final String mockDuplicateCaseErrorMessage = "Posted duplicate case - exception thrown by mock case service - case: "
-            + caseContainer.getId() + " - " + mockDuplicateCaseException.getMessage();
+        final String mockDuplicateCaseErrorMessage =
+            "Posted duplicate case - exception thrown by mock case service - case: "
+                + caseContainer.getId()
+                + " - "
+                + mockDuplicateCaseException.getMessage();
         if (failTest) {
           log.error(mockDuplicateCaseErrorMessage);
           throw new RuntimeException(mockDuplicateCaseException);
-        }
-        else {
+        } else {
           log.warn(mockDuplicateCaseErrorMessage);
         }
       }

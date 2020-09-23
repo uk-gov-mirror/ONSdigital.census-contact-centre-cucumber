@@ -29,6 +29,7 @@ import io.swagger.client.model.ModifyCaseRequestDTO;
 import io.swagger.client.model.NewCaseRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO;
 import io.swagger.client.model.RefusalRequestDTO.ReasonEnum;
+import io.swagger.client.model.Region;
 import io.swagger.client.model.ResponseDTO;
 import io.swagger.client.model.UACResponseDTO;
 import java.net.URI;
@@ -38,8 +39,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -84,10 +85,10 @@ import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.CaseContainerDTO;
+import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.EventDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.context.ResetMockCaseApiContext;
 import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataRepository;
-import uk.gov.ons.ctp.integration.contcencucumber.data.ExampleData;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
@@ -161,7 +162,8 @@ public class TestCaseEndpoints {
 
   @Then("I do the smoke test and receive a response of OK from the service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_service() {
-    checkServiceHealthy(context.getCcBaseUrl(), context.getCcBasePort(), "THE SERVICE MAY NOT BE RUNNING ");
+    checkServiceHealthy(
+        context.getCcBaseUrl(), context.getCcBasePort(), "THE SERVICE MAY NOT BE RUNNING ");
   }
 
   @Given("I am about to do a smoke test by going to a mock case api endpoint")
@@ -171,7 +173,10 @@ public class TestCaseEndpoints {
 
   @Then("I do the smoke test and receive a response of OK from the mock case api service")
   public void i_do_the_smoke_test_and_receive_a_response_of_OK_from_the_mock_case_api_service() {
-    checkServiceHealthy(context.getMcsBaseUrl(), context.getMcsBasePort(), "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
+    checkServiceHealthy(
+        context.getMcsBaseUrl(),
+        context.getMcsBasePort(),
+        "THE MOCK CASE API SERVICE MAY NOT BE RUNNING ");
   }
 
   @Given("I have a valid case ID {string}")
@@ -187,7 +192,8 @@ public class TestCaseEndpoints {
             .pathSegment("cases")
             .pathSegment(caseId)
             .queryParam("caseEvents", showCaseEvents);
-    caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+    caseDTO =
+        context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
   }
 
   @Then("the correct case for my case ID is returned {int}")
@@ -248,7 +254,8 @@ public class TestCaseEndpoints {
             .pathSegment("cases")
             .pathSegment(caseId);
     try {
-      caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+      caseDTO =
+          context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
     }
@@ -277,7 +284,8 @@ public class TestCaseEndpoints {
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -315,7 +323,8 @@ public class TestCaseEndpoints {
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -537,9 +546,9 @@ public class TestCaseEndpoints {
       ContactCompact c = details.getContact();
       // should be encrypted.
       // IMPROVEME Check actual encryption.
-      assertFalse(RefusalFixture.A_TITLE.equals(c.getTitle()));
-      assertFalse(RefusalFixture.A_FORENAME.equals(c.getForename()));
-      assertFalse(RefusalFixture.A_SURNAME.equals(c.getSurname()));
+      assertNotEquals(RefusalFixture.A_TITLE, c.getTitle());
+      assertNotEquals(RefusalFixture.A_FORENAME, c.getForename());
+      assertNotEquals(RefusalFixture.A_SURNAME, c.getSurname());
     } else {
       assertNull(details.getContact());
     }
@@ -558,7 +567,8 @@ public class TestCaseEndpoints {
             .pathSegment("refusal");
     try {
       responseDTO =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .postForObject(builder.build().encode().toUri(), refusalDTO, ResponseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
@@ -741,7 +751,8 @@ public class TestCaseEndpoints {
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -828,7 +839,8 @@ public class TestCaseEndpoints {
         ccUprnEndpointUrl);
 
     ResponseEntity<List<CaseDTO>> caseResponse =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -988,7 +1000,8 @@ public class TestCaseEndpoints {
             .queryParam("input", "Public Telephone 13M From 11 Nine Acres");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,
@@ -1046,7 +1059,8 @@ public class TestCaseEndpoints {
     status = "";
 
     try {
-      context.getRestTemplate()
+      context
+          .getRestTemplate()
           .exchange(
               builder.build().encode().toUri(),
               HttpMethod.GET,
@@ -1083,7 +1097,8 @@ public class TestCaseEndpoints {
         .dateTime(OffsetDateTime.now(ZoneId.of("Z")).withNano(0).toString());
 
     ResponseEntity<ResponseDTO> response =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .postForEntity(invalidateCaseUrl, new HttpEntity<>(dto), ResponseDTO.class);
     return response;
   }
@@ -1178,7 +1193,7 @@ public class TestCaseEndpoints {
 
   @When("the case address details are modified by a member of CC staff")
   public void the_case_address_details_are_modified_by_a_member_of_CC_staff() {
-    modifyCaseRequest = ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
+    createModifyCaseRequest();
     putCaseForID(modifyCaseRequest);
   }
 
@@ -1236,11 +1251,14 @@ public class TestCaseEndpoints {
   @Given("that a new cached case has been created for a new address but is not yet in RM")
   public void createNewCachedCase() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl()).port(context.getCcBasePort()).pathSegment("cases");
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
+            .pathSegment("cases");
 
-    NewCaseRequestDTO newCaseRequest = ExampleData.createNewCaseRequestDTO();
+    NewCaseRequestDTO newCaseRequest = createNewCaseRequestDTO();
     caseDTO =
-        context.getRestTemplate()
+        context
+            .getRestTemplate()
             .postForObject(builder.build().encode().toUri(), newCaseRequest, CaseDTO.class);
     log.info("New case created: " + caseDTO.getId());
   }
@@ -1265,10 +1283,22 @@ public class TestCaseEndpoints {
   private void fetchTheCaseFromCCSvc(String operation) {
     if (operation.equals("GetCaseByUPRN")) {
       getCaseForUprn(uprnStr);
-      caseDTO = caseDTOList.stream().max(Comparator.comparing(CaseDTO::getCreatedDateTime)).get();
+      caseDTO = caseDTOList.get(0);
     } else if (operation.equals("GetCaseByID")) {
       getCaseForID();
     }
+  }
+
+  private void createModifyCaseRequest() {
+    modifyCaseRequest = new ModifyCaseRequestDTO();
+    modifyCaseRequest.setAddressLine1("33 RM Road");
+    modifyCaseRequest.setAddressLine2("RM Street");
+    modifyCaseRequest.setAddressLine3("RM Village");
+    modifyCaseRequest.setCeOrgName("Response Management Org");
+    modifyCaseRequest.setDateTime("2020-08-20T16:50:26.564+01:00");
+    modifyCaseRequest.setCaseId(UUID.fromString(this.caseId));
+    modifyCaseRequest.setEstabType(EstabType.OTHER);
+    modifyCaseRequest.setCaseType(CaseType.CE);
   }
 
   private void putCaseForID(ModifyCaseRequestDTO modifyCaseRequest) {
@@ -1285,6 +1315,23 @@ public class TestCaseEndpoints {
           "An HttpClientErrorException has occurred when trying to modify a case using putCaseById endpoint in contact centre: "
               + httpClientErrorException.getMessage());
     }
+  }
+
+  private NewCaseRequestDTO createNewCaseRequestDTO() {
+    NewCaseRequestDTO newCaseRequest = new NewCaseRequestDTO();
+    newCaseRequest.setCaseType(CaseType.SPG);
+    newCaseRequest.setAddressLine1("12 Newlands Terrace");
+    newCaseRequest.setAddressLine2("Flatfield");
+    newCaseRequest.setAddressLine3("Brumble");
+    newCaseRequest.setCeOrgName("Claringdon House");
+    newCaseRequest.setCeUsualResidents(13);
+    newCaseRequest.setEstabType(EstabType.ROYAL_HOUSEHOLD);
+    newCaseRequest.setDateTime("2016-11-09T11:44:44.797");
+    newCaseRequest.setUprn("3333334");
+    newCaseRequest.setRegion(Region.E);
+    newCaseRequest.setPostcode("EX2 5WH");
+    newCaseRequest.setTownName("Exeter");
+    return newCaseRequest;
   }
 
   private void checkStatus(int httpStatus) {
@@ -1309,7 +1356,8 @@ public class TestCaseEndpoints {
             .pathSegment("cases")
             .pathSegment(caseId);
     try {
-      caseDTO = context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
+      caseDTO =
+          context.getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
     } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
       this.exception = httpClientErrorException;
     }
@@ -1328,7 +1376,8 @@ public class TestCaseEndpoints {
 
     try {
       caseResponse =
-          context.getRestTemplate()
+          context
+              .getRestTemplate()
               .exchange(
                   caseForUprnUrl,
                   HttpMethod.GET,
@@ -1358,16 +1407,39 @@ public class TestCaseEndpoints {
    * be there in real life) to facilitate testing.
    */
   private void rmActionsCaseModifiedEvent() {
-    // createCaseContainer - the difference is 44 rather than 33 (used in the cache)
-    CaseContainerDTO caseContainerInRM = ExampleData.createCaseContainer(caseId, uprnStr);
+    CaseContainerDTO caseContainerInRM = new CaseContainerDTO();
+    caseContainerInRM.setId(UUID.fromString(this.caseId));
+    caseContainerInRM.setCaseRef("124124009");
+    caseContainerInRM.setCaseType("CE");
+    caseContainerInRM.setAddressType("HH");
+    caseContainerInRM.setEstabType("OTHER");
+    Calendar cal = Calendar.getInstance();
+    cal.set(2019, Calendar.JANUARY, 9);
+    Date earlyDate = cal.getTime();
+    caseContainerInRM.setCreatedDateTime(earlyDate);
+    caseContainerInRM.setLastUpdated(new Date());
+    caseContainerInRM.setAddressLine1("44 RM Road"); // the difference is 44 rather than 33 (used in
+    // the cache)
+    caseContainerInRM.setAddressLine2("RM Street");
+    caseContainerInRM.setAddressLine3("RM Village");
+    caseContainerInRM.setTownName("Newport");
+    caseContainerInRM.setRegion("W");
+    caseContainerInRM.setPostcode("G1 2AA");
+    caseContainerInRM.setOrganisationName("Response Management Org");
+    caseContainerInRM.setUprn(this.uprnStr);
+    List<EventDTO> caseEvents = new ArrayList<EventDTO>();
+    caseContainerInRM.setCaseEvents(caseEvents);
     List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
     context.postCasesToMockService(postCaseList, false);
   }
 
+  /**
+   * Note that the data we get back should still have the original modification address in the cache
+   */
   @Then("the modified case is returned from the cache")
   public void theModifiedCaseIsReturnedFromTheCache() {
-    ModifyCaseRequestDTO expectedCaseData =
-        ExampleData.createModifyCaseRequest(UUID.fromString(caseId));
+    createModifyCaseRequest();
+    final ModifyCaseRequestDTO expectedCaseData = modifyCaseRequest;
     assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
     assertEquals(expectedCaseData.getAddressLine2(), caseDTO.getAddressLine2());
     assertEquals(expectedCaseData.getAddressLine3(), caseDTO.getAddressLine3());
