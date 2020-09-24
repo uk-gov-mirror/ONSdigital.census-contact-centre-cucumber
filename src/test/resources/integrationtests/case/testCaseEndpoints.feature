@@ -209,6 +209,21 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
       | "GetCaseByUPRN" |
       | "GetCaseByID"   |
 
+  @CC @TestCaseEndpointsT381
+  Scenario Outline: [CR-T381, CR-T385] Get latest case from cache
+    Given the case with id "5a54ee1f-3552-4a46-adcc-0940f0998f90" and uprn "1710030112" does not exist in the cache
+    And an empty queue exists for sending "ADDRESS_MODIFIED" events
+    And the case exists in RM and can be fetched using <endpoint>
+    When the case address details are modified by a member of CC staff
+    And the case modified event is sent to RM and RM does not immediately action it
+    And the call is made to fetch the case again from <endpoint>
+    Then the modified case is returned from the cache
+
+    Examples:
+      | endpoint        |
+      | "GetCaseByUPRN" |
+      | "GetCaseByID"   |
+
   @CC @CR-T376
   Scenario: [CR-T376] Launch EQ for Address in AIMS but no case linked
     Given that a new cached case has been created for a new address but is not yet in RM

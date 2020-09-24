@@ -40,6 +40,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -531,9 +532,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
       ContactCompact c = details.getContact();
       // should be encrypted.
       // IMPROVEME Check actual encryption.
-      assertFalse(RefusalFixture.A_TITLE.equals(c.getTitle()));
-      assertFalse(RefusalFixture.A_FORENAME.equals(c.getForename()));
-      assertFalse(RefusalFixture.A_SURNAME.equals(c.getSurname()));
+      assertNotEquals(RefusalFixture.A_TITLE, c.getTitle());
+      assertNotEquals(RefusalFixture.A_FORENAME, c.getForename());
+      assertNotEquals(RefusalFixture.A_SURNAME, c.getSurname());
     } else {
       assertNull(details.getContact());
     }
@@ -1178,7 +1179,18 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @When("the case modified event is sent to RM and RM does immediately action it")
   public void the_case_modified_event_is_sent_to_RM_and_RM_does_immediately_action_it()
-      throws ClassNotFoundException, CTPException {
+      throws CTPException {
+    createAddressModificationAndPutOnQueue();
+    rmActionsCaseModifiedEvent();
+  }
+
+  @When("the case modified event is sent to RM and RM does not immediately action it")
+  public void the_case_modified_event_is_sent_to_RM_and_RM_does_not_immediately_action_it()
+      throws CTPException {
+    createAddressModificationAndPutOnQueue();
+  }
+
+  private void createAddressModificationAndPutOnQueue() throws CTPException {
     log.info(
         "Check that an event of type ADDRESS_MODIFIED has now been put on the empty queue, named {}, ready to be picked up by RM",
         queueName);
@@ -1196,8 +1208,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     Header addressModifiedHeader = addressModifiedEvent.getEvent();
     assertNotNull(addressModifiedHeader);
     assertEquals("ADDRESS_MODIFIED", addressModifiedHeader.getType().toString());
-
-    rmActionsCaseModifiedEvent();
   }
 
   @When("the call is made to fetch the case again from {string}")
@@ -1394,7 +1404,22 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     caseContainerInRM.setUprn(this.uprnStr);
     List<EventDTO> caseEvents = new ArrayList<EventDTO>();
     caseContainerInRM.setCaseEvents(caseEvents);
-    List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainerInRM);
+    List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
     postCasesToMockService(postCaseList);
+  }
+
+  /**
+   * Note that the data we get back should still have the original modification address in the cache
+   */
+  @Then("the modified case is returned from the cache")
+  public void theModifiedCaseIsReturnedFromTheCache() {
+    createModifyCaseRequest();
+    final ModifyCaseRequestDTO expectedCaseData = modifyCaseRequest;
+    assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
+    assertEquals(expectedCaseData.getAddressLine2(), caseDTO.getAddressLine2());
+    assertEquals(expectedCaseData.getAddressLine3(), caseDTO.getAddressLine3());
+    assertEquals(expectedCaseData.getCeOrgName(), caseDTO.getCeOrgName());
+    assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
+    assertEquals(expectedCaseData.getCaseId(), caseDTO.getId());
   }
 }
