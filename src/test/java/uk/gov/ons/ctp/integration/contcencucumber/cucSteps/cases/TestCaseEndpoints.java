@@ -229,33 +229,6 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
         "Mismatching expectation of secure establishment", expectedSecure, secureEstablishment);
   }
 
-  @Given("I have an invalid case ID {string}")
-  public void i_have_an_invalid_case_ID(String caseId) {
-    this.caseId = caseId;
-  }
-
-  @When("I Search for cases By case ID")
-  public void i_Search_for_cases_By_case_ID() {
-    final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
-            .pathSegment("cases")
-            .pathSegment(caseId);
-    try {
-      caseDTO = getRestTemplate().getForObject(builder.build().encode().toUri(), CaseDTO.class);
-    } catch (HttpClientErrorException | HttpServerErrorException httpClientErrorException) {
-      this.exception = httpClientErrorException;
-    }
-  }
-
-  @Then("An error is thrown and no case is returned {string}")
-  public void an_error_is_thrown_and_no_case_is_returned(String httpError) {
-    assertNotNull("An error was expected, but it succeeded", exception);
-    assertTrue(
-        "The correct http status must be returned " + httpError,
-        exception.getMessage().trim().contains(httpError));
-  }
-
   @Given("I have a valid UPRN {string}")
   public void i_have_a_valid_UPRN(String uprn) {
     this.uprnStr = uprn;
