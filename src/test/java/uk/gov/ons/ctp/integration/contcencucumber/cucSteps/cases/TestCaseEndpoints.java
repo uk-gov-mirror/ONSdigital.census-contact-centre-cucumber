@@ -1408,7 +1408,9 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     postCasesToMockService(postCaseList);
   }
 
-  /** Note that the data we get back should still have the original modification address in the cache */
+  /**
+   * Note that the data we get back should still have the original modification address in the cache
+   */
   @Then("the modified case is returned from the cache")
   public void theModifiedCaseIsReturnedFromTheCache() {
     createModifyCaseRequest();
