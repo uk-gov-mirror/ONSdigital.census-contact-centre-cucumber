@@ -118,7 +118,6 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
 
     Examples: 
       | caseId                                 | httpError |
-      | "NOTKNOWN"                             | "400"     |
       | "XX474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "400"     |
 
   @CC @InvalidateCase @SetUp
