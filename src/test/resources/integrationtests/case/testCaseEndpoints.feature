@@ -109,18 +109,6 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
       | caseId                                 | agentId | httpError |
       | "3305e937-6fb1-4ce1-9d4c-077f147789ab" | ""      | "400"     |
 
-  @CC
-  Scenario Outline: I want to verify that an invalid Case ID for Refusal is rejected
-    Given I have an invalid case ID <caseId>
-    And I supply the Refusal information
-    When I Refuse a case
-    Then An error is thrown and no case is returned <httpError>
-
-    Examples: 
-      | caseId                                 | httpError |
-      | "NOTKNOWN"                             | "400"     |
-      | "XX474ef9-2a0c-4a5c-bb69-d3fc5bfa10dc" | "400"     |
-
   @CC @InvalidateCase @SetUp
   Scenario Outline: [CR-T357] Invalid Address
     Given the CC advisor has provided a valid UPRN <uprn>
