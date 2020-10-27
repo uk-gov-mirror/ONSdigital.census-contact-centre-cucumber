@@ -98,8 +98,7 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
   }
 
   protected CaseContainerDTO getCase(String caseId) {
-    return caseList
-        .stream()
+    return caseList.stream()
         .filter(c -> c.getId().toString().equals(caseId))
         .findFirst()
         .orElse(null);
