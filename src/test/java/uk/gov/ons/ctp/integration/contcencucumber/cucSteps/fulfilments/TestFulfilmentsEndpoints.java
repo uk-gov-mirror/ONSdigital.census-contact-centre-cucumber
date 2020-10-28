@@ -81,7 +81,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Before("@SetUp")
   public void setup() throws CTPException {
-    rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
+    rabbit = RabbitHelper.instance(RABBIT_EXCHANGE, false);
     fulfilmentRequestedEvent = null;
     deleteCaseFromCache("1710030110");
     deleteCaseFromCache("1710030113");
@@ -179,9 +179,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   public void i_have_a_valid_UPRN_from_my_found_address(final String expectedUPRN) {
 
     List<AddressDTO> addressList =
-        addressQueryResponseDTO
-            .getAddresses()
-            .stream()
+        addressQueryResponseDTO.getAddresses().stream()
             .filter(aq -> aq.getUprn().equals(expectedUPRN))
             .collect(Collectors.toList());
     if (addressList.isEmpty()) {
@@ -279,9 +277,7 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private List<Product> getExpectedProducts(
       final String caseType, final String region, final String individual) throws CTPException {
 
-    return productService
-        .getProducts()
-        .stream()
+    return productService.getProducts().stream()
         .filter(p1 -> (containsCaseType(p1, caseType)))
         .filter(p2 -> (containsRegion(p2, region)))
         .filter(p3 -> containsChannel(p3))

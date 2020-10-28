@@ -126,7 +126,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Before
   public void setup() throws Exception {
-    rabbit = RabbitHelper.instance(RABBIT_EXCHANGE);
+    rabbit = RabbitHelper.instance(RABBIT_EXCHANGE, false);
     addressNotValidEvent = null;
     deleteCaseFromCache("1710030095");
   }
