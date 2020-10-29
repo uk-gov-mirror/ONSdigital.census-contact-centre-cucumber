@@ -30,11 +30,11 @@ public final class RefusalFixture {
   public static final Region A_REGION = Region.E;
   public static final String A_UPRN_STR = "1234";
 
-  public static RefusalRequestDTO createRequest(String caseId, String agentId, ReasonEnum reason) {
+  public static RefusalRequestDTO createRequest(UUID caseId, String agentId, ReasonEnum reason) {
 
     RefusalRequestDTO refusal = new RefusalRequestDTO();
     refusal
-        .caseId(UUID.fromString(caseId))
+        .caseId(caseId)
         .agentId(StringUtils.isBlank(agentId) ? null : Integer.valueOf(agentId))
         .callId(A_CALL_ID)
         .title(A_TITLE)

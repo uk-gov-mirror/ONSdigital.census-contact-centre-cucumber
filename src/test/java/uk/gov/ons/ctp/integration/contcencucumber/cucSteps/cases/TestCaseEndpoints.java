@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -232,7 +233,11 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @Given("I have an invalid case ID {string}")
   public void i_have_an_invalid_case_ID(String caseId) {
+    Pattern p = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
     this.caseId = caseId;
+    if (!p.matcher(caseId).matches()) {
+      this.caseId = UUID.randomUUID().toString();
+    }
   }
 
   @When("I Search for cases By case ID")
@@ -543,13 +548,22 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
     assertEquals(UUID.fromString(caseId), details.getCollectionCase().getId());
   }
 
+  @When("I Refuse a case with invalid caseId {string}")
+  public void i_Refuse_a_case_with_invalid_caseId(String caseId) {
+    refuseACase(caseId);
+  }
+
   @When("I Refuse a case")
   public void i_Refuse_a_case() {
+    refuseACase(null);
+  }
+
+  public void refuseACase(String newCaseId) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
             .port(ccBasePort)
             .pathSegment("cases")
-            .pathSegment(caseId)
+            .pathSegment(newCaseId == null ? caseId : newCaseId)
             .pathSegment("refusal");
     try {
       responseDTO =
@@ -572,7 +586,7 @@ public class TestCaseEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   @And("I supply the Refusal information")
   public void i_supply_the_Refusal_information() {
-    this.refusalDTO = RefusalFixture.createRequest(caseId, agentId, reason);
+    this.refusalDTO = RefusalFixture.createRequest(UUID.fromString(caseId), agentId, reason);
   }
 
   @Then("the call succeeded and responded with the supplied case ID")
