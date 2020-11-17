@@ -77,19 +77,20 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
           .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
     }
   }
+
   protected void postCCSCasesToMockService(final List<CaseContainerDTO> caseList) {
     UriComponentsBuilder builder =
-            UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
-                    .port(mcsBasePort)
-                    .pathSegment("cases")
-                    .pathSegment("data")
-                    .pathSegment("ccs")
-                    .pathSegment("cases")
-                    .pathSegment("save");
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+            .port(mcsBasePort)
+            .pathSegment("cases")
+            .pathSegment("data")
+            .pathSegment("ccs")
+            .pathSegment("cases")
+            .pathSegment("save");
     for (CaseContainerDTO caseContainer : caseList) {
       final List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainer);
       getAuthenticationFreeRestTemplate()
-              .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
+          .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
     }
   }
 
