@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import lombok.Data;
@@ -71,7 +71,7 @@ public class ResetMockCaseApiContext {
     postCCSCasesToMockService(caseList);
   }
 
-  protected void postCasesToMockService(final List<CaseContainerDTO> caseList) {
+  public void postCasesToMockService(final List<CaseContainerDTO> caseList) {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
             .port(mcsBasePort)
@@ -102,7 +102,7 @@ public class ResetMockCaseApiContext {
     }
   }
 
-  protected RestTemplate getRestTemplate() {
+  public RestTemplate getRestTemplate() {
     return getRestTemplate(ccUsername, ccPassword);
   }
 
@@ -135,26 +135,5 @@ public class ResetMockCaseApiContext {
 
   public RestTemplate getAuthenticationFreeRestTemplate() {
     return new RestTemplateBuilder().build();
-  }
-
-  public void postCasesToMockService(final List<CaseContainerDTO> caseList) {
-    UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
-            .port(mcsBasePort)
-            .pathSegment("cases")
-            .pathSegment("data")
-            .pathSegment("cases")
-            .pathSegment("save");
-    for (CaseContainerDTO caseContainer : caseList) {
-      final List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainer);
-      try {
-        getAuthenticationFreeRestTemplate()
-            .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
-      } catch (Exception exception) {
-        final String errorMessage =
-            "Something went wrong: " + caseContainer.getId() + " - " + exception.getMessage();
-        throw new RuntimeException(errorMessage, exception);
-      }
-    }
   }
 }

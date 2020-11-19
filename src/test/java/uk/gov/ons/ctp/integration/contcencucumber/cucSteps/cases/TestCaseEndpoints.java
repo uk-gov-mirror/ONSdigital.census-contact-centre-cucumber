@@ -1458,12 +1458,13 @@ public class TestCaseEndpoints {
   public void CC_advisor_checks_for_the_CCS_postcode_in_the_list() {
     exception = null;
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("cases", "ccs", "postcode", postcode);
     try {
       responseEntity =
-          getRestTemplate()
+          context
+              .getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
