@@ -121,10 +121,7 @@ public class ResetMockCaseApiContext {
             .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
       } catch (Exception exception) {
         final String errorMessage =
-            "Something went wrong: "
-                + caseContainer.getId()
-                + " - "
-                + exception.getMessage();
+            "Something went wrong: " + caseContainer.getId() + " - " + exception.getMessage();
         throw new RuntimeException(errorMessage, exception);
       }
     }
