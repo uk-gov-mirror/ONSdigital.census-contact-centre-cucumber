@@ -216,3 +216,14 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
   Scenario: [CR-T376] Launch EQ for Address in AIMS but no case linked
     Given that a new cached case has been created for a new address but is not yet in RM
     Then Getting launch URL results in a 202 status and content containing "Unable to provide launch URL/UAC at present"
+
+  @CC @CR-T386
+  Scenario Outline: [CR-T386,CR-T387] I want to verify that the case search by case POSTCODE works
+    Given the CC advisor has a CCS <postcode>
+    When CC advisor checks for the CCS postcode in the list
+    Then the endpoint returns <httpCode> and <message>
+
+    Examples:
+      | postcode   | httpCode | message                                               |
+      | "PO2 8NT"  | 400      | "The requested postcode is not within the CCS sample" |
+      | "GW12 AAA" | 200      | ""                                                    |

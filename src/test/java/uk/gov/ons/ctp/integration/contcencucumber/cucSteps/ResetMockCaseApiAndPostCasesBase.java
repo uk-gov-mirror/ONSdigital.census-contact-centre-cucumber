@@ -60,6 +60,7 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
     final ObjectMapper objectMapper = new ObjectMapper();
     caseList = objectMapper.readValue(cases, new TypeReference<List<CaseContainerDTO>>() {});
     postCasesToMockService(caseList);
+    postCCSCasesToMockService(caseList);
   }
 
   protected void postCasesToMockService(final List<CaseContainerDTO> caseList) {
@@ -68,6 +69,22 @@ public class ResetMockCaseApiAndPostCasesBase extends SpringIntegrationTest {
             .port(mcsBasePort)
             .pathSegment("cases")
             .pathSegment("data")
+            .pathSegment("cases")
+            .pathSegment("save");
+    for (CaseContainerDTO caseContainer : caseList) {
+      final List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainer);
+      getAuthenticationFreeRestTemplate()
+          .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
+    }
+  }
+
+  protected void postCCSCasesToMockService(final List<CaseContainerDTO> caseList) {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+            .port(mcsBasePort)
+            .pathSegment("cases")
+            .pathSegment("data")
+            .pathSegment("ccs")
             .pathSegment("cases")
             .pathSegment("save");
     for (CaseContainerDTO caseContainer : caseList) {
