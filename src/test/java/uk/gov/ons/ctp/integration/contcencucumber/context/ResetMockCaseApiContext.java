@@ -95,8 +95,7 @@ public class ResetMockCaseApiContext {
   }
 
   public CaseContainerDTO getCase(String caseId) {
-    return caseList
-        .stream()
+    return caseList.stream()
         .filter(c -> c.getId().toString().equals(caseId))
         .findFirst()
         .orElse(null);
