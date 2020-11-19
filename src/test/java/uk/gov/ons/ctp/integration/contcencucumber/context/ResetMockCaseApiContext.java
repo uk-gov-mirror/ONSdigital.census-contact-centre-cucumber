@@ -67,8 +67,7 @@ public class ResetMockCaseApiContext {
 
     final ObjectMapper objectMapper = new ObjectMapper();
     caseList = objectMapper.readValue(cases, new TypeReference<List<CaseContainerDTO>>() {});
-    final boolean failTest = false;
-    postCasesToMockService(caseList, failTest);
+    postCasesToMockService(caseList);
   }
 
   public RestTemplate getRestTemplate() {
@@ -107,7 +106,7 @@ public class ResetMockCaseApiContext {
     return new RestTemplateBuilder().build();
   }
 
-  public void postCasesToMockService(final List<CaseContainerDTO> caseList, boolean failTest) {
+  public void postCasesToMockService(final List<CaseContainerDTO> caseList) {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
             .port(mcsBasePort)
@@ -120,18 +119,13 @@ public class ResetMockCaseApiContext {
       try {
         getAuthenticationFreeRestTemplate()
             .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
-      } catch (HttpClientErrorException mockDuplicateCaseException) {
-        final String mockDuplicateCaseErrorMessage =
-            "Posted duplicate case - exception thrown by mock case service - case: "
+      } catch (Exception exception) {
+        final String errorMessage =
+            "Something went wrong: "
                 + caseContainer.getId()
                 + " - "
-                + mockDuplicateCaseException.getMessage();
-        if (failTest) {
-          log.error(mockDuplicateCaseErrorMessage);
-          throw new RuntimeException(mockDuplicateCaseException);
-        } else {
-          log.warn(mockDuplicateCaseErrorMessage);
-        }
+                + exception.getMessage();
+        throw new RuntimeException(errorMessage, exception);
       }
     }
   }

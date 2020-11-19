@@ -1430,7 +1430,7 @@ public class TestCaseEndpoints {
     List<EventDTO> caseEvents = new ArrayList<EventDTO>();
     caseContainerInRM.setCaseEvents(caseEvents);
     List<CaseContainerDTO> postCaseList = Collections.singletonList(caseContainerInRM);
-    context.postCasesToMockService(postCaseList, false);
+    context.postCasesToMockService(postCaseList);
   }
 
   /**
