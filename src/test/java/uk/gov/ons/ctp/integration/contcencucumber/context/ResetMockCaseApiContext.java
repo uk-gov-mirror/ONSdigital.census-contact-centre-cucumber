@@ -68,9 +68,41 @@ public class ResetMockCaseApiContext {
     final ObjectMapper objectMapper = new ObjectMapper();
     caseList = objectMapper.readValue(cases, new TypeReference<List<CaseContainerDTO>>() {});
     postCasesToMockService(caseList);
+    postCCSCasesToMockService(caseList);
   }
 
-  public RestTemplate getRestTemplate() {
+  protected void postCasesToMockService(final List<CaseContainerDTO> caseList) {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+            .port(mcsBasePort)
+            .pathSegment("cases")
+            .pathSegment("data")
+            .pathSegment("cases")
+            .pathSegment("save");
+    for (CaseContainerDTO caseContainer : caseList) {
+      final List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainer);
+      getAuthenticationFreeRestTemplate()
+          .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
+    }
+  }
+
+  protected void postCCSCasesToMockService(final List<CaseContainerDTO> caseList) {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(mcsBaseUrl)
+            .port(mcsBasePort)
+            .pathSegment("cases")
+            .pathSegment("data")
+            .pathSegment("ccs")
+            .pathSegment("cases")
+            .pathSegment("save");
+    for (CaseContainerDTO caseContainer : caseList) {
+      final List<CaseContainerDTO> postCaseList = Arrays.asList(caseContainer);
+      getAuthenticationFreeRestTemplate()
+          .postForObject(builder.build().encode().toUri(), postCaseList, HashMap.class);
+    }
+  }
+
+  protected RestTemplate getRestTemplate() {
     return getRestTemplate(ccUsername, ccPassword);
   }
 

@@ -120,6 +120,7 @@ public class TestCaseEndpoints {
   private URI caseForUprnUrl;
   private AddressNotValidEvent addressNotValidEvent;
   private String uprnStr;
+  private String postcode;
   private String status = "";
   private ModifyCaseRequestDTO modifyCaseRequest = null;
 
@@ -1446,5 +1447,42 @@ public class TestCaseEndpoints {
     assertEquals(expectedCaseData.getCeOrgName(), caseDTO.getCeOrgName());
     assertEquals(expectedCaseData.getAddressLine1(), caseDTO.getAddressLine1());
     assertEquals(expectedCaseData.getCaseId(), caseDTO.getId());
+  }
+
+  @Given("the CC advisor has a CCS {string}")
+  public void the_CC_advisor_has_a_CCS(String postcode) {
+    this.postcode = postcode;
+  }
+
+  @When("CC advisor checks for the CCS postcode in the list")
+  public void CC_advisor_checks_for_the_CCS_postcode_in_the_list() {
+    exception = null;
+    final UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
+            .port(ccBasePort)
+            .pathSegment("cases", "ccs", "postcode", postcode);
+    try {
+      responseEntity =
+          getRestTemplate()
+              .exchange(
+                  builder.build().encode().toUri(),
+                  HttpMethod.GET,
+                  null,
+                  new ParameterizedTypeReference<List<CaseDTO>>() {});
+    } catch (HttpClientErrorException httpClientErrorException) {
+      exception = httpClientErrorException;
+    }
+  }
+
+  @Then("the endpoint returns {int} and {string}")
+  public void theEndpointReturnsAnd(Integer httpCode, String message) {
+    checkStatus(httpCode);
+    if (httpCode == 400) {
+      assertTrue(
+          "Should throw an exception with this message: " + message,
+          exception.getMessage().contains(message));
+    } else {
+      assertNotNull("The response body should not be null", responseEntity.getBody());
+    }
   }
 }

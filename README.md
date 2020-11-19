@@ -215,7 +215,7 @@ Eclipse does not recognise the maven lifecycle operations for generating code fr
 1. It is important that a maven **mvn clean compile** is performed to ensure the generated source is created in the target directory, before trying to cleanup the project in eclipse.
 2. Import this project into eclipse as a maven project.
 3. In the project properties **Java Build Path** , choose the **Source** tab and select the source entry for:
-``census-contract-centre-cucumber/target/generated-sources/swagger/src/gen/java/main``.  Then toggle the **Ignore optional compile problems** to YES.
+``census-contract-centre-cucumber/target/generated-sources/swagger/src/gen/java/main``. Then toggle the **Ignore optional compile problems** to YES.
 4. Configure the Eclipse **lifecycle-mapping-metadata.xml** to ignore the 2 errors highlighted in the **pom.xml** . The easiest way to do this is to select a "quick fix" (CMD-1 on MacOS) at each of the 2 error points in the **pom.xml**, and select the option to fix for all projects (at the time of writing this is the bottom option in the drop-down).
 5. You may have to refresh maven on the project to clean up errors and warnings.
 

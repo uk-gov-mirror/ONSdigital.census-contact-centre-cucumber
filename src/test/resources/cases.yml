@@ -730,5 +730,36 @@ casedata:
         "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
         "surveyType": "CENSUS",
         "handDelivery": true
-      }
+      },
+      {
+                  "caseRef": "124124009",
+                  "arid": "2344266233",
+                  "estabArid": "AABBCC",
+                  "estabType": "ET",
+                  "uprn": "1710030113",
+                  "createdDateTime": "2019-04-14T13:45:26.564+01:00",
+                  "addressLine1": "Napier House",
+                  "addressLine2": "88 Harbour Street",
+                  "addressLine3": "Parkhead",
+                  "townName": "Glasgow",
+                  "postcode": "GW12 AAA",
+                  "organisationName": "ON",
+                  "addressLevel": "U",
+                  "abpCode": "AACC",
+                  "latitude": "41.40338",
+                  "longitude": "2.17403",
+                  "oa": "EE22",
+                  "lsoa": "x1",
+                  "msoa": "x2",
+                  "lad": "H1",
+                  "secureEstablishment": false,
+                  "caseEvents": [],
+                  "id": "b4fcdf72-083b-4299-affc-200918b2c117",
+                  "caseType": "CE",
+                  "addressType": "HH",
+                  "region": "W",
+                  "collectionExerciseId": "49871667-117d-4a63-9101-f6a0660f73f6",
+                  "surveyType": "CCS",
+                  "handDelivery": false
+                }
      ]'
