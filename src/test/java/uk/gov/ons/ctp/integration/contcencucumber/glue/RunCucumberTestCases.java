@@ -1,7 +1,7 @@
-package uk.gov.ons.ctp.integration.contcencucumber;
+package uk.gov.ons.ctp.integration.contcencucumber.glue;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.junit.Cucumber;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
@@ -12,6 +12,8 @@ import org.junit.runner.RunWith;
       "src/test/resources/integrationtests/case/testCaseEndpoints.feature",
       "src/test/resources/integrationtests/case/testTelephoneEndpoint.feature"
     },
-    glue = {"uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases"},
-    dryRun = false)
+    glue = {
+      "uk.gov.ons.ctp.integration.contcencucumber.cucSteps.cases",
+      "uk.gov.ons.ctp.integration.contcencucumber.main"
+    })
 public class RunCucumberTestCases {}

@@ -7,30 +7,33 @@ import static org.junit.Assert.assertNull;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressDTO.AddressTypeEnum;
 import io.swagger.client.model.AddressDTO.RegionEnum;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.EstabType;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.TestBase;
+import uk.gov.ons.ctp.integration.contcencucumber.context.CucTestContext;
 
-public class TestAddressEndpoints extends TestBase {
+public class TestAddressEndpoints {
 
   private static final Logger log = LoggerFactory.getLogger(TestAddressEndpoints.class);
   private AddressQueryResponseDTO addressQueryResponseDTO;
   private String postcode = "";
   private String addressSearchString = "";
   private String addressEndpointUrl;
+
+  @Autowired private CucTestContext context;
 
   @Given("I have a valid Postcode {string}")
   public void i_have_a_valid_Postcode(final String postcode) {
@@ -40,13 +43,14 @@ public class TestAddressEndpoints extends TestBase {
   @When("I Search Addresses By Postcode")
   public void i_Search_Addresses_By_Postcode() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .pathSegment("postcode")
             .queryParam("postcode", postcode);
     addressQueryResponseDTO =
-        getRestTemplate()
+        context
+            .getRestTemplate()
             .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
   }
 
@@ -65,14 +69,15 @@ public class TestAddressEndpoints extends TestBase {
   @When("I Search Addresses By Invalid Postcode")
   public void i_Search_Addresses_By_Invalid_Postcode() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .pathSegment("postcode")
             .queryParam("postcode", postcode);
     try {
       addressQueryResponseDTO =
-          getRestTemplate()
+          context
+              .getRestTemplate()
               .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
     } catch (HttpClientErrorException hcee) {
       assertNull(" Invalid format Address Query Response must be null", addressQueryResponseDTO);
@@ -96,12 +101,13 @@ public class TestAddressEndpoints extends TestBase {
   @When("I Search Addresses By Address Search")
   public void i_Search_Addresses_By_Address_Search() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", addressSearchString);
     addressQueryResponseDTO =
-        getRestTemplate()
+        context
+            .getRestTemplate()
             .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
   }
 
@@ -120,13 +126,14 @@ public class TestAddressEndpoints extends TestBase {
   @When("I Search invalid Addresses By Address Search")
   public void i_Search_invalid_Addresses_By_Address_Search() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", addressSearchString);
     try {
       addressQueryResponseDTO =
-          getRestTemplate()
+          context
+              .getRestTemplate()
               .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
     } catch (HttpClientErrorException hcee) {
       assertNull(" Invalid format Address Query Response must be null", addressQueryResponseDTO);
@@ -150,8 +157,8 @@ public class TestAddressEndpoints extends TestBase {
   @Given("the respondent address exists in AIMS")
   public void the_respondent_address_exists_in_AIMS() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
     addressEndpointUrl = builder.build().encode().toUri().toString();
@@ -159,7 +166,7 @@ public class TestAddressEndpoints extends TestBase {
     log.info("Using the following endpoint to check address exists in AIMS: " + addressEndpointUrl);
 
     ResponseEntity<String> aimsEndpointResponse =
-        getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
+        context.getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
     String aimsEndpointBody = aimsEndpointResponse.getBody();
     log.with(aimsEndpointBody).info("The response body");
     log.with(aimsEndpointResponse.getStatusCode()).info("The response status");
@@ -179,13 +186,14 @@ public class TestAddressEndpoints extends TestBase {
   public void
       the_CC_SVC_returns_address_attributes_with_region_code_address_type_and_establishment_type() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", "1, West Grove Road, Exeter, EX2 4LU");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
-        getRestTemplate()
+        context
+            .getRestTemplate()
             .exchange(
                 builder.build().encode().toUri(),
                 HttpMethod.GET,

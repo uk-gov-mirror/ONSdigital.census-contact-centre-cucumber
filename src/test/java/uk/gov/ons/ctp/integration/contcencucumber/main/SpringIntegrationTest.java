@@ -1,15 +1,16 @@
 package uk.gov.ons.ctp.integration.contcencucumber.main;
 
+import io.cucumber.java.Before;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.ctp.common.cloud.FirestoreDataStore;
 import uk.gov.ons.ctp.common.cloud.TestCloudDataStore;
+import uk.gov.ons.ctp.integration.contcencucumber.context.CucTestContext;
+import uk.gov.ons.ctp.integration.contcencucumber.context.ResetMockCaseApiContext;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
 @ContextConfiguration(
@@ -17,7 +18,9 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
       SpringIntegrationTest.class,
       ProductService.class,
       TestCloudDataStore.class,
-      FirestoreDataStore.class
+      FirestoreDataStore.class,
+      CucTestContext.class,
+      ResetMockCaseApiContext.class
     },
     loader = SpringBootContextLoader.class,
     initializers = ConfigFileApplicationContextInitializer.class)
@@ -30,11 +33,6 @@ import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 })
 public class SpringIntegrationTest {
 
-  protected RestTemplate getAuthenticationFreeRestTemplate() {
-    return new RestTemplateBuilder().build();
-  }
-
-  protected RestTemplate getRestTemplate(final String username, final String password) {
-    return new RestTemplateBuilder().basicAuthentication(username, password).build();
-  }
+  @Before(order = 0)
+  public void init() {}
 }

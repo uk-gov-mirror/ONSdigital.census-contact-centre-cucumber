@@ -8,12 +8,12 @@ import static org.junit.Assert.fail;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
-import cucumber.api.PendingException;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.Before;
+import io.cucumber.java.PendingException;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import io.swagger.client.model.AddressDTO;
 import io.swagger.client.model.AddressQueryResponseDTO;
 import io.swagger.client.model.CaseDTO;
@@ -50,10 +50,11 @@ import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
-import uk.gov.ons.ctp.integration.contcencucumber.cucSteps.ResetMockCaseApiAndPostCasesBase;
+import uk.gov.ons.ctp.integration.contcencucumber.context.ResetMockCaseApiContext;
+import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataRepository;
 import uk.gov.ons.ctp.integration.contcencucumber.main.service.ProductService;
 
-public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
+public class TestFulfilmentsEndpoints {
 
   private List<FulfilmentDTO> fulfilmentDTOList;
   private AddressQueryResponseDTO addressQueryResponseDTO;
@@ -73,7 +74,11 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private String productCodeSelected;
   private Exception fulfillmentException;
 
+  @Autowired private CaseDataRepository dataRepo;
+
   @Autowired private ProductService productService;
+
+  @Autowired private ResetMockCaseApiContext mcontext;
 
   private static final String RABBIT_EXCHANGE = "events";
 
@@ -99,8 +104,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private void searchFulfillments(String caseType, String region, String individual) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
+            .port(mcontext.getCcBasePort())
             .pathSegment("fulfilments")
             .queryParam("caseType", caseType)
             .queryParam("region", region)
@@ -108,7 +113,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     try {
       ResponseEntity<List<FulfilmentDTO>> fulfilmentResponse =
-          getRestTemplate()
+          mcontext
+              .getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -160,12 +166,13 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @When("I Search Addresses By Address Search String")
   public void i_Search_Addresses_By_Address_Search_String() {
     UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
+            .port(mcontext.getCcBasePort())
             .pathSegment("addresses")
             .queryParam("input", addressSearchString);
     addressQueryResponseDTO =
-        getRestTemplate()
+        mcontext
+            .getRestTemplate()
             .getForObject(builder.build().encode().toUri(), AddressQueryResponseDTO.class);
   }
 
@@ -204,14 +211,15 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   @When("I Search cases By UPRN")
   public void i_Search_cases_By_UPRN() {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
+            .port(mcontext.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprnStr);
     try {
       ResponseEntity<List<CaseDTO>> caseResponse =
-          getRestTemplate()
+          mcontext
+              .getRestTemplate()
               .exchange(
                   builder.build().encode().toUri(),
                   HttpMethod.GET,
@@ -610,8 +618,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private ResponseEntity<List<CaseDTO>> getCaseForUprn(String uprn) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
+            .port(mcontext.getCcBasePort())
             .pathSegment("cases")
             .pathSegment("uprn")
             .pathSegment(uprn);
@@ -621,7 +629,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     try {
       caseResponse =
-          getRestTemplate()
+          mcontext
+              .getRestTemplate()
               .exchange(
                   caseForUprnUrl,
                   HttpMethod.GET,
@@ -638,8 +647,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private ResponseEntity<List<Product>> getProducts(
       String caseType, String region, String individual) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
+            .port(mcontext.getCcBasePort())
             .pathSegment("fulfilments")
             .queryParam("caseType", caseType)
             .queryParam("region", region)
@@ -650,7 +659,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     try {
       productsResponse =
-          getRestTemplate()
+          mcontext
+              .getRestTemplate()
               .exchange(
                   productsUrl,
                   HttpMethod.GET,
@@ -688,8 +698,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
   private ResponseEntity<ResponseDTO> requestFulfilmentByPost(
       final PostalFulfilmentRequestDTO postalFulfilmentRequest) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
+            .port(mcontext.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(postalFulfilmentRequest.getCaseId().toString())
             .pathSegment("fulfilment")
@@ -704,7 +714,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     try {
       requestFulfilmentByPostResponse =
-          getRestTemplate()
+          mcontext
+              .getRestTemplate()
               .exchange(fulfilmentByPostUrl, HttpMethod.POST, requestEntity, ResponseDTO.class);
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
@@ -717,8 +728,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
   private ResponseEntity<ResponseDTO> requestFulfilmentBySMS(String caseId, String productCode) {
     final UriComponentsBuilder builder =
-        UriComponentsBuilder.fromHttpUrl(ccBaseUrl)
-            .port(ccBasePort)
+        UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
+            .port(mcontext.getCcBasePort())
             .pathSegment("cases")
             .pathSegment(caseId)
             .pathSegment("fulfilment")
@@ -740,7 +751,8 @@ public class TestFulfilmentsEndpoints extends ResetMockCaseApiAndPostCasesBase {
 
     try {
       requestFulfilmentBySMSResponse =
-          getRestTemplate()
+          mcontext
+              .getRestTemplate()
               .exchange(fulfilmentBySMSUrl, HttpMethod.POST, requestEntity, ResponseDTO.class);
     } catch (HttpClientErrorException httpClientErrorException) {
       log.debug(
