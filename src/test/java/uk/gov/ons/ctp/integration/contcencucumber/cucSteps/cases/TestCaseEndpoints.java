@@ -56,6 +56,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
@@ -347,56 +348,27 @@ public class TestCaseEndpoints {
     assertNull("UPRN response must be null", caseDTOList);
   }
 
-  @And("setup {string}")
-  public void setup(final String caseID) throws InterruptedException {
+  @Then("CC advisor receives error {string} {string} {string}")
+  public void setup(final String caseId, final String errMsg,final String individual ) throws InterruptedException {
     this.caseId = caseId;
-    boolean isIndividual = Boolean.parseBoolean("false");
+    boolean isIndividual = Boolean.parseBoolean(individual);
     log.info(
             "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
-
     try {
-      ResponseEntity<String> eqResponse1 = getEqToken(caseId, isIndividual);
-      telephoneEndpointBody1 = eqResponse1.getBody();
-      HttpStatus contactCentreStatus1 = eqResponse1.getStatusCode();
-      log.with(contactCentreStatus1)
-              .info("Launch EQ for HH: The response from " + telephoneEndpointUrl);
-      assertEquals(
-              "LAUNCHING EQ FOR HH HAS FAILED -  the contact centre does not give a response code of 200",
-              HttpStatus.OK,
-              contactCentreStatus1);
-    } catch (ResourceAccessException e) {
-      log.error("LAUNCHING EQ FOR HH HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    } catch (Exception e) {
-      log.error("LAUNCHING EQ FOR HH HAS FAILED: An unexpected error has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
-    }
+      getEqToken(caseId, isIndividual);
+    } catch (BadRequest e) {
 
-    log.info(
-            "Repeat launching EQ for HH so that the two responses can be compared. Wait a second to get different time values.");
-    Thread.sleep(1000);
+      assertTrue(
+              "Error message produced not correct",
+              e.getMessage().matches(".*"+errMsg+".*")
+      );
 
-    try {
-      ResponseEntity<String> eqResponse2 = getEqToken(caseId, isIndividual);
-      telephoneEndpointBody2 = eqResponse2.getBody();
-      HttpStatus contactCentreStatus2 = eqResponse2.getStatusCode();
-      log.with(contactCentreStatus2)
-              .info("Launch EQ for HH: The response from " + telephoneEndpointUrl);
       assertEquals(
-              "LAUNCHING EQ FOR HH HAS FAILED -  the contact centre does not give a response code of 200",
-              HttpStatus.OK,
-              contactCentreStatus2);
-    } catch (ResourceAccessException e) {
-      log.error("LAUNCHING EQ FOR HH HAS FAILED: A ResourceAccessException has occurred.");
-      log.error(e.getMessage());
-      fail();
-      System.exit(0);
+              "CC should have blocked NI CE managers to access",
+              HttpStatus.BAD_REQUEST,
+              e.getStatusCode());
+
     } catch (Exception e) {
-      log.error("LAUNCHING EQ FOR HH HAS FAILED: An unexpected has occurred.");
       log.error(e.getMessage());
       fail();
       System.exit(0);

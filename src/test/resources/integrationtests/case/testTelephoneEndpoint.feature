@@ -24,12 +24,11 @@ Feature: Test Contact Centre Telephone Capture Endpoint
   @TeleEndpoint-CR-T412
   Scenario Outline: CR-T412 - NI CE manager recieves an error on EQ launch
     Given I have a valid UPRN "1347459997"
-    And setup <caseId>
     When I Search cases By UPRN
     Then the correct cases for my UPRN are returned <caseId>
-    And EQ is launched <caseType> <caseId> <individual>
-    Then CC advisor receives error <message>
+
+    Then CC advisor receives error <caseId> <message> <individual>
 
     Examples:
-      | caseId                                 | individual | caseType | message |
-      | "cb46a66a-494f-45ea-ba46-8186069bbb6f" | "false"    | "CE"     | "All Northern Ireland calls from CE Managers are to be escalated to the NI management team." |
+      | caseId                                 | individual | message |
+      | "cb46a66a-494f-45ea-ba46-8186069bbb6f" | "false"    | "All Northern Ireland calls from CE Managers are to be escalated to the NI management team" |
