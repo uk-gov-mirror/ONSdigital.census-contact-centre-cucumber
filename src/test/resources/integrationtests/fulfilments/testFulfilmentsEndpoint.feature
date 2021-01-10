@@ -91,7 +91,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     Then a fulfilment request event is emitted to RM for addressType = "SPG" and individual = "false"
 
   @SetUp
-  Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] I want to request a Paper Questionnaire for SMS delivery channel
+  Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] I want to request a individual for SMS delivery channel
     Given the CC advisor has provided a valid UPRN "<uprn>"
     Then the Case endpoint returns a case, associated with UPRN "<uprn>", which has caseType "<case_type>" and addressLevel "U" and handDelivery "false"
     Given a list of available fulfilment product codes is presented for a caseType = "<case_type>" where individual flag = "<individual>" and region = "<region>"
@@ -130,7 +130,7 @@ Feature: Test Contact centre Fulfilments Endpoints
 #### the following scenarios are still PENDING due to lack of products covering these options #####
 
   @SetUp
-  Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] PENDING - I want to request a Paper Questionnaire for SMS delivery channel
+  Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] PENDING - I want to request a individual UAC for SMS delivery channel
     Given the CC advisor has provided a valid UPRN "<uprn>"
     Then the Case endpoint returns a case, associated with UPRN "<uprn>", which has caseType "<case_type>" and addressLevel "U" and handDelivery "false"
     Given a list of available fulfilment product codes is presented for a caseType = "<case_type>" where individual flag = "<individual>" and region = "<region>"
@@ -154,22 +154,12 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
     And Requests a fulfilment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "true" 
+    Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "true"
 
   @SetUp
-  Scenario: [CR-T304] PENDING - I want to request a Welsh Paper Questionnaire for a CE Manager in Wales
+  Scenario: [CR-T313] PENDING - I want to request an UAC for a CE Individual Respondent in Wales via Post
     Given the CC advisor has provided a valid UPRN "1347459993"
     Then the Case endpoint returns a case, associated with UPRN "1347459993", which has caseType "CE"
-    Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "false" and region = "W"
-    And an empty queue exists for sending Fulfilment Requested events
-    When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
-    And Requests a fulfilment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "false"
-
-  @SetUp
-  Scenario: [CR-T313] PENDING - I want to request an UAC for a CE Individual Respondent in NI via Post
-    Given the CC advisor has provided a valid UPRN "1347459997"
-    Then the Case endpoint returns a case, associated with UPRN "1347459997", which has caseType "CE"
     Given a list of available fulfilment product codes is presented for a caseType = "CE" where individual flag = "true" and region = "N"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
@@ -187,10 +177,10 @@ Feature: Test Contact centre Fulfilments Endpoints
     Then a fulfilment request event is emitted to RM for addressType = "CE" and individual = "false"
 
   @SetUp
-  Scenario: [CR-T323] PENDING - I want to request a Paper Questionnaire for a SPG Individual Respondent in NI
+  Scenario: [CR-T323] PENDING - I want to request a Paper Questionnaire for a SPG Individual Respondent in ENG
     Given the CC advisor has provided a valid UPRN "1710030110"
     Then the Case endpoint returns a case, associated with UPRN "1710030110", which has caseType "SPG" and addressLevel "U" and handDelivery "false"
-    Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "true" and region = "N"
+    Given a list of available fulfilment product codes is presented for a caseType = "SPG" where individual flag = "true" and region = "E"
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
     And Requests a fulfilment for the case and delivery channel "POST"

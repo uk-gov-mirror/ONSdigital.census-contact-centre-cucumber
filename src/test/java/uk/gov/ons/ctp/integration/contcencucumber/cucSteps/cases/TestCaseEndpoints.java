@@ -347,6 +347,62 @@ public class TestCaseEndpoints {
     assertNull("UPRN response must be null", caseDTOList);
   }
 
+  @And("setup {string}")
+  public void setup(final String caseID) throws InterruptedException {
+    this.caseId = caseId;
+    boolean isIndividual = Boolean.parseBoolean("false");
+    log.info(
+            "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
+
+    try {
+      ResponseEntity<String> eqResponse1 = getEqToken(caseId, isIndividual);
+      telephoneEndpointBody1 = eqResponse1.getBody();
+      HttpStatus contactCentreStatus1 = eqResponse1.getStatusCode();
+      log.with(contactCentreStatus1)
+              .info("Launch EQ for HH: The response from " + telephoneEndpointUrl);
+      assertEquals(
+              "LAUNCHING EQ FOR HH HAS FAILED -  the contact centre does not give a response code of 200",
+              HttpStatus.OK,
+              contactCentreStatus1);
+    } catch (ResourceAccessException e) {
+      log.error("LAUNCHING EQ FOR HH HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("LAUNCHING EQ FOR HH HAS FAILED: An unexpected error has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+
+    log.info(
+            "Repeat launching EQ for HH so that the two responses can be compared. Wait a second to get different time values.");
+    Thread.sleep(1000);
+
+    try {
+      ResponseEntity<String> eqResponse2 = getEqToken(caseId, isIndividual);
+      telephoneEndpointBody2 = eqResponse2.getBody();
+      HttpStatus contactCentreStatus2 = eqResponse2.getStatusCode();
+      log.with(contactCentreStatus2)
+              .info("Launch EQ for HH: The response from " + telephoneEndpointUrl);
+      assertEquals(
+              "LAUNCHING EQ FOR HH HAS FAILED -  the contact centre does not give a response code of 200",
+              HttpStatus.OK,
+              contactCentreStatus2);
+    } catch (ResourceAccessException e) {
+      log.error("LAUNCHING EQ FOR HH HAS FAILED: A ResourceAccessException has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    } catch (Exception e) {
+      log.error("LAUNCHING EQ FOR HH HAS FAILED: An unexpected has occurred.");
+      log.error(e.getMessage());
+      fail();
+      System.exit(0);
+    }
+  }
+
   @Given("confirmed CaseType {string} {string}")
   public void confirmed_caseType(final String caseId, final String individual)
       throws InterruptedException {
@@ -410,6 +466,9 @@ public class TestCaseEndpoints {
     String hhEqToken1;
     String hhEqToken2;
     final boolean isIndividual = Boolean.parseBoolean(individual);
+
+    log.info(telephoneEndpointBody1);
+    log.info(telephoneEndpointBody2);
 
     log.info(
         "Create a substring that removes the first part of the telephoneEndpointBody to leave just the EQ token value");
@@ -1279,6 +1338,11 @@ public class TestCaseEndpoints {
         context.getRestTemplate().getForEntity(builder.build().encode().toUri(), String.class);
     assertEquals(expectedStatus, r.getStatusCodeValue());
     assertTrue(r.getBody(), r.getBody().contains(expectedContent));
+  }
+
+  @Then("CC advisor receives error {string}")
+  public void cc_advisor_receives_error(String msg) {
+
   }
 
   private void fetchTheCaseFromCCSvc(String operation) {

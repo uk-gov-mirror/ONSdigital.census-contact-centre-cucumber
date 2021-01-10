@@ -7,6 +7,7 @@
 Feature: Test Contact centre Address Endpoints
   I want to verify that all address endpoints in CC-SERVICE work correctly
 
+  @AddressEndpointTestCR-T129
   Scenario Outline: [CR-T129] I want to verify that address search by postcode works
     Given I have a valid Postcode <postcode>
     When I Search Addresses By Postcode
@@ -27,6 +28,7 @@ Feature: Test Contact centre Address Endpoints
       | "ZZ99 9ZZ" |
       | "XXX SSS"  |
 
+  @AddressEndpointTestCR-T131
   Scenario Outline: [CR-T131] I want to verify that address search by address works
     Given I have a valid address <address>
     When I Search Addresses By Address Search
@@ -49,6 +51,7 @@ Feature: Test Contact centre Address Endpoints
       | "Boaty McBoat Face " |
       | "Strawberry Laces"   |
 
+  @AddressEndpointTestCR-T147
   Scenario: [CR-T147] AIMS endpoint to provide region code, address type and establishment type
     Given the respondent calls the CC with a fulfilment request
     And the respondent address exists in AIMS
