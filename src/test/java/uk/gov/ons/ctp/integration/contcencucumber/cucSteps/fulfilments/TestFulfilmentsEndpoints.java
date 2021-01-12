@@ -744,7 +744,6 @@ public class TestFulfilmentsEndpoints {
 
     ResponseEntity<ResponseDTO> requestFulfilmentByPostResponse = null;
     URI fulfilmentByPostUrl = builder.build().encode().toUri();
-    log.info(fulfilmentByPostUrl.toString());
     log.with(fulfilmentByPostUrl).info("The url for requesting the postal fulfilment");
     HttpEntity<PostalFulfilmentRequestDTO> requestEntity =
         new HttpEntity<>(postalFulfilmentRequest);
