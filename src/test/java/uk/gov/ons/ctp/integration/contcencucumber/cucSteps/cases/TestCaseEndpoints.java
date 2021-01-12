@@ -349,24 +349,23 @@ public class TestCaseEndpoints {
   }
 
   @Then("CC advisor receives error {string} {string} {string}")
-  public void setup(final String caseId, final String errMsg,final String individual ) throws InterruptedException {
+  public void setup(final String caseId, final String errMsg, final String individual)
+      throws InterruptedException {
     this.caseId = caseId;
     boolean isIndividual = Boolean.parseBoolean(individual);
     log.info(
-            "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
+        "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
     try {
       getEqToken(caseId, isIndividual);
     } catch (BadRequest e) {
 
       assertTrue(
-              "Error message produced not correct",
-              e.getMessage().matches(".*"+errMsg+".*")
-      );
+          "Error message produced not correct", e.getMessage().matches(".*" + errMsg + ".*"));
 
       assertEquals(
-              "CC should have blocked NI CE managers to access",
-              HttpStatus.BAD_REQUEST,
-              e.getStatusCode());
+          "CC should have blocked NI CE managers to access",
+          HttpStatus.BAD_REQUEST,
+          e.getStatusCode());
 
     } catch (Exception e) {
       log.error(e.getMessage());
@@ -1313,9 +1312,7 @@ public class TestCaseEndpoints {
   }
 
   @Then("CC advisor receives error {string}")
-  public void cc_advisor_receives_error(String msg) {
-
-  }
+  public void cc_advisor_receives_error(String msg) {}
 
   private void fetchTheCaseFromCCSvc(String operation) {
     if (operation.equals("GetCaseByUPRN")) {

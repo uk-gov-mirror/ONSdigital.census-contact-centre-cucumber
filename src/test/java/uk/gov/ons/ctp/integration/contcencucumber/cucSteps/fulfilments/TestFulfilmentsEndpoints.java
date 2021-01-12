@@ -47,7 +47,6 @@ import uk.gov.ons.ctp.common.event.model.AddressModifiedEvent;
 import uk.gov.ons.ctp.common.event.model.FulfilmentPayload;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequest;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequestedEvent;
-import uk.gov.ons.ctp.common.event.model.GenericEvent;
 import uk.gov.ons.ctp.common.event.model.Header;
 import uk.gov.ons.ctp.common.event.model.NewAddressReportedEvent;
 import uk.gov.ons.ctp.common.event.model.QuestionnaireLinkedEvent;
@@ -470,17 +469,19 @@ public class TestFulfilmentsEndpoints {
     rabbit.flushQueue(queueName);
   }
 
-  @Then("a fulfilment request event is emitted to RM for addressType = {string} and individual = {string}")
-  public void a_fulfilment_request_event_is_emitted_to_RM(final String addressType, final String individual) throws CTPException {
+  @Then(
+      "a fulfilment request event is emitted to RM for addressType = {string} and individual = {string}")
+  public void a_fulfilment_request_event_is_emitted_to_RM(
+      final String addressType, final String individual) throws CTPException {
 
     EventType eventType = EventType.FULFILMENT_REQUESTED;
 
     final FulfilmentRequestedEvent event =
-            (FulfilmentRequestedEvent)
-                    rabbit.getMessage(
-                            EventPublisher.RoutingKey.forType(eventType).getKey(),
-                            eventClass(eventType),
-                            TimeoutParser.parseTimeoutString("2000ms"));
+        (FulfilmentRequestedEvent)
+            rabbit.getMessage(
+                EventPublisher.RoutingKey.forType(eventType).getKey(),
+                eventClass(eventType),
+                TimeoutParser.parseTimeoutString("2000ms"));
 
     assertNotNull(event);
     assertNotNull(event.getEvent());
@@ -497,7 +498,6 @@ public class TestFulfilmentsEndpoints {
     } else if (addressType == "CE" && individual == "false") {
       assertEquals("P_UAC_UACIP2B", fulfilmentCode);
     }
-
   }
 
   @When("CC Advisor selects the product code for productGroup {string} deliveryChannel {string}")
