@@ -370,7 +370,6 @@ public class TestCaseEndpoints {
     } catch (Exception e) {
       log.error(e.getMessage());
       fail();
-      System.exit(0);
     }
   }
 
@@ -1310,9 +1309,6 @@ public class TestCaseEndpoints {
     assertEquals(expectedStatus, r.getStatusCodeValue());
     assertTrue(r.getBody(), r.getBody().contains(expectedContent));
   }
-
-  @Then("CC advisor receives error {string}")
-  public void cc_advisor_receives_error(String msg) {}
 
   private void fetchTheCaseFromCCSvc(String operation) {
     if (operation.equals("GetCaseByUPRN")) {

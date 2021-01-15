@@ -469,10 +469,9 @@ public class TestFulfilmentsEndpoints {
     rabbit.flushQueue(queueName);
   }
 
-  @Then(
-      "a fulfilment request event is emitted to RM for addressType = {string} and individual = {string}")
-  public void a_fulfilment_request_event_is_emitted_to_RM(
-      final String addressType, final String individual) throws CTPException {
+  @Then("a fulfilment request event is emitted to RM with expected fulfilemnt code = {string}")
+  public void a_fulfilment_request_event_is_emitted_to_RM(final String expectedCode)
+      throws CTPException {
 
     EventType eventType = EventType.FULFILMENT_REQUESTED;
 
@@ -487,17 +486,8 @@ public class TestFulfilmentsEndpoints {
     assertNotNull(event.getEvent());
 
     String fulfilmentCode = event.getPayload().getFulfilmentRequest().getFulfilmentCode();
-    if (addressType == "HH" && individual == "false") {
-      assertEquals("P_UAC_UACHHP4", fulfilmentCode);
-    } else if (addressType == "HH" && individual == "true") {
-      assertEquals("P_UAC_UACIP2B", fulfilmentCode);
-    } else if (addressType == "CE" && individual == "true") {
-      assertEquals("P_UAC_UACIP2B", fulfilmentCode);
-    } else if (addressType == "SPG" && individual == "false") {
-      assertEquals("P_UAC_UACIP2B", fulfilmentCode);
-    } else if (addressType == "CE" && individual == "false") {
-      assertEquals("P_UAC_UACIP2B", fulfilmentCode);
-    }
+
+    assertEquals(expectedCode, fulfilmentCode);
   }
 
   @When("CC Advisor selects the product code for productGroup {string} deliveryChannel {string}")
