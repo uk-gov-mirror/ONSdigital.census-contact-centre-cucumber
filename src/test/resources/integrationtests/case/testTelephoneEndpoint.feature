@@ -24,9 +24,8 @@ Feature: Test Contact Centre Telephone Capture Endpoint
   @TeleEndpoint-CR-T412
   Scenario Outline: CR-T412 - NI CE manager recieves an error on EQ launch
     Given I have a valid UPRN "1347459997"
-    When I Search cases By UPRN
+    And I Search cases By UPRN
     Then the correct cases for my UPRN are returned <caseId>
-
     Then CC advisor receives error <caseId> <message> <individual>
 
     Examples:
