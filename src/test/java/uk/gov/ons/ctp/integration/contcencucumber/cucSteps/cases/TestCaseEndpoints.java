@@ -349,7 +349,7 @@ public class TestCaseEndpoints {
   }
 
   @Then("CC advisor receives error {string} {string} {string}")
-  public void setup(final String caseId, final String errMsg, final String individual)
+  public void cc_advisor_recieves(final String caseId, final String errMsg, final String individual)
       throws InterruptedException {
     this.caseId = caseId;
     boolean isIndividual = Boolean.parseBoolean(individual);
