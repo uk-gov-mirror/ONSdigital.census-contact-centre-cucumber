@@ -110,6 +110,27 @@ Feature: Test Contact centre Fulfilments Endpoints
       |100440222798  | CE        | W      | SMS              | false      | UACCET2W   |
 
   @SetUp
+  @testFulfilments-T375
+  Scenario Outline: [CR-T375] I want to check that EMPTY title, forename or surname items are not fulfilled for an individual POSTAL request
+    Given the CC advisor has provided a valid UPRN "<uprn>"
+    Then the Case endpoint returns a case, associated with UPRN "<uprn>", which has caseType "<case_type>" and addressLevel "U" and handDelivery "false"
+    Given a list of available fulfilment product codes is presented for a caseType = "<case_type>" where individual flag = "true" and region = "W"
+    And an empty queue exists for sending Fulfilment Requested events
+    When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
+    And Requests a fulfilment for the case and title "<title>" forename "<forename>" surname "<surname>"
+    Then an exception is thrown stating "The fulfilment is for an individual so none of the following fields can be empty: 'title', 'forename' and 'surname'"
+
+    Examples:
+      | uprn         | case_type | title | forename | surname |
+      | 1347459993   | CE        |       |          |         |
+      | 1347459993   | CE        |   Mr  |          |         |
+      | 1347459993   | CE        |       |   A      |         |
+      | 1347459993   | CE        |       |          |   J     |
+      | 1347459993   | CE        |   Mr  |   A      |         |
+      | 1347459993   | CE        |   Mr  |          |   J     |
+      | 1347459993   | CE        |       |   A      |   J     |
+
+  @SetUp
   @testFulfilments-T302
   Scenario: [CR-T302] I want to request an UAC for a CE Individual Respondent in Wales via Post
     Given the CC advisor has provided a valid UPRN "1347459993"
