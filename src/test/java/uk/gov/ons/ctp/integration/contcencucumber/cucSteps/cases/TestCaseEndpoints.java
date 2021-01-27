@@ -363,7 +363,7 @@ public class TestCaseEndpoints {
           "Error message produced not correct", e.getMessage().matches(".*" + errMsg + ".*"));
 
       assertEquals(
-          "CC should have blocked NI CE managers to access",
+          "CC should have blocked NI CE managers access",
           HttpStatus.BAD_REQUEST,
           e.getStatusCode());
 
@@ -436,9 +436,6 @@ public class TestCaseEndpoints {
     String hhEqToken1;
     String hhEqToken2;
     final boolean isIndividual = Boolean.parseBoolean(individual);
-
-    log.info(telephoneEndpointBody1);
-    log.info(telephoneEndpointBody2);
 
     log.info(
         "Create a substring that removes the first part of the telephoneEndpointBody to leave just the EQ token value");
