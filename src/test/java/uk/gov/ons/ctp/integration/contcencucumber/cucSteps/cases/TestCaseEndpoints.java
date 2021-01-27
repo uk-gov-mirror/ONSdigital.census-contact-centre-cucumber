@@ -518,7 +518,7 @@ public class TestCaseEndpoints {
      * The following assert will need to be changed if the period_id value, which is hard-coded in
      * the CCSVC, is updated
      */
-    assertEquals("Must have the correct period id", "2019", result1.get("period_id"));
+    assertEquals("Must have the correct period id", "2021", result1.get("period_id"));
 
     assertNotEquals("Must have different iat values", result1.get("iat"), result2.get("iat"));
     assertNotEquals("Must have different jti values", result1.get("jti"), result2.get("jti"));
