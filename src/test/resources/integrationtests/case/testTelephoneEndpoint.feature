@@ -22,7 +22,7 @@ Feature: Test Contact Centre Telephone Capture Endpoint
       | "3305e937-6fb1-4ce1-9d4c-077f147789bb"  | "true"       | "HI"      |
 
   @TeleEndpoint-CR-T412
-  Scenario Outline: CR-T412 - NI CE manager recieves an error on EQ launch
+  Scenario Outline: CR-T412 - NI CE manager receives an error on EQ launch
     Given I have a valid UPRN "1347459997"
     And I Search cases By UPRN
     Then the correct cases for my UPRN are returned <caseId>

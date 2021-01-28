@@ -78,7 +78,7 @@ public class TestFulfilmentsEndpoints {
   private FulfilmentRequestedEvent fulfilmentRequestedEvent;
   private String caseId;
   private String productCodeSelected;
-  private Exception fulfillmentException;
+  private Exception fulfilmentException;
 
   @Autowired private CaseDataRepository dataRepo;
 
@@ -100,15 +100,15 @@ public class TestFulfilmentsEndpoints {
 
   @Given("I Search fulfilments")
   public void i_Search_fulfilments() {
-    searchFulfillments(caseDTO.getCaseType().name(), caseDTO.getRegion().name(), "true");
+    searchFulfilments(caseDTO.getCaseType().name(), caseDTO.getRegion().name(), "true");
   }
 
   @Given("I Search fulfilments {string} {string} {string}")
   public void i_Search_fulfilments(String caseType, String region, String individual) {
-    searchFulfillments(caseType, region, individual);
+    searchFulfilments(caseType, region, individual);
   }
 
-  private void searchFulfillments(String caseType, String region, String individual) {
+  private void searchFulfilments(String caseType, String region, String individual) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
             .port(mcontext.getCcBasePort())
@@ -469,7 +469,7 @@ public class TestFulfilmentsEndpoints {
     rabbit.flushQueue(queueName);
   }
 
-  @Then("a fulfilment request event is emitted to RM with expected fulfilemnt code = {string}")
+  @Then("a fulfilment request event is emitted to RM with expected fulfilment code = {string}")
   public void a_fulfilment_request_event_is_emitted_to_RM(final String expectedCode)
       throws CTPException {
 
@@ -522,8 +522,8 @@ public class TestFulfilmentsEndpoints {
   }
 
   @And("Requests a fulfilment for the case and delivery channel {string}")
-  public void requestsAFulfillmentForTheCaseAndDeliveryChannel(final String strDeliveryChannel) {
-    fulfillmentException = null;
+  public void requestsAFulfilmentForTheCaseAndDeliveryChannel(final String strDeliveryChannel) {
+    fulfilmentException = null;
     try {
       log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
       ResponseEntity<ResponseDTO> fulfilmentRequestResponse;
@@ -533,10 +533,10 @@ public class TestFulfilmentsEndpoints {
         fulfilmentRequestResponse = requestFulfilmentByPost(caseId, productCodeSelected);
       }
 
-      if (fulfillmentException != null) {
-        throw fulfillmentException;
+      if (fulfilmentException != null) {
+        throw fulfilmentException;
       }
-      assertNotNull("Fulfillment Response is NULL", fulfilmentRequestResponse);
+      assertNotNull("Fulfilment Response is NULL", fulfilmentRequestResponse);
 
       HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
       log.with(contactCentreStatus)
@@ -553,19 +553,21 @@ public class TestFulfilmentsEndpoints {
     }
   }
 
-  @And("Requests a fulfillment for the case and title {string} forename {string} surname {string}")
-  public void requestsAFulfillmentForTheCaseAndTitleForenameSurname(
+  @And("Requests a fulfilment for the case and title {string} forename {string} surname {string}")
+  public void requestsAFulfilmentForTheCaseAndTitleForenameSurname(
       String title, String forename, String surname) {
-    fulfillmentException = null;
+    fulfilmentException = null;
     log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
     requestFulfilmentByPost(caseId, productCodeSelected, title, forename, surname);
   }
 
   @Then("an exception is thrown stating {string}")
   public void anExceptionIsThrownStating(String expectedExceptionMessage) {
+    String fulfilmentMessage = fulfilmentException.getMessage();
+
     assertTrue(
         "Exception must contain message: " + expectedExceptionMessage,
-        fulfillmentException.getMessage().contains(expectedExceptionMessage));
+        fulfilmentMessage.contains(expectedExceptionMessage));
   }
 
   @Then(
@@ -747,7 +749,7 @@ public class TestFulfilmentsEndpoints {
       log.debug(
           "A HttpClientErrorException has occurred when trying to post to fulfilmentRequestByPost endpoint in contact centre: "
               + httpClientErrorException.getMessage());
-      fulfillmentException = httpClientErrorException;
+      fulfilmentException = httpClientErrorException;
     }
     return requestFulfilmentByPostResponse;
   }

@@ -58,7 +58,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
     And Requests a fulfilment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM with expected fulfilemnt code = "P_UAC_UACHHP4"
+    Then a fulfilment request event is emitted to RM with expected fulfilment code = "P_UAC_UACHHP4"
 
   @SetUp
   Scenario: [CR-T292] I want to request an UAC for a HI Respondent in Wales via Post
@@ -68,7 +68,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
     And Requests a fulfilment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM with expected fulfilemnt code = "P_UAC_UACIP2B"
+    Then a fulfilment request event is emitted to RM with expected fulfilment code = "P_UAC_UACIP2B"
 
   @SetUp
   Scenario: [CR-T301] I want to request a Welsh Paper Questionnaire for a CE Individual Respondent in Wales
@@ -78,7 +78,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
     And Requests a fulfilment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM with expected fulfilemnt code = "P_OR_I2W"
+    Then a fulfilment request event is emitted to RM with expected fulfilment code = "P_OR_I2W"
 
   @SetUp
   Scenario: [CR-T334] I want to request an UAC for a SPG Respondent in Wales via Post
@@ -88,7 +88,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
     And Requests a fulfilment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM with expected fulfilemnt code = "P_OR_H2W"
+    Then a fulfilment request event is emitted to RM with expected fulfilment code = "P_OR_H2W"
 
   @SetUp
   Scenario Outline: [CR-T269, CR-T273, CR-T293, CR-T306, CR-T319, CR-T322] I want to request a individual for SMS delivery channel
@@ -98,7 +98,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "<delivery_channel>"
     And Requests a fulfilment for the case and delivery channel "<delivery_channel>"
-    Then a fulfilment request event is emitted to RM with expected fulfilemnt code = "<fulfilment>"
+    Then a fulfilment request event is emitted to RM with expected fulfilment code = "<fulfilment>"
 
     Examples:
       | uprn         | case_type | region | delivery_channel | individual | fulfilment |
@@ -118,7 +118,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "QUESTIONNAIRE" deliveryChannel "POST"
     And Requests a fulfilment for the case and title "<title>" forename "<forename>" surname "<surname>"
-    Then an exception is thrown stating "The fulfilment is for an individual so none of the following fields can be empty: 'title', 'forename' and 'surname'"
+    Then an exception is thrown stating "The fulfilment is for an individual so none of the following fields can be empty: 'forename' or 'surname'"
 
     Examples:
       | uprn         | case_type | title | forename | surname |
@@ -128,7 +128,6 @@ Feature: Test Contact centre Fulfilments Endpoints
       | 1347459993   | CE        |       |          |   J     |
       | 1347459993   | CE        |   Mr  |   A      |         |
       | 1347459993   | CE        |   Mr  |          |   J     |
-      | 1347459993   | CE        |       |   A      |   J     |
 
   @SetUp
   @testFulfilments-T302
@@ -139,7 +138,7 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
     And Requests a fulfilment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM with expected fulfilemnt code = "P_UAC_UACIP2B"
+    Then a fulfilment request event is emitted to RM with expected fulfilment code = "P_UAC_UACIP2B"
 
   @SetUp
   @testFulfilments-T313
@@ -150,4 +149,4 @@ Feature: Test Contact centre Fulfilments Endpoints
     And an empty queue exists for sending Fulfilment Requested events
     When CC Advisor selects the product code for productGroup "UAC" deliveryChannel "POST"
     And Requests a fulfilment for the case and delivery channel "POST"
-    Then a fulfilment request event is emitted to RM with expected fulfilemnt code = "P_UAC_UACIP2B"
+    Then a fulfilment request event is emitted to RM with expected fulfilment code = "P_UAC_UACIP2B"
