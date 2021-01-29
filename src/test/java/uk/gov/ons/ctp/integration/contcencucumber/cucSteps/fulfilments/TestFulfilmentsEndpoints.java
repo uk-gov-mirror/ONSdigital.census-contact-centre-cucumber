@@ -41,11 +41,17 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.ons.ctp.common.domain.UniquePropertyReferenceNumber;
 import uk.gov.ons.ctp.common.error.CTPException;
+import uk.gov.ons.ctp.common.event.EventPublisher;
 import uk.gov.ons.ctp.common.event.EventPublisher.EventType;
+import uk.gov.ons.ctp.common.event.model.AddressModifiedEvent;
 import uk.gov.ons.ctp.common.event.model.FulfilmentPayload;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequest;
 import uk.gov.ons.ctp.common.event.model.FulfilmentRequestedEvent;
 import uk.gov.ons.ctp.common.event.model.Header;
+import uk.gov.ons.ctp.common.event.model.NewAddressReportedEvent;
+import uk.gov.ons.ctp.common.event.model.QuestionnaireLinkedEvent;
+import uk.gov.ons.ctp.common.event.model.RespondentAuthenticatedEvent;
+import uk.gov.ons.ctp.common.event.model.SurveyLaunchedEvent;
 import uk.gov.ons.ctp.common.rabbit.RabbitHelper;
 import uk.gov.ons.ctp.common.util.TimeoutParser;
 import uk.gov.ons.ctp.integration.common.product.model.Product;
@@ -72,7 +78,7 @@ public class TestFulfilmentsEndpoints {
   private FulfilmentRequestedEvent fulfilmentRequestedEvent;
   private String caseId;
   private String productCodeSelected;
-  private Exception fulfillmentException;
+  private Exception fulfilmentException;
 
   @Autowired private CaseDataRepository dataRepo;
 
@@ -94,15 +100,15 @@ public class TestFulfilmentsEndpoints {
 
   @Given("I Search fulfilments")
   public void i_Search_fulfilments() {
-    searchFulfillments(caseDTO.getCaseType().name(), caseDTO.getRegion().name(), "true");
+    searchFulfilments(caseDTO.getCaseType().name(), caseDTO.getRegion().name(), "true");
   }
 
   @Given("I Search fulfilments {string} {string} {string}")
   public void i_Search_fulfilments(String caseType, String region, String individual) {
-    searchFulfillments(caseType, region, individual);
+    searchFulfilments(caseType, region, individual);
   }
 
-  private void searchFulfillments(String caseType, String region, String individual) {
+  private void searchFulfilments(String caseType, String region, String individual) {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(mcontext.getCcBaseUrl())
             .port(mcontext.getCcBasePort())
@@ -463,6 +469,27 @@ public class TestFulfilmentsEndpoints {
     rabbit.flushQueue(queueName);
   }
 
+  @Then("a fulfilment request event is emitted to RM with expected fulfilment code = {string}")
+  public void a_fulfilment_request_event_is_emitted_to_RM(final String expectedCode)
+      throws CTPException {
+
+    EventType eventType = EventType.FULFILMENT_REQUESTED;
+
+    final FulfilmentRequestedEvent event =
+        (FulfilmentRequestedEvent)
+            rabbit.getMessage(
+                EventPublisher.RoutingKey.forType(eventType).getKey(),
+                eventClass(eventType),
+                TimeoutParser.parseTimeoutString("2000ms"));
+
+    assertNotNull(event);
+    assertNotNull(event.getEvent());
+
+    String fulfilmentCode = event.getPayload().getFulfilmentRequest().getFulfilmentCode();
+
+    assertEquals(expectedCode, fulfilmentCode);
+  }
+
   @When("CC Advisor selects the product code for productGroup {string} deliveryChannel {string}")
   public void ccAdvisorSelectsTheProductCodeForProductGroupDeliveryChannel(
       String strProductGroup, String strDeliveryChannel) {
@@ -494,9 +521,9 @@ public class TestFulfilmentsEndpoints {
     return prodCodeSelected;
   }
 
-  @And("Requests a fulfillment for the case and delivery channel {string}")
-  public void requestsAFulfillmentForTheCaseAndDeliveryChannel(final String strDeliveryChannel) {
-    fulfillmentException = null;
+  @And("Requests a fulfilment for the case and delivery channel {string}")
+  public void requestsAFulfilmentForTheCaseAndDeliveryChannel(final String strDeliveryChannel) {
+    fulfilmentException = null;
     try {
       log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
       ResponseEntity<ResponseDTO> fulfilmentRequestResponse;
@@ -506,10 +533,10 @@ public class TestFulfilmentsEndpoints {
         fulfilmentRequestResponse = requestFulfilmentByPost(caseId, productCodeSelected);
       }
 
-      if (fulfillmentException != null) {
-        throw fulfillmentException;
+      if (fulfilmentException != null) {
+        throw fulfilmentException;
       }
-      assertNotNull("Fulfillment Response is NULL", fulfilmentRequestResponse);
+      assertNotNull("Fulfilment Response is NULL", fulfilmentRequestResponse);
 
       HttpStatus contactCentreStatus = fulfilmentRequestResponse.getStatusCode();
       log.with(contactCentreStatus)
@@ -526,19 +553,21 @@ public class TestFulfilmentsEndpoints {
     }
   }
 
-  @And("Requests a fulfillment for the case and title {string} forename {string} surname {string}")
-  public void requestsAFulfillmentForTheCaseAndTitleForenameSurname(
+  @And("Requests a fulfilment for the case and title {string} forename {string} surname {string}")
+  public void requestsAFulfilmentForTheCaseAndTitleForenameSurname(
       String title, String forename, String surname) {
-    fulfillmentException = null;
+    fulfilmentException = null;
     log.with(caseId).info("Now requesting a postal fulfilment for this case id..");
     requestFulfilmentByPost(caseId, productCodeSelected, title, forename, surname);
   }
 
   @Then("an exception is thrown stating {string}")
   public void anExceptionIsThrownStating(String expectedExceptionMessage) {
+    String fulfilmentMessage = fulfilmentException.getMessage();
+
     assertTrue(
         "Exception must contain message: " + expectedExceptionMessage,
-        fulfillmentException.getMessage().contains(expectedExceptionMessage));
+        fulfilmentMessage.contains(expectedExceptionMessage));
   }
 
   @Then(
@@ -707,7 +736,6 @@ public class TestFulfilmentsEndpoints {
 
     ResponseEntity<ResponseDTO> requestFulfilmentByPostResponse = null;
     URI fulfilmentByPostUrl = builder.build().encode().toUri();
-
     log.with(fulfilmentByPostUrl).info("The url for requesting the postal fulfilment");
     HttpEntity<PostalFulfilmentRequestDTO> requestEntity =
         new HttpEntity<>(postalFulfilmentRequest);
@@ -721,7 +749,7 @@ public class TestFulfilmentsEndpoints {
       log.debug(
           "A HttpClientErrorException has occurred when trying to post to fulfilmentRequestByPost endpoint in contact centre: "
               + httpClientErrorException.getMessage());
-      fulfillmentException = httpClientErrorException;
+      fulfilmentException = httpClientErrorException;
     }
     return requestFulfilmentByPostResponse;
   }
@@ -774,6 +802,25 @@ public class TestFulfilmentsEndpoints {
 
     for (String id : cachedCaseIds) {
       dataRepo.deleteCachedCase(id);
+    }
+  }
+
+  private Class<?> eventClass(EventType eventType) {
+    switch (eventType) {
+      case FULFILMENT_REQUESTED:
+        return FulfilmentRequestedEvent.class;
+      case NEW_ADDRESS_REPORTED:
+        return NewAddressReportedEvent.class;
+      case RESPONDENT_AUTHENTICATED:
+        return RespondentAuthenticatedEvent.class;
+      case SURVEY_LAUNCHED:
+        return SurveyLaunchedEvent.class;
+      case ADDRESS_MODIFIED:
+        return AddressModifiedEvent.class;
+      case QUESTIONNAIRE_LINKED:
+        return QuestionnaireLinkedEvent.class;
+      default:
+        throw new IllegalArgumentException("Cannot create event for event type: " + eventType);
     }
   }
 }

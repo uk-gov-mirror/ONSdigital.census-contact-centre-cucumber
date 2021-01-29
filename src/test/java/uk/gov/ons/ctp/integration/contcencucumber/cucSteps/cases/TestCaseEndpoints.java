@@ -56,6 +56,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
@@ -123,6 +124,7 @@ public class TestCaseEndpoints {
   private String postcode;
   private String status = "";
   private ModifyCaseRequestDTO modifyCaseRequest = null;
+  private BadRequest badRequest;
 
   @Autowired private CaseDataRepository dataRepo;
 
@@ -276,7 +278,7 @@ public class TestCaseEndpoints {
   }
 
   @When("I Search cases By UPRN")
-  public void i_Search_cases_By_UPRN() {
+  public void i_search_cases_By_UPRN() {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
             .port(context.getCcBasePort())
@@ -345,6 +347,48 @@ public class TestCaseEndpoints {
         exception.getMessage() != null && exception.getMessage().contains(httpError));
 
     assertNull("UPRN response must be null", caseDTOList);
+  }
+
+  @Given("Case ID {string} is region {string} and for case type {string}")
+  public void case_ID_is_region_and_for_case_type(
+      final String caseId, final String region, final String caseType) {
+    this.uprnStr = "1347459997";
+
+    i_search_cases_By_UPRN();
+    the_correct_cases_for_my_UPRN_are_returned(caseId);
+
+    CaseDTO caseDTO = caseDTOList.get(0);
+
+    assertEquals(caseType, caseDTO.getCaseType().getValue());
+    assertEquals(region, caseDTO.getRegion().getValue());
+  }
+
+  @When("getting URL for EQ Launch for Case ID {string} and Individual flag {string}")
+  public void getting_URL_for_EQ_Launch(final String caseId, final String individual) {
+    log.info(
+        "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
+
+    try {
+      getEqToken(caseId, Boolean.parseBoolean(individual));
+    } catch (BadRequest e) {
+      this.badRequest = e;
+
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      fail();
+    }
+  }
+
+  @Then("CC advisor receives error {string}")
+  public void cc_advisor_receives_error(final String errMsg) {
+    assertTrue(
+        "Error message produced not correct",
+        badRequest.getMessage().matches(".*" + errMsg + ".*"));
+
+    assertEquals(
+        "CC should have blocked NI CE managers access",
+        HttpStatus.BAD_REQUEST,
+        badRequest.getStatusCode());
   }
 
   @Given("confirmed CaseType {string} {string}")
