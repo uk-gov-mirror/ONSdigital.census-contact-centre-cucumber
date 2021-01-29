@@ -278,7 +278,7 @@ public class TestCaseEndpoints {
   }
 
   @When("I Search cases By UPRN")
-  public void i_Search_cases_By_UPRN() {
+  public void i_search_cases_By_UPRN() {
     final UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
             .port(context.getCcBasePort())
@@ -355,7 +355,7 @@ public class TestCaseEndpoints {
                                                   final String caseType) {
     this.uprnStr = "1347459997";
 
-    i_Search_cases_By_UPRN();
+    i_search_cases_By_UPRN();
     the_correct_cases_for_my_UPRN_are_returned(caseId);
 
     CaseDTO caseDTO = caseDTOList.get(0);
