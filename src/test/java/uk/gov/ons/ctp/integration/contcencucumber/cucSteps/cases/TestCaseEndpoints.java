@@ -350,9 +350,8 @@ public class TestCaseEndpoints {
   }
 
   @Given("Case ID {string} is region {string} and for case type {string}")
-  public void case_ID_is_region_and_for_case_type(final String caseId,
-                                                  final String region,
-                                                  final String caseType) {
+  public void case_ID_is_region_and_for_case_type(
+      final String caseId, final String region, final String caseType) {
     this.uprnStr = "1347459997";
 
     i_search_cases_By_UPRN();
@@ -360,15 +359,14 @@ public class TestCaseEndpoints {
 
     CaseDTO caseDTO = caseDTOList.get(0);
 
-    assertEquals(caseType,  caseDTO.getCaseType().getValue());
+    assertEquals(caseType, caseDTO.getCaseType().getValue());
     assertEquals(region, caseDTO.getRegion().getValue());
   }
 
-
   @When("getting URL for EQ Launch for Case ID {string} and Individual flag {string}")
-  public void getting_URL_for_EQ_Launch(final String caseId, final String individual){
+  public void getting_URL_for_EQ_Launch(final String caseId, final String individual) {
     log.info(
-            "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
+        "The CC advisor clicks a button to confirm that the case type is HH and then launch EQ...");
 
     try {
       getEqToken(caseId, Boolean.parseBoolean(individual));
@@ -382,16 +380,15 @@ public class TestCaseEndpoints {
   }
 
   @Then("CC advisor receives error {string}")
-  public void cc_advisor_receives_error(final String errMsg){
-      assertTrue(
-          "Error message produced not correct",
-              badRequest.getMessage().matches(".*" + errMsg + ".*"));
+  public void cc_advisor_receives_error(final String errMsg) {
+    assertTrue(
+        "Error message produced not correct",
+        badRequest.getMessage().matches(".*" + errMsg + ".*"));
 
-      assertEquals(
-          "CC should have blocked NI CE managers access",
-          HttpStatus.BAD_REQUEST,
-          badRequest.getStatusCode());
-
+    assertEquals(
+        "CC should have blocked NI CE managers access",
+        HttpStatus.BAD_REQUEST,
+        badRequest.getStatusCode());
   }
 
   @Given("confirmed CaseType {string} {string}")
