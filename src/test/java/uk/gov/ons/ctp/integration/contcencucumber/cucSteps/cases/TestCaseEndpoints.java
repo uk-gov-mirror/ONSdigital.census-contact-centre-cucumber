@@ -90,8 +90,7 @@ import uk.gov.ons.ctp.integration.caseapiclient.caseservice.model.EventDTO;
 import uk.gov.ons.ctp.integration.contcencucumber.cloud.CachedCase;
 import uk.gov.ons.ctp.integration.contcencucumber.context.ResetMockCaseApiContext;
 import uk.gov.ons.ctp.integration.contcencucumber.main.repository.CaseDataRepository;
-import uk.gov.ons.ctp.integration.eqlaunch.crypto.Codec;
-import uk.gov.ons.ctp.integration.eqlaunch.crypto.EQJOSEProvider;
+import uk.gov.ons.ctp.integration.eqlaunch.crypto.JweDecryptor;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
 public class TestCaseEndpoints {
@@ -464,10 +463,10 @@ public class TestCaseEndpoints {
     log.info("The first EQ token is: " + hhEqToken1);
     log.info("The second EQ token is: " + hhEqToken2);
 
-    EQJOSEProvider coderDecoder = new Codec();
+    JweDecryptor coderDecoder = new JweDecryptor(new KeyStore(keyStore));
 
-    String decryptedEqToken1 = coderDecoder.decrypt(hhEqToken1, new KeyStore(keyStore));
-    String decryptedEqToken2 = coderDecoder.decrypt(hhEqToken2, new KeyStore(keyStore));
+    String decryptedEqToken1 = coderDecoder.decrypt(hhEqToken1);
+    String decryptedEqToken2 = coderDecoder.decrypt(hhEqToken2);
 
     log.info("The first decrypted EQ token is: " + decryptedEqToken1);
     log.info("The second decrypted EQ token is: " + decryptedEqToken2);
