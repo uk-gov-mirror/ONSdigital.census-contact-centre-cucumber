@@ -1035,7 +1035,7 @@ public class TestCaseEndpoints {
     assertEquals(agentId, launchedEvent.getPayload().getResponse().getAgentId());
   }
 
-  @Given("the CC agent has selected an address that is not of addressType CE, HH, or SPG")
+  @Given("the CC agent cannot find an address that is not of addressType CE, HH, or SPG")
   public void the_CC_agent_has_selected_an_address_that_is_not_of_addressType_CE_HH_or_SPG() {
     UriComponentsBuilder builder =
         UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
@@ -1058,32 +1058,7 @@ public class TestCaseEndpoints {
 
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
-    String addressToFind =
-        "Public Telephone 13M From 11 Nine Acres On Unnamed Road, "
-            + "Steep Marsh Bungalows, Steep, Petersfield, GU32 2BW";
-    String addressFound = "";
-    int indexFound = 500;
-    log.info(
-        "The indexFound value defaults to 500 as that will cause an exception if it does not get reset in the while loop");
-    for (int i = 0; i < addressesFound.size(); i++) {
-      addressFound = addressesFound.get(i).getFormattedAddress();
-      if (addressFound.equals(addressToFind)) {
-        log.with(addressFound).info("This is the address that was found in AIMS");
-        indexFound = i;
-        break;
-      }
-    }
-    assertEquals(
-        "The address query response does not contain the correct address",
-        addressToFind,
-        addressFound);
-
-    uprnStr = addressesFound.get(indexFound).getUprn();
-    String addressTypeFound = addressesFound.get(indexFound).getAddressType().name();
-    log.with(addressTypeFound).info("The addressType of the address found");
-    assertNotEquals("CE", addressTypeFound);
-    assertNotEquals("HH", addressTypeFound);
-    assertNotEquals("SPG", addressTypeFound);
+    assertEquals(0, addressesFound.size());
   }
 
   @Then("the CC SVC must also return a {string} error")
