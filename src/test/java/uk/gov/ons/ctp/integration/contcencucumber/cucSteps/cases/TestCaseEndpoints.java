@@ -981,7 +981,7 @@ public class TestCaseEndpoints {
     assertEquals("E", address.getRegion());
     assertEquals("HH", address.getAddressType());
     assertEquals("U", address.getAddressLevel());
-    assertEquals("Household", address.getEstabType());
+    assertEquals("HOUSEHOLD", address.getEstabType());
     assertNull(address.getLatitude());
     assertNull(address.getLongitude());
     assertEquals(uprnStr, address.getUprn());
