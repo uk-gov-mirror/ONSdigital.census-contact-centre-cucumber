@@ -1041,7 +1041,7 @@ public class TestCaseEndpoints {
         UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
             .port(context.getCcBasePort())
             .pathSegment("addresses")
-            .queryParam("input", "Public Telephone 13M From 11 Nine Acres");
+            .queryParam("input", "Carpets, Shirley Avenue Southampton");
 
     ResponseEntity<AddressQueryResponseDTO> addressQueryResponse =
         context
@@ -1058,9 +1058,7 @@ public class TestCaseEndpoints {
 
     List<AddressDTO> addressesFound = addressQueryBody.getAddresses();
 
-    String addressToFind =
-        "Public Telephone 13M From 11 Nine Acres On Unnamed Road, "
-            + "Steep Marsh Bungalows, Steep, Petersfield, GU32 2BW";
+    String addressToFind = "Direct Carpets LTD, 2 Shirley Avenue, Southampton, SO15 5NG";
     String addressFound = "";
     int indexFound = 500;
     log.info(
