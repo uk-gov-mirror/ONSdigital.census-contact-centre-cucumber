@@ -1079,9 +1079,8 @@ public class TestCaseEndpoints {
     uprnStr = addressesFound.get(indexFound).getUprn();
     String addressTypeFound = addressesFound.get(indexFound).getAddressType().name();
     log.with(addressTypeFound).info("The addressType of the address found");
-    assertNotEquals("CE", addressTypeFound);
-    assertNotEquals("HH", addressTypeFound);
-    assertNotEquals("SPG", addressTypeFound);
+    // CC will convert the NA address type to HH
+    assertEquals("HH", addressTypeFound);
   }
 
   @Then("the CC SVC must also return a {string} error")
