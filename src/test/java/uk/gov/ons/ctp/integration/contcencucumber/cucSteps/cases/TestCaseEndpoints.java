@@ -903,7 +903,7 @@ public class TestCaseEndpoints {
         Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
         response.getAllowedDeliveryChannels());
     assertEquals(EstabType.HOUSEHOLD.name(), response.getEstabType().name());
-    assertEquals("Household", response.getEstabDescription());
+    assertEquals("household", response.getEstabDescription().toLowerCase());
     assertNotNull(response.getCreatedDateTime());
     assertEquals("1 West Grove Road", response.getAddressLine1());
     assertEquals("Exeter", response.getTownName());
