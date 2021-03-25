@@ -903,13 +903,66 @@ public class TestCaseEndpoints {
         Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
         response.getAllowedDeliveryChannels());
     assertEquals(EstabType.HOUSEHOLD.name(), response.getEstabType().name());
-    assertEquals("Household", response.getEstabDescription());
+    assertEquals("household", response.getEstabDescription().toLowerCase());
     assertNotNull(response.getCreatedDateTime());
     assertEquals("1 West Grove Road", response.getAddressLine1());
     assertEquals("Exeter", response.getTownName());
     assertEquals("E", response.getRegion().name());
     assertEquals("EX2 4LU", response.getPostcode());
     assertEquals(100040239948L, Long.parseLong(response.getUprn()));
+    assertNull(response.getEstabUprn());
+    assertNotNull(response.getCaseEvents());
+    assertEquals(0, response.getCaseEvents().size());
+
+    List<CachedCase> cachedCases =
+        dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(response.getUprn()));
+    assertFalse(cachedCases.isEmpty());
+    log.with(cachedCases).info("The fake case that has been created in Firestore");
+  }
+
+  @When("the service creates a new Case with the address details from AIMS")
+  public void the_service_creates_a_new_Case_with_the_address_details_from_AIMS()
+      throws CTPException {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprnStr);
+    String ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+
+    log.info(
+        "As the case does not exist in the case service the endpoint {} should cause a new fake case to be created",
+        ccUprnEndpointUrl);
+
+    ResponseEntity<List<CaseDTO>> caseResponse =
+        context
+            .getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CaseDTO>>() {});
+    caseDTOList = caseResponse.getBody();
+    assert caseDTOList != null;
+    CaseDTO response = caseDTOList.get(0);
+
+    assertNotNull(response.getId());
+    assertNull(response.getCaseRef());
+    assertEquals("HH", response.getCaseType().name());
+    assertEquals("HH", response.getAddressType().name());
+    assertFalse(response.isSecureEstablishment());
+    assertEquals(
+        Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
+        response.getAllowedDeliveryChannels());
+    assertEquals(EstabType.HOUSEHOLD.name(), response.getEstabType().name());
+    assertEquals("household", response.getEstabDescription().toLowerCase());
+    assertNotNull(response.getCreatedDateTime());
+    assertEquals("Direct Carpets LTD", response.getAddressLine1());
+    assertEquals("Southampton", response.getTownName());
+    assertEquals("E", response.getRegion().name());
+    assertEquals("SO15 5NG", response.getPostcode());
+    assertEquals(100060730793L, Long.parseLong(response.getUprn()));
     assertNull(response.getEstabUprn());
     assertNotNull(response.getCaseEvents());
     assertEquals(0, response.getCaseEvents().size());
@@ -929,9 +982,9 @@ public class TestCaseEndpoints {
     }
   }
 
-  @Then("the service must publish a new address event to RM with the fake CaseID")
-  public void the_service_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID()
-      throws CTPException {
+  @Then("the service must publish a new {string} address event to RM with the fake CaseID")
+  public void the_service_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID(
+      String expectedLocation) throws CTPException {
     log.info(
         "Check that a NEW_ADDRESS_REPORTED event has now been put on the empty queue, named {}, ready to be picked up by RM",
         queueName);
@@ -973,18 +1026,32 @@ public class TestCaseEndpoints {
     assertNull(collectionCase.getFieldOfficerId());
 
     Address address = collectionCase.getAddress();
-    assertEquals("1 West Grove Road", address.getAddressLine1());
-    assertEquals("", address.getAddressLine2());
-    assertEquals("", address.getAddressLine3());
-    assertEquals("Exeter", address.getTownName());
-    assertEquals("EX2 4LU", address.getPostcode());
+    if (expectedLocation.equals("Exeter")) {
+      assertEquals("1 West Grove Road", address.getAddressLine1());
+      assertEquals("", address.getAddressLine2());
+      assertEquals("", address.getAddressLine3());
+      assertEquals("Exeter", address.getTownName());
+      assertEquals("EX2 4LU", address.getPostcode());
+      assertNull(address.getLatitude());
+      assertNull(address.getLongitude());
+      assertEquals(uprnStr, address.getUprn());
+    } else if (expectedLocation.equals("Southampton")) {
+      assertEquals("Direct Carpets LTD", address.getAddressLine1());
+      assertEquals("2 Shirley Avenue", address.getAddressLine2());
+      assertEquals("", address.getAddressLine3());
+      assertEquals("Southampton", address.getTownName());
+      assertEquals("SO15 5NG", address.getPostcode());
+      assertNull(address.getLatitude());
+      assertNull(address.getLongitude());
+      assertEquals("100060730793", address.getUprn());
+    } else {
+      throw new IllegalArgumentException(
+          "Unrecognised location. Must be 'Exeter' or 'Southampton'");
+    }
     assertEquals("E", address.getRegion());
     assertEquals("HH", address.getAddressType());
     assertEquals("U", address.getAddressLevel());
     assertEquals("HOUSEHOLD", address.getEstabType());
-    assertNull(address.getLatitude());
-    assertNull(address.getLongitude());
-    assertEquals(uprnStr, address.getUprn());
   }
 
   @When("CC Advisor selects the survey launch")
@@ -1079,9 +1146,8 @@ public class TestCaseEndpoints {
     uprnStr = addressesFound.get(indexFound).getUprn();
     String addressTypeFound = addressesFound.get(indexFound).getAddressType().name();
     log.with(addressTypeFound).info("The addressType of the address found");
-    assertNotEquals("CE", addressTypeFound);
-    assertNotEquals("HH", addressTypeFound);
-    assertNotEquals("SPG", addressTypeFound);
+    // CC will convert the NA address type to HH
+    assertEquals("HH", addressTypeFound);
   }
 
   @Then("the CC SVC must also return a {string} error")

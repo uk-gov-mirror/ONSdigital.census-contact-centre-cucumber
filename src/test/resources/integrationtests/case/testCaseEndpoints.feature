@@ -150,19 +150,23 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
   Scenario: [CR-T148] Publish a new address event to RM
     Given the agent has confirmed the respondent address
     And the case service does not have any case created for the address in question
+    And cached cases for the UPRN do not already exist
     And Get/Case API returns a "404" error because there is no case found
     And an empty queue exists for sending "NEW_ADDRESS_REPORTED" events
     And cached cases for the UPRN do not already exist
     Given the service creates a fake Case with the address details from AIMS
-    Then the service must publish a new address event to RM with the fake CaseID
+    Then the service must publish a new "Exeter" address event to RM with the fake CaseID
 
   @CC @AD @CR-T377
   Scenario: [CR-T377] AddressType Not Applicable
     Given the CC agent has selected an address that is not of addressType CE, HH, or SPG
-    And the case service does not have any case created for the address in question
+    And the case service does not have any case created for the address in question	
     And cached cases for the UPRN do not already exist
-    When Get/Case API returns a "404" error because there is no case found
-    Then the CC SVC must also return a "404 Not Found" error
+    When Get/Case API returns a "404" error because there is no case found	
+    And an empty queue exists for sending "NEW_ADDRESS_REPORTED" events
+    And cached cases for the UPRN do not already exist
+    Given the service creates a new Case with the address details from AIMS
+    Then the service must publish a new "Southampton" address event to RM with the fake CaseID
 
   @AD @CR-T383
   Scenario Outline: [CR-T383]  AD advisor wants to get a new UAC for the respondent
