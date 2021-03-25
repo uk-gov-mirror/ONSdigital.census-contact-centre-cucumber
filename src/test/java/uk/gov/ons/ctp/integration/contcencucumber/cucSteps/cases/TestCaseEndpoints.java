@@ -48,7 +48,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -1046,7 +1045,7 @@ public class TestCaseEndpoints {
       assertNull(address.getLongitude());
       assertEquals("100060730793", address.getUprn());
     } else {
-      throw new InvalidArgumentException(
+      throw new IllegalArgumentException(
           "Unrecognised location. Must be 'Exeter' or 'Southampton'");
     }
     assertEquals("E", address.getRegion());
