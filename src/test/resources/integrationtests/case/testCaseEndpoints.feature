@@ -154,7 +154,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
     And an empty queue exists for sending "NEW_ADDRESS_REPORTED" events
     And cached cases for the UPRN do not already exist
     Given the service creates a fake Case with the address details from AIMS
-    Then the service must publish a new address event to RM with the fake CaseID
+    Then the service must publish a new "Exeter" address event to RM with the fake CaseID
 
   @CC @AD @CR-T377
   Scenario: [CR-T377] AddressType Not Applicable
@@ -164,7 +164,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
     And an empty queue exists for sending "NEW_ADDRESS_REPORTED" events
     And cached cases for the UPRN do not already exist
     Given the service creates a new Case with the address details from AIMS
-    Then the service must publish a new address event to RM with the fake CaseID
+    Then the service must publish a new "Southampton" address event to RM with the fake CaseID
 
   @AD @CR-T383
   Scenario Outline: [CR-T383]  AD advisor wants to get a new UAC for the respondent

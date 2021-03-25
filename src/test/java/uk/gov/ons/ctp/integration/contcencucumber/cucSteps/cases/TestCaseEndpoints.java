@@ -48,6 +48,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -982,9 +983,9 @@ public class TestCaseEndpoints {
     }
   }
 
-  @Then("the service must publish a new address event to RM with the fake CaseID")
-  public void the_service_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID()
-      throws CTPException {
+  @Then("the service must publish a new {string} address event to RM with the fake CaseID")
+  public void the_service_must_publish_a_new_address_event_to_RM_with_the_fake_CaseID(
+      String expectedLocation) throws CTPException {
     log.info(
         "Check that a NEW_ADDRESS_REPORTED event has now been put on the empty queue, named {}, ready to be picked up by RM",
         queueName);
@@ -1026,18 +1027,32 @@ public class TestCaseEndpoints {
     assertNull(collectionCase.getFieldOfficerId());
 
     Address address = collectionCase.getAddress();
-    assertEquals("1 West Grove Road", address.getAddressLine1());
-    assertEquals("", address.getAddressLine2());
-    assertEquals("", address.getAddressLine3());
-    assertEquals("Exeter", address.getTownName());
-    assertEquals("EX2 4LU", address.getPostcode());
+    if (expectedLocation.equals("Exeter")) {
+      assertEquals("1 West Grove Road", address.getAddressLine1());
+      assertEquals("", address.getAddressLine2());
+      assertEquals("", address.getAddressLine3());
+      assertEquals("Exeter", address.getTownName());
+      assertEquals("EX2 4LU", address.getPostcode());
+      assertNull(address.getLatitude());
+      assertNull(address.getLongitude());
+      assertEquals(uprnStr, address.getUprn());
+    } else if (expectedLocation.equals("Southampton")) {
+      assertEquals("Direct Carpets LTD", address.getAddressLine1());
+      assertEquals("2 Shirley Avenue", address.getAddressLine2());
+      assertEquals("", address.getAddressLine3());
+      assertEquals("Southampton", address.getTownName());
+      assertEquals("SO15 5NG", address.getPostcode());
+      assertNull(address.getLatitude());
+      assertNull(address.getLongitude());
+      assertEquals("100060730793", address.getUprn());
+    } else {
+      throw new InvalidArgumentException(
+          "Unrecognised location. Must be 'Exeter' or 'Southampton'");
+    }
     assertEquals("E", address.getRegion());
     assertEquals("HH", address.getAddressType());
     assertEquals("U", address.getAddressLevel());
     assertEquals("HOUSEHOLD", address.getEstabType());
-    assertNull(address.getLatitude());
-    assertNull(address.getLongitude());
-    assertEquals(uprnStr, address.getUprn());
   }
 
   @When("CC Advisor selects the survey launch")
