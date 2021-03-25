@@ -150,6 +150,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
   Scenario: [CR-T148] Publish a new address event to RM
     Given the agent has confirmed the respondent address
     And the case service does not have any case created for the address in question
+    And cached cases for the UPRN do not already exist
     And Get/Case API returns a "404" error because there is no case found
     And an empty queue exists for sending "NEW_ADDRESS_REPORTED" events
     And cached cases for the UPRN do not already exist
@@ -160,6 +161,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
   Scenario: [CR-T377] AddressType Not Applicable
     Given the CC agent has selected an address that is not of addressType CE, HH, or SPG
     And the case service does not have any case created for the address in question	
+    And cached cases for the UPRN do not already exist
     When Get/Case API returns a "404" error because there is no case found	
     And an empty queue exists for sending "NEW_ADDRESS_REPORTED" events
     And cached cases for the UPRN do not already exist
