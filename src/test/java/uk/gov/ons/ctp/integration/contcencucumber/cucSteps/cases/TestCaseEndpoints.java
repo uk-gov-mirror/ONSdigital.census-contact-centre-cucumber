@@ -905,6 +905,59 @@ public class TestCaseEndpoints {
     assertEquals(EstabType.HOUSEHOLD.name(), response.getEstabType().name());
     assertEquals("household", response.getEstabDescription().toLowerCase());
     assertNotNull(response.getCreatedDateTime());
+    assertEquals("2 Shirley Avenue", response.getAddressLine1());
+    assertEquals("Southampton", response.getTownName());
+    assertEquals("E", response.getRegion().name());
+    assertEquals("SO15 5NG", response.getPostcode());
+    assertEquals(100060730793L, Long.parseLong(response.getUprn()));
+    assertNull(response.getEstabUprn());
+    assertNotNull(response.getCaseEvents());
+    assertEquals(0, response.getCaseEvents().size());
+
+    List<CachedCase> cachedCases =
+        dataRepo.readCachedCasesByUprn(UniquePropertyReferenceNumber.create(response.getUprn()));
+    assertFalse(cachedCases.isEmpty());
+    log.with(cachedCases).info("The fake case that has been created in Firestore");
+  }
+
+  @When("the service creates a new Case with the address details from AIMS")
+  public void the_service_creates_a_new_Case_with_the_address_details_from_AIMS()
+      throws CTPException {
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(context.getCcBaseUrl())
+            .port(context.getCcBasePort())
+            .pathSegment("cases")
+            .pathSegment("uprn")
+            .pathSegment(uprnStr);
+    String ccUprnEndpointUrl = builder.build().encode().toUri().toString();
+
+    log.info(
+        "As the case does not exist in the case service the endpoint {} should cause a new fake case to be created",
+        ccUprnEndpointUrl);
+
+    ResponseEntity<List<CaseDTO>> caseResponse =
+        context
+            .getRestTemplate()
+            .exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CaseDTO>>() {});
+    caseDTOList = caseResponse.getBody();
+    assert caseDTOList != null;
+    CaseDTO response = caseDTOList.get(0);
+
+    assertNotNull(response.getId());
+    assertNull(response.getCaseRef());
+    assertEquals("HH", response.getCaseType().name());
+    assertEquals("HH", response.getAddressType().name());
+    assertFalse(response.isSecureEstablishment());
+    assertEquals(
+        Arrays.asList(DeliveryChannel.POST, DeliveryChannel.SMS),
+        response.getAllowedDeliveryChannels());
+    assertEquals(EstabType.HOUSEHOLD.name(), response.getEstabType().name());
+    assertEquals("household", response.getEstabDescription().toLowerCase());
+    assertNotNull(response.getCreatedDateTime());
     assertEquals("1 West Grove Road", response.getAddressLine1());
     assertEquals("Exeter", response.getTownName());
     assertEquals("E", response.getRegion().name());

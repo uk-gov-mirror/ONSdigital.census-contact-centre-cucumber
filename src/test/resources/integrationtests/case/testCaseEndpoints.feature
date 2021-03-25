@@ -163,7 +163,7 @@ Feature: Test Contact Centre, Assisted Digital case endpoints
     When Get/Case API returns a "404" error because there is no case found	
     And an empty queue exists for sending "NEW_ADDRESS_REPORTED" events
     And cached cases for the UPRN do not already exist
-    Given the service creates a fake Case with the address details from AIMS
+    Given the service creates a new Case with the address details from AIMS
     Then the service must publish a new address event to RM with the fake CaseID
 
   @AD @CR-T383
