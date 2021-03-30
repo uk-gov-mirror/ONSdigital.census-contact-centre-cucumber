@@ -94,6 +94,7 @@ import uk.gov.ons.ctp.integration.eqlaunch.crypto.JweDecryptor;
 import uk.gov.ons.ctp.integration.eqlaunch.crypto.KeyStore;
 
 public class TestCaseEndpoints {
+  private static final int TIME_COMPARISON_LEEWAY = 100;
   private static final Logger log = LoggerFactory.getLogger(TestCaseEndpoints.class);
   private static final String RABBIT_EXCHANGE = "events";
   private static final long RABBIT_TIMEOUT = 2000L;
@@ -1451,7 +1452,9 @@ public class TestCaseEndpoints {
     }
   }
 
-  private void verifyTimeInExpectedRange(long minAllowed, long maxAllowed, Date dateTime) {
+  private void verifyTimeInExpectedRange(long startTime, long endTime, Date dateTime) {
+    long minAllowed = startTime - TIME_COMPARISON_LEEWAY;
+    long maxAllowed = endTime + TIME_COMPARISON_LEEWAY;
     long actualInMillis = dateTime.getTime();
     assertTrue(actualInMillis + " not after " + minAllowed, actualInMillis >= minAllowed);
     assertTrue(actualInMillis + " not before " + maxAllowed, actualInMillis <= maxAllowed);
