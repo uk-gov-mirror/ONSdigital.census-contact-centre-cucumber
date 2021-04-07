@@ -48,7 +48,7 @@ Feature: Test Contact centre Address Endpoints
     Examples: 
       | address              |
       | "Chimpanzee"         |
-      | "Boaty McBoat Face " |
+      | "Paddle McBoardFace" |
       | "Strawberry Laces"   |
 
   @AddressEndpointTestCR-T147
